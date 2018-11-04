@@ -1,0 +1,17 @@
+{
+    "name": "maltyxx/restclient",
+    "keywords": ["codeigniter", "rest", "client"],
+    "description": "REST Full Client for Codeigniter 3",
+    "homepage": "https://github.com/maltyxx/restclient",
+    "license": "Apache-2.0",
+    "authors": [
+        {
+            "name": "Yoann Vanitou",
+            "email": "yvanitou@gmail.com",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.0"
+    }
+}
