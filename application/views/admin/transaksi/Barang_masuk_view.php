@@ -29,9 +29,6 @@
                                     <th>Tanggal</th>
                                     <th>Nomor Referensi</th>
                                     <th>Jenis Trans</th>
-                                    <th>Kode Barang</th>
-                                    <th>Nama Barang</th>
-                                    <th>Qty</th>
                                     <th>Keterangan</th>
                                     <th>Action</th>
                                 </tr>
@@ -147,16 +144,22 @@
             "serverSide": false, //Feature control DataTables' server-side processing mode.
             "order": [], //Initial no order.
             responsive: true,
+            /*
+
             columns: [
                 { title: "Nama Barang" },
                 { title: "Expired" },
                 { title: "Qty" }
                 
             ],
+            */
             "columnDefs": [
                 {
                     "targets": [ -1 ], //last column
                     "orderable": false
+                },{
+                    "targets": [0],
+                    "visible": false
                 }
 
             ]
@@ -257,7 +260,7 @@
                 //alert(data[0]['detailStok'].length);
                 for(var i = 0; i < data[0]['detailBarang'].length; i++) {
                     var obj = data[0]['detailBarang'][i];
-                    table_detailbarang.row.add([obj.nama_barang, obj.expired, obj.qty]).draw();
+                    table_detailbarang.row.add([obj.id, obj.kode_barang_masuk, obj.nomor_referensi, obj.kode_barang, obj.nama_barang, obj.qty ]).draw();
                 }
 
                 $('#modal_detail_barang').modal('show'); // show bootstrap modal when complete loaded
@@ -678,8 +681,12 @@
                 <table id="datatable-detailbarang" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
                         <thead>
                         <tr>
+                            <th>Id</th>
+                            <th>Kode Barang Masuk</th>
+                            <th>Referensi</th>
+                            <th>Kode Barang</th>
                             <th>Nama Barang</th>
-                            <th>Expired</th>
+                            
                             <th>Qty</th>
                         </tr>
                         </thead>

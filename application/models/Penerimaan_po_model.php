@@ -17,7 +17,7 @@ class Penerimaan_po_model extends MY_Model
 
     private function _get_datatables_query()
     {
-        /*
+        
         $this->db->select("
         detail_penerimaan_po.id,
         penerimaan_po.kode_penerimaan_po as kode_penerimaan_po,
@@ -25,12 +25,11 @@ class Penerimaan_po_model extends MY_Model
         detail_penerimaan_po.kode_barang as kode_barang,
         penerimaan_po.kode_supplier,        
         penerimaan_po.nama_supplier,
-        kode_barang,
-        nama_barang,
-        qty_terima, qty_return, kode_po
+        detail_penerimaan_po.nama_barang as nama_barang,
+        detail_penerimaan_po.qty_terima as qty_terima, kode_po
         ");
-        */
-        // $this->db->join('detail_penerimaan_po','detail_penerimaan_po.kode_penerimaan_po = penerimaan_po.kode_penerimaan_po');
+        
+         $this->db->join('detail_penerimaan_po','detail_penerimaan_po.kode_penerimaan_po = penerimaan_po.kode_penerimaan_po');
 
        $this->db->from($this->table);
           $i = 0;

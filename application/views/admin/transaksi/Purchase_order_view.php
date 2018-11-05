@@ -282,6 +282,9 @@
                 $('[name="qty"]').val(data[0]['qty']);
                 $('[name="harga"]').val(data[0]['harga']);
                 $('[name="top"]').val(data[0]['top']);
+                $('[name="buttom_supplier"]').val(data[0]['buttom_supplier']);
+                $('[name="buttom_retail"]').val(data[0]['buttom_retail']);
+                $('[name="harga_beli"]').val(data[0]['harga_beli']);
                 $('[name="qty_terima"]').val("0");
 
   

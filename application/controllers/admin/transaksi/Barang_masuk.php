@@ -53,19 +53,16 @@ class Barang_masuk extends Admin_Controller
             $row[] = $this->tanggal($dt->tanggal);
             $row[] = $dt->nomor_referensi;
             $row[] = $dt->jenis_trans;
+            /*
             $row[] = $dt->kode_barang;
             $row[] = $dt->nama_barang;
             $row[] = $dt->qty;
+            */
             $row[] = $dt->keterangan;
-            if($dt->qty > $dt->keluar){
-                $row[] = '<a class="btn btn-sm btn-primary" href="javascript:void(0)" title="Edit" onclick="edit_barang_masuk('."'".$dt->id."'".')"><i class="glyphicon glyphicon-pencil"></i> Edit</a>
-                  <a class="btn btn-sm btn-danger" href="javascript:void(0)" title="Hapus" onclick="delete_barang_masuk('."'".$dt->id."'".')"><i class="glyphicon glyphicon-trash"></i> Delete</a>
-                  <a class="btn btn-sm btn-primary" href="javascript:void(0)" title="Detail" onclick="detail_barang_masuk('."'".$dt->id."'".')"><i class="glyphicon glyphicon-pencil"></i> Detail</a>';
-            }else{
 
                 $row[] = '
                   <a class="btn btn-sm btn-primary" href="javascript:void(0)" title="Detail" onclick="detail_barang_masuk('."'".$dt->id."'".')"><i class="glyphicon glyphicon-pencil"></i> Detail</a>';
-            }
+            
            
             $data[] = $row;
         }

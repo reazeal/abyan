@@ -154,4 +154,32 @@ class Detail_barang_masuk_model extends MY_Model
 
     }
 
+    public function getDataByTransaksi($id){
+        $data = array();
+        $this->db->select("detail_barang_masuk.id as id, detail_barang_masuk.kode_barang_masuk as kode_barang_masuk, detail_barang_masuk.kode_barang as kode_barang, detail_barang_masuk.nama_barang as nama_barang, detail_barang_masuk.qty as qty, detail_barang_masuk.nomor_referensi as nomor_referensi");
+        $this->db->join('barang_masuk','barang_masuk.kode_barang_masuk = detail_barang_masuk.kode_barang_masuk');
+        $this->db->where('barang_masuk.id',$id);
+        $query = $this->db->get($this->table);
+
+        $totaly2 = $query->num_rows();
+        if ($totaly2 > 0) {
+            foreach ($query->result() as $atributy) {
+
+                    $data[] = array(
+                    'id' => $atributy->id,
+                    'kode_barang_masuk' => $atributy->kode_barang_masuk,
+                    'kode_barang' => $atributy->kode_barang,
+                    'nama_barang' => $atributy->nama_barang,
+                    'qty' => $atributy->qty,
+                    'nomor_referensi' => $atributy->nomor_referensi,
+                    
+                );
+                
+            }
+
+        }
+        return $data;
+
+    }
+
 }

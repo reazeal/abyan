@@ -60,7 +60,9 @@ class Penerimaan_po extends Admin_Controller
             $row[] = $dt->kode_barang;
             $row[] = $dt->nama_barang;
             $row[] = $dt->qty_terima;
+            /*
             $row[] = '<a class="btn btn-sm btn-primary" href="javascript:void(0)" title="Edit" onclick="edit_penerimaan('."'".$dt->id."'".')"><i class="glyphicon glyphicon-pencil"></i> Edit</a>';
+            */
             $data[] = $row;
         }
 
@@ -129,9 +131,9 @@ class Penerimaan_po extends Admin_Controller
         }
 
 
-        $kode_terima_po = $this->penerimaan_po_model->get_kode_by_po_terima($this->input->post('kode_po'),$this->tanggaldb($this->input->post('tanggal')));
+        $kode_terima_pox = $this->penerimaan_po_model->get_kode_by_kode_terima($this->input->post('kode_po'),$this->tanggaldb($this->input->post('tanggal')));
 
-        if($kode_terima_po == null){
+        if($kode_terima_pox == null){
 
             
             $kode = $kode_awal."/PP/".$tanggal_asli[1]."/".$tanggal_asli[0];
@@ -167,7 +169,12 @@ class Penerimaan_po extends Admin_Controller
             );
             $insert = $this->detail_penerimaan_po_model->save($data_detail);
             
+            $kode_terima_po = $kode;
+
         }else{
+
+            $kode_terima_po = $kode_terima_pox;
+
             $id_detail = md5($kode_terima_po.'detail_penerimaan-po'.$this->input->post('kode_po').$this->input->post('kode_barang').$this->input->post('qty').$this->input->post('qty_terima').date('YmdHis'));
 
             $data_detail = array(
@@ -215,25 +222,23 @@ class Penerimaan_po extends Admin_Controller
                 'id' => $id_barang_masuk,
                 'kode_barang_masuk' => $kode_barang_masuk,
                 'jenis_trans' => 'PEMBELIAN',
-                'nomor_referensi' => $this->input->post('kode_po'),
+                'nomor_referensi' => $kode_terima_po,
                 'tanggal' => $this->tanggaldb($this->input->post('tanggal'))
             );
             $insert = $this->barang_masuk_model->save($data_barang_masuk);
 
-            $id_detail_masuk = md5($id_barang_masuk.$kode.'detail_po_masuk'.date('YmdHis'));
+            $id_detail_masuk = md5($this->input->post('kode_barang').rand(1,100).$id_barang_masuk.$kode_barang_masuk.'detail_po_masuk'.date('YmdHis'));
 
             $data_detail_barang = array(
                 'kode_barang_masuk' => $kode_barang_masuk,
                 'id' => $id_detail_masuk,
-                'nomor_referensi' => $this->input->post('kode_po'),
+                'nomor_referensi' => $kode_terima_po,
                 'kode_barang' =>  $this->input->post('kode_barang'),
                 'nama_barang' =>  $this->input->post('nama_barang'),
                 'qty' =>  $this->input->post('qty_terima'),
-                'harga_beli' =>  $this->input->post('harga_beli'),
+                'harga_beli' =>  $this->input->post('harga'),
                 'buttom_retail' =>  $this->input->post('buttom_retail'),
-                'buttom_supplier' =>  $this->input->post('buttom_supplier'),
-                
-                'kode_penerimaan_po' => $kode,
+                'buttom_supplier' =>  $this->input->post('buttom_supplier'),                
                 'keluar' => 0
                                         );
 
@@ -241,10 +246,10 @@ class Penerimaan_po extends Admin_Controller
 
         }else{
 
-            $id_detail_masuk = md5($id_barang_masuk.$kode.'detail_po_masuk'.date('YmdHis'));
+            $id_detail_masuk = md5($this->input->post('kode_barang').$kode_masuk.rand(1,100).'detail_po_masuk'.date('YmdHis'));
 
             $data_detail_barang = array(
-                'kode_barang_masuk' => $kode_barang_masuk,
+                'kode_barang_masuk' => $kode_masuk,
                 'id' => $id_detail_masuk,
             //    'nomor_referensi' => $this->input->post('kode_po'),
                 'kode_barang' =>  $this->input->post('kode_barang'),
@@ -268,26 +273,6 @@ class Penerimaan_po extends Admin_Controller
         /*
         
 */            
-        /*
-
-        $stok_barang = $this->stok_model->total_perbarang($this->input->post('kode_barang'));
-
-        $stok_limit = $this->barang_model->total_limit_perbarang($this->input->post('kode_barang'));
-
-        if($stok_barang + $this->input->post('qty_terima') < $stok_limit){
-            $status = 'Stok Limit';
-        }else{
-            $status = 'Stok Baik';
-        }
-        
-        $jumlah_stok = $stok_barang + $this->input->post('qty_terima');
-        $data_stok = array(
-            'status_stok' => $status,
-            'qty' => $jumlah_stok
-        );
-
-        $this->stok_model->update_by_kode($this->input->post('kode_barang'), $data_stok);
-        */
         $jumlah_order = $this->input->post('qty');
         $jumlah_terima = $this->penerimaan_po_model->total_kode_po($this->input->post('kode_po'));
         if($jumlah_terima >=  $jumlah_order){

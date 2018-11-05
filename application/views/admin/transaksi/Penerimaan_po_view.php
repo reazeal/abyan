@@ -32,7 +32,7 @@
                                     <th>Kode Barang</th>
                                     <th>Nama Barang</th>
                                     <th>Qty Terima</th>
-                                    <th>Action</th>
+                                    
                                 </tr>
                                 </thead>
 
