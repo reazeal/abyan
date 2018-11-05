@@ -27,6 +27,7 @@
                                     <th>No</th>
                                     <th>Id</th>
                                     <th>Tanggal</th>
+                                    <th>Kode</th>
                                     <th>Nomor Referensi</th>
                                     <th>Jenis Trans</th>
                                     <th>Keterangan</th>
@@ -103,7 +104,7 @@
                     "visible": false
                 },{
                     "targets": [5],
-                    "visible": false
+                    "visible": true
                 }
             ]
         });

@@ -110,7 +110,7 @@ class Hutang_model extends MY_Model
 
     public function update_by_kode($kode, $data)
     {
-        $this->db->where('kode',$kode);
+        $this->db->where('kode_hutang',$kode);
         $this->db->update($this->table, $data);
         return $this->db->affected_rows();
         //$this->db->update($this->table,array("upload_rate"=>0,"download_rate"=>0));
@@ -137,6 +137,31 @@ class Hutang_model extends MY_Model
         }
         return $total_hutang;
 
+    }
+
+     public function get_kode_hutang_by_kode_terimax($kode_terima){
+        $kode_hutang = array();
+        $this->db->select("
+            kode_hutang, nominal
+        ");
+        $this->db->where("nomor_referensi",$kode_terima);
+        //$this->db->where("tanggal",$tanggal);
+        $this->db->from($this->table);
+        $query = $this->db->get();
+        return $query->row;
+    }
+
+     public function get_kode_hutang_by_kode_terima($kode_terima){
+
+         $this->db->select("
+            kode_hutang, nominal
+        ");
+
+        $this->db->from($this->table);
+        $this->db->where("nomor_referensi",$kode_terima);
+        $query = $this->db->get();
+
+        return $query->row();
     }
 
 

@@ -188,8 +188,9 @@ class Penerimaan_po extends Admin_Controller
                 
         }
 
+        // barang masuk
 
-        $kode_masuk = $this->barang_masuk_model->get_kode_by_kode_terima($this->input->post('kode_po'),$this->tanggaldb($this->input->post('tanggal')));
+        $kode_masuk = $this->barang_masuk_model->get_kode_by_kode_terima($kode_terima_po,$this->tanggaldb($this->input->post('tanggal')));
 
         if($kode_masuk == null){
 
@@ -251,11 +252,11 @@ class Penerimaan_po extends Admin_Controller
             $data_detail_barang = array(
                 'kode_barang_masuk' => $kode_masuk,
                 'id' => $id_detail_masuk,
-            //    'nomor_referensi' => $this->input->post('kode_po'),
+                'nomor_referensi' => $kode_terima_po,
                 'kode_barang' =>  $this->input->post('kode_barang'),
                 'nama_barang' =>  $this->input->post('nama_barang'),
                 'qty' =>  $this->input->post('qty_terima'),
-                'harga_beli' =>  $this->input->post('harga_beli'),
+                'harga_beli' =>  $this->input->post('harga'),
                 'buttom_retail' =>  $this->input->post('buttom_retail'),
                 'buttom_supplier' =>  $this->input->post('buttom_supplier'),
                 
@@ -268,11 +269,6 @@ class Penerimaan_po extends Admin_Controller
         }
 
         
-        // /$id = $this->db->insert_id();
-
-        /*
-        
-*/            
         $jumlah_order = $this->input->post('qty');
         $jumlah_terima = $this->penerimaan_po_model->total_kode_po($this->input->post('kode_po'));
         if($jumlah_terima >=  $jumlah_order){
@@ -287,52 +283,71 @@ class Penerimaan_po extends Admin_Controller
 
         $this->purchase_order_model->update_by_kode_po($this->input->post('kode_po'), $data_po);
 
+        // hutang 
 
-        $data_hutang = array();
-        
-        $jumlah_hutang = $this->hutang_model->total_hutang_perbulan_tahun($tanggal_asli[1],$tanggal_asli[0]); 
-        
-        if($jumlah_hutang == 0){
-            $jumlah = 1;
-            $kode_awal_hutang = "00001";
-        }else{
-            $jumlah = $jumlah_hutang + 1;
+        $data_kode_hutang = $this->hutang_model->get_kode_hutang_by_kode_terima($kode_terima_po, $this->tanggaldb($this->input->post('tanggal')));
 
-            if(strlen($jumlah_hutang) == 1 ){
-                $kode_awal_hutang = "0000".$jumlah;
-            }else if(strlen($jumlah_hutang) == 2){
-                $kode_awal_hutang = "000".$jumlah;
-            }else if(strlen($jumlah_hutang) == 3){
-                $kode_awal_hutang = "00".$jumlah;
-            }else if(strlen($jumlah_hutang) == 4){
-                $kode_awal_hutang = "0".$jumlah;
-            }else {
-                $kode_awal_hutang = $jumlah;
+        if($data_kode_hutang == null ){
+
+            $data_hutang = array();
+            
+            $jumlah_hutang = $this->hutang_model->total_hutang_perbulan_tahun($tanggal_asli[1],$tanggal_asli[0]); 
+            
+            if($jumlah_hutang == 0){
+                $jumlah = 1;
+                $kode_awal_hutang = "00001";
+            }else{
+                $jumlah = $jumlah_hutang + 1;
+
+                if(strlen($jumlah_hutang) == 1 ){
+                    $kode_awal_hutang = "0000".$jumlah;
+                }else if(strlen($jumlah_hutang) == 2){
+                    $kode_awal_hutang = "000".$jumlah;
+                }else if(strlen($jumlah_hutang) == 3){
+                    $kode_awal_hutang = "00".$jumlah;
+                }else if(strlen($jumlah_hutang) == 4){
+                    $kode_awal_hutang = "0".$jumlah;
+                }else {
+                    $kode_awal_hutang = $jumlah;
+                }
             }
+
+            $kode_hutang = $kode_awal_hutang."/HT/".$tanggal_asli[1]."/".$tanggal_asli[0];
+            $i_hutang = rand(1,100);
+            $id_hutang = md5($kode_hutang.$i_hutang.date('YmdHis').$this->input->post('kode_supplier'));
+            
+            $jatuh_tempo = $this->penerimaan_po_model->get_by_jatuh_tempo($this->tanggaldb($this->input->post('tanggal')),$this->input->post('top'));
+
+            $data_hutang = array(
+                'id' => $id_hutang,
+                'kode_hutang' => $kode_hutang,
+                'kode_relasi' => $this->input->post('kode_supplier'),
+                'nama_relasi' => $this->input->post('nama_supplier'),
+                'nomor_referensi' => $kode_terima_po,
+                'jenis' => 'PEMBELIAN' ,
+                'nominal' => $this->input->post('qty_terima') * $this->input->post('harga'),
+                'tanggal' => $this->tanggaldb($this->input->post('tanggal')) ,
+                'tanggal_jatuh_tempo' => $jatuh_tempo,
+                'status' => 'Belum Lunas' ,
+
+            );
+
+            $this->hutang_model->insert($data_hutang);
+
+
+        }else{
+
+            $nominal = ( $this->input->post('qty_terima') * $this->input->post('harga') ) + $data_kode_hutang->nominal;
+            
+            $data_hutang_baru = array(
+                'nominal' => $nominal
+            );
+
+            $this->hutang_model->update_by_kode($data_kode_hutang->kode_hutang, $data_hutang_baru);
+
         }
 
-        $kode_hutang = $kode_awal_hutang."/HT/".$tanggal_asli[1]."/".$tanggal_asli[0];
-        $i_hutang = rand(1,100);
-        $id_hutang = md5($kode_hutang.$i_hutang.date('YmdHis').$this->input->post('kode_supplier'));
-        
-        $jatuh_tempo = $this->penerimaan_po_model->get_by_jatuh_tempo($this->tanggaldb($this->input->post('tanggal')),$this->input->post('top'));
-
-        $data_hutang = array(
-            'id' => $id_hutang,
-            'kode_hutang' => $kode_hutang,
-            'kode_relasi' => $this->input->post('kode_supplier'),
-            'nama_relasi' => $this->input->post('nama_supplier'),
-            'nomor_referensi' => $kode_terima_po,
-            'jenis' => 'PEMBELIAN' ,
-            'nominal' => $this->input->post('qty_terima') * $this->input->post('harga'),
-            'tanggal' => $this->tanggaldb($this->input->post('tanggal')) ,
-            'tanggal_jatuh_tempo' => $jatuh_tempo,
-            'status' => 'Belum Lunas' ,
-
-        );
-
-        $this->hutang_model->insert($data_hutang);
-
+        // tutup hutang
 
         echo json_encode(array("status" => TRUE));
     }

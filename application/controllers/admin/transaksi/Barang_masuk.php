@@ -51,6 +51,7 @@ class Barang_masuk extends Admin_Controller
             $row[] = $no;
             $row[] = $dt->id;
             $row[] = $this->tanggal($dt->tanggal);
+            $row[] = $dt->kode_barang_masuk;
             $row[] = $dt->nomor_referensi;
             $row[] = $dt->jenis_trans;
             /*
