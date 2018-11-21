@@ -110,7 +110,7 @@ class Piutang_model extends MY_Model
 
     public function update_by_kode($kode, $data)
     {
-        $this->db->where('kode',$kode);
+        $this->db->where('kode_piutang',$kode);
         $this->db->update($this->table, $data);
         return $this->db->affected_rows();
         //$this->db->update($this->table,array("upload_rate"=>0,"download_rate"=>0));
@@ -137,6 +137,20 @@ class Piutang_model extends MY_Model
         }
         return $total_piutang;
 
+    }
+
+    public function get_piutang_by_kode_kirim($kode_kirim){
+
+         $this->db->select("
+            kode_piutang, nominal, kode_bantu
+        ");
+
+        $this->db->from($this->table);
+        $this->db->where("kode_referensi",$kode_kirim);
+      //  $this->db->where("tanggal",$tanggal);
+        $query = $this->db->get();
+
+        return $query->row();
     }
 
 

@@ -165,32 +165,25 @@
         $('.modal-title').text('Tambah Pegawai'); // Set Title to Bootstrap modal title
     }
 
-    function bayar_hutang(id)
+    function edit_pegawai(id)
     {
-        alert(id);
         save_method = 'update';
-        $('#form_bayar')[0].reset(); // reset form on modals
+        $('#form_pegawai')[0].reset(); // reset form on modals
         $('.form-group').removeClass('has-error'); // clear error class
         $('.help-block').empty(); // clear error string
 
         //Ajax Load data from ajax
         $.ajax({
-            url : "<?php echo site_url('admin/transaksi/hutang/get/')?>" + id,
+            url : "<?php echo site_url('admin/master/pegawai/edit/')?>/" + id,
             type: "GET",
             dataType: "JSON",
             success: function(data)
             {
                 $('[name="id"]').val(data[0]['id']);
-                $('[name="kode_hutang"]').val(data[0]['kode_hutang']);
-                $('[name="nomor_referensi"]').val(data[0]['nomor_referensi']);
-                $('[name="kode_relasi"]').val(data[0]['kode_relasi']);
-                $('[name="nama_relasi"]').val(data[0]['nama_relasi']);
-                $('[name="jenis"]').val(data[0]['jenis']);
-                $('[name="nominal"]').val(data[0]['nominal']);
+                $('[name="nama_pegawai"]').val(data[0]['nama_pegawai']);
                 
-                
-                $('#modal_form_bayar').modal('show'); // show bootstrap modal when complete loaded
-                $('.modal-title').text('Bayar Hutang'); // Set title to Bootstrap modal title
+                $('#modal_form').modal('show'); // show bootstrap modal when complete loaded
+                $('.modal-title').text('Ubah Pegawai'); // Set title to Bootstrap modal title
 
             },
             error: function (jqXHR, textStatus, errorThrown)
@@ -200,6 +193,29 @@
         });
     }
 
+    function delete_pegawai(id)
+    {
+        if(confirm('Anda yakin mau menghapus data ini ?'))
+        {
+            // ajax delete data to database
+            $.ajax({
+                url : "<?php echo site_url('admin/master/pegawai/delete')?>/"+id,
+                type: "POST",
+                dataType: "JSON",
+                success: function(data)
+                {
+                    //if success reload ajax table
+                    $('#modal_form').modal('hide');
+                    reload_table();
+                },
+                error: function (jqXHR, textStatus, errorThrown)
+                {
+                    alert('Error deleting data');
+                }
+            });
+
+        }
+    }
 
 </script>
 
@@ -217,19 +233,9 @@
                     
                     <div class="form-body">
                         <div class="form-group">
-                            <label class="control-label col-md-3">Kode Pegawai <span class="required">*</span></label>
-                            <div class="col-md-9">
-                                <input name="kode_pegawai" placeholder="Kode Pegawai">
-                                <span class="help-block"></span>
-                            </div>
-                        </div>                        
-                    </div>
-
-                    <div class="form-body">
-                        <div class="form-group">
                             <label class="control-label col-md-3">Nama Pegawai <span class="required">*</span></label>
-                            <div class="col-md-9">
-                                <input name="nama_pegawai" placeholder="Nama Pegawai">
+                           <div class="col-md-9">
+                                <input name="nama_pegawai" placeholder="Nama Pegawai" class="validate[required] form-control" type="text" required="required" data-validate-length-range="6" data-validate-words="2">
                                 <span class="help-block"></span>
                             </div>
                         </div>                        
@@ -266,9 +272,11 @@
     {
 
         var url;
-
-        url = "<?php echo site_url('admin/master/pegawai/add')?>";
-
+        if(save_method === 'add') {
+            url = "<?php echo site_url('admin/master/pegawai/add')?>";
+        }else{
+            url = "<?php echo site_url('admin/master/pegawai/update')?>";
+        }
         seen = [];
 
 

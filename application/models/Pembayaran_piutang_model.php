@@ -117,26 +117,47 @@ class Pembayaran_piutang_model extends MY_Model
     }
 
 
-    public function total_hutang_perbulan_tahun($bulan,$tahun){
-        $total_hutang = array();
+    public function total_piutang_perbulan_tahun($bulan,$tahun){
+        $total_piutang = array();
         $filter = "$bulan"."/".$tahun;
         $this->db->select("
-            ifnull(max(abs(substring_index(kode_hutang, '/', 1))),0) as total_hutang
+            ifnull(max(abs(substring_index(kode_pembayaran_piutang, '/', 1))),0) as total_piutang
         ");
-        $this->db->where(" kode_hutang like '%$filter' ");
+        $this->db->where(" kode_pembayaran_piutang like '%$filter' ");
         $query = $this->db->get($this->table);
 
         $totaly2 = $query->num_rows();
         if ($totaly2 > 0) {
             foreach ($query->result() as $atributy) {
 
-                $total_hutang = $atributy->total_hutang ;
+                $total_piutang = $atributy->total_piutang ;
                 
             }
 
         }
-        return $total_hutang;
+        return $total_piutang;
 
+    }
+
+    public function get_total_bayar_by_kode($kode){
+        $nominal = array();
+        $this->db->select("
+            sum(nominal) as nominal
+        ");
+        $this->db->where("kode_piutang",$kode);
+        //$this->db->where("tanggal",$tanggal);
+        $query = $this->db->get($this->table);
+
+        $totaly2 = $query->num_rows();
+        if ($totaly2 > 0) {
+            foreach ($query->result() as $atributy) {
+
+                $nominal = $atributy->nominal ;
+                
+            }
+
+        }
+        return $nominal;
     }
 
 

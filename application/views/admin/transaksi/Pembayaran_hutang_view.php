@@ -33,8 +33,8 @@
                                     <th>Kode Relasi</th>
                                     <th>Nama Relasi</th>
                                     <th>Nominal</th>
-                                    <th>Status</th>
-                                    <th>Action</th>
+                                    <th>Keterangan</th>
+                                    
                                 </tr>
                                 </thead>
 

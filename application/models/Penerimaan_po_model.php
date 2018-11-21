@@ -203,7 +203,7 @@ class Penerimaan_po_model extends MY_Model
         ");
         $this->db->where(" kode_penerimaan_po like '%$filter' ");
         $this->db->where("kode_barang",$barang);
-        $query = $this->db->get('penerimaan_po');
+        $query = $this->db->get('detail_penerimaan_po');
 
         $totaly2 = $query->num_rows();
         if ($totaly2 > 0) {
@@ -221,8 +221,9 @@ class Penerimaan_po_model extends MY_Model
     public function total_kode_po( $kodepo){
         $total_masuk = array();
         $this->db->select("
-            sum(qty_terima) as qty 
+            sum(detail_penerimaan_po.qty_terima) as qty 
         ");
+        $this->db->join('detail_penerimaan_po','detail_penerimaan_po.kode_penerimaan_po = penerimaan_po.kode_penerimaan_po');
         $this->db->where("kode_po",$kodepo);
         $query = $this->db->get($this->table);
 

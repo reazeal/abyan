@@ -436,10 +436,10 @@
             return false;
         }
 
-        alert('sini');
+       // alert('sini');
         
         var id_po = $('#form_terima').find('input[name="id_po"]').val();
-        alert(id_po);        
+       // alert(id_po);        
 
         $('#btnSave').text('menyimpan...'); //change button text
         $('#btnSave').attr('disabled',true); //set button disable

@@ -71,15 +71,15 @@ class Stok extends Admin_Controller
             $row[] = $dt->kode;
             $row[] = $dt->nama;
             $row[] = $opname + $terima - $kirim;
-            //$row[] = 0;
-            $row[] =  '';
-            /*
-            if($status == 'Stok Limit'){
-                $row[] = '<a class="label label-danger">'. $status ."</a>";
+            $row[] = $dt->satuan;
+            //$row[] =  '';
+            
+            if((int)$dt->batas_stok <= (int)($opname + $terima - $kirim)){
+                $row[] = '<a class="label label-success">Baik</a>';
             }else{
-                $row[] = '<a class="label label-success">'. $status ."</a>";
+                $row[] = '<a class="label label-danger">Limit</a>';
             }
-            */
+            
             
             $row[] = '<a class="btn btn-sm btn-primary" href="javascript:void(0)" title="Edit" onclick="detail_stok('."'".$dt->kode."'".')"><i class="glyphicon glyphicon-pencil"></i> Detail</a>';
             $data[] = $row;

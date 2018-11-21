@@ -139,5 +139,25 @@ class Pembayaran_hutang_model extends MY_Model
 
     }
 
+    public function get_total_bayar_by_kode($kode){
+        $nominal = array();
+        $this->db->select("
+            sum(nominal) as nominal
+        ");
+        $this->db->where("kode_hutang",$kode);
+        //$this->db->where("tanggal",$tanggal);
+        $query = $this->db->get($this->table);
+
+        $totaly2 = $query->num_rows();
+        if ($totaly2 > 0) {
+            foreach ($query->result() as $atributy) {
+
+                $nominal = $atributy->nominal ;
+                
+            }
+
+        }
+        return $nominal;
+    }
 
 }

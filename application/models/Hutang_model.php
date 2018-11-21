@@ -139,7 +139,7 @@ class Hutang_model extends MY_Model
 
     }
 
-     public function get_kode_hutang_by_kode_terimax($kode_terima){
+    public function get_kode_hutang_by_kode_terimax($kode_terima){
         $kode_hutang = array();
         $this->db->select("
             kode_hutang, nominal
@@ -159,6 +159,20 @@ class Hutang_model extends MY_Model
 
         $this->db->from($this->table);
         $this->db->where("nomor_referensi",$kode_terima);
+        $query = $this->db->get();
+
+        return $query->row();
+    }
+
+    public function get_kode_hutang_by_kode_terima_po($kode_terima, $tanggal){
+
+         $this->db->select("
+            kode_hutang, nominal
+        ");
+
+        $this->db->from($this->table);
+        $this->db->where("nomor_referensi",$kode_terima);
+        $this->db->where("tanggal",$tanggal);
         $query = $this->db->get();
 
         return $query->row();

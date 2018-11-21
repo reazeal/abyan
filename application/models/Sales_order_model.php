@@ -6,8 +6,8 @@ class Sales_order_model extends MY_Model
 {
     public $table = 'sales_order';
     public $primary_key = 'id';
-    public $column_order = array(null, 'id','tanggal','kode_so','kode_customer','nama_customer',null);
-    public $column_search = array('id','tanggal','kode_so','kode_customer','nama_customer');
+    public $column_order = array(null, 'id','tanggal','kode_so','kode_customer','nama_customer','tanggal_kirim',null);
+    public $column_search = array('id','tanggal','kode_so','kode_customer','nama_customer','tanggal_kirim');
     public $order = array('kode_so' => 'desc'); // default order
 
     public function __construct()
@@ -18,6 +18,7 @@ class Sales_order_model extends MY_Model
     private function _get_datatables_query()
     {
 
+        /*
         $this->db->select("
         sales_order.id,
         detail_so.id as id_detail,
@@ -29,7 +30,7 @@ class Sales_order_model extends MY_Model
         qty, satuan, detail_so.status as status, harga
         ");
         $this->db->join('detail_so','detail_so.kode_so = sales_order.kode_so');
-
+        */
        $this->db->from($this->table);
           $i = 0;
         foreach ($this->column_search as $item) // loop column
@@ -161,7 +162,37 @@ class Sales_order_model extends MY_Model
 
     }
 
+    public function get_so_between($awal, $akhir){
+        $data = array();
+        $this->db->select('sales_order.tanggal as tanggal, sales_order.kode_so as kode_so, detail_so.kode_barang as kode_barang, barang.satuan as satuan,
+            detail_so.nama_barang as nama_barang, sum(detail_so.qty) as qty');
+        $this->db->join('detail_so','sales_order.kode_so = detail_so.kode_so');
+        $this->db->join('barang','barang.kode = detail_so.kode_barang');
+        $this->db->where('sales_order.tanggal >= ',$awal);
+        $this->db->where('sales_order.tanggal <= ',$akhir);
+        $this->db->order_by('sales_order.kode_so','desc');
+        $this->db->order_by('sales_order.tanggal','asc');
+        $query = $this->db->get($this->table);
 
+        $totaly2 = $query->num_rows();
+        if ($totaly2 > 0) {
+            foreach ($query->result() as $atributy) {
+
+                $data[] = array(
+                'tanggal' => $atributy->tanggal,
+                'kode_so' => $atributy->kode_so,
+                'kode_barang' => $atributy->kode_barang,
+                'nama_barang' => $atributy->nama_barang,
+                'qty' => $atributy->qty,
+                'satuan' => $atributy->satuan,
+                    
+                );
+            }
+
+        }
+        return $data;
+
+    }
 
 
 }

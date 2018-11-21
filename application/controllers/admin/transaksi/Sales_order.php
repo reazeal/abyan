@@ -34,6 +34,7 @@ class Sales_order extends Admin_Controller
         $this->load->model('piutang_model');
         $this->load->model('pegawai_model');
         $this->load->model('detail_so_model');
+         $this->load->model('detail_barang_masuk_model');
     }
 
     public function index()
@@ -41,6 +42,9 @@ class Sales_order extends Admin_Controller
         $this->data['pilihan_barang'] = $this->barang_model->get_all();
         $this->data['pilihan_customer'] = $this->customer_model->get_all();
         $this->data['pilihan_pegawai'] = $this->pegawai_model->get_all();
+        $this->data['pilihan_barang_masuk'] = $this->detail_barang_masuk_model->get_by_penerimaan();
+      // /  print_r($this->data['pilihan_barang_masuk']);
+     //   print_r($this->data['pilihan_barang']);
         $this->render('admin/transaksi/Sales_order_view');
     }
 
@@ -55,21 +59,28 @@ class Sales_order extends Admin_Controller
             $row[] = $no;
             $row[] = $dt->id;
             $row[] = $this->tanggal($dt->tanggal);
+
             $row[] = $dt->kode_so;
             $row[] = $dt->nama_customer;
            // $row[] = $dt->kode_customer;
-            
+            /*
             $row[] = $dt->kode_barang;
             $row[] = $dt->nama_barang;
             $row[] = $dt->qty;
             $row[] = $dt->harga;
             $row[] = $dt->satuan;
+            */
+            $row[] = $this->tanggal($dt->tanggal_kirim);
             $row[] = $dt->status;
+            /*
                 $row[] = '<a class="btn btn-sm btn-primary" href="javascript:void(0)" title="Edit" onclick="edit_so('."'".$dt->id."'".')"><i class="glyphicon glyphicon-pencil"></i> Edit</a>
                   <a class="btn btn-sm btn-danger" href="javascript:void(0)" title="Hapus" onclick="delete_so('."'".$dt->id_detail."'".')"><i class="glyphicon glyphicon-trash"></i> Delete</a>
                   <a class="btn btn-sm btn-primary" href="javascript:void(0)" title="Detail" onclick="detail_so('."'".$dt->id."'".')"><i class="glyphicon glyphicon-pencil"></i> Detail</a>
                   <a class="btn btn-sm btn-success" href="javascript:void(0)" title="Edit" onclick="kirim_so('."'".$dt->id_detail."'".')"><i class="glyphicon glyphicon-check"></i> Kirim</a>';
-           
+           */
+                     $row[] = '
+                  <a class="btn btn-sm btn-primary" href="javascript:void(0)" title="Detail" onclick="detail_so('."'".$dt->id."'".')"><i class="glyphicon glyphicon-pencil"></i> Detail</a>
+                ';
             $data[] = $row;
         }
 
@@ -84,10 +95,10 @@ class Sales_order extends Admin_Controller
     }
 
 
-    public function get_detail($id)
+    public function get_detail($id_so)
     {
         $data  = array(
-            'detailBarang'=> (array) $this->detail_barang_masuk_model->getDataByTransaksi($id)
+            'detailSo'=> (array) $this->detail_so_model->getDataByNoSO($id_so)
         );
         echo json_encode(array($data));
     }
@@ -114,17 +125,13 @@ class Sales_order extends Admin_Controller
         
         if($jumlah_so == 0){
             $jumlah = 1;
-            $kode_awal = "00001";
+            $kode_awal = "001";
         }else{
             $jumlah = $jumlah_so + 1;
 
             if(strlen($jumlah_so) == 1 ){
-                $kode_awal = "0000".$jumlah;
-            }else if(strlen($jumlah_so) == 2){
-                $kode_awal = "000".$jumlah;
-            }else if(strlen($jumlah_so) == 3){
                 $kode_awal = "00".$jumlah;
-            }else if(strlen($jumlah_so) == 4){
+            }else if(strlen($jumlah_so) == 2){
                 $kode_awal = "0".$jumlah;
             }else {
                 $kode_awal = $jumlah;
@@ -140,6 +147,7 @@ class Sales_order extends Admin_Controller
             'nama_customer' => $customer[1],
             'status' => 'Proses',
             'tanggal' => $this->tanggaldb($this->input->post('tanggal')),
+            'tanggal_kirim' => $this->tanggaldb($this->input->post('tanggal_kirim')),
             'top' => $this->input->post('top')
         );
         $insert = $this->sales_order_model->save($data);
@@ -154,15 +162,20 @@ class Sales_order extends Admin_Controller
                         //$no_bukti = $this->stok_fisik_model->get_nobukti();
                         //$kode_barang = substr($ax[3], 0,5);
                         $kode_barang = explode("-", $ax[3]);
+                        $id_barang_masuk = $ax[2];
+                        
+                        $harga = $this->detail_barang_masuk_model->get_by_id($id_barang_masuk);
+
                         $data_detail = array(
                             'kode_so' => $kode,
                             'id' => $id_detail,
                             'kode_barang' => $kode_barang[0],
                             'nama_barang' => $kode_barang[1],
-                            'satuan' => $kode_barang[2],
                             'qty' => $ax[4],
                             'status' => 'Proses',
-                            'harga' => $ax[5]
+                            'id_detail_barang_masuk' => $id_barang_masuk,
+                            'harga' => $ax[5],
+                            'harga_beli' => $harga->harga_beli
                         );
 
                         $nominal_piutang = $nominal_piutang + ($ax[4] * $ax[5]);
@@ -207,6 +220,7 @@ class Sales_order extends Admin_Controller
         $data = $this->detail_so_model->get_by_id($id);
         $data  = array(
             'id' => $data->id,
+            'id_so' => $data->id_so,
             'kode_so' => $data->kode_so,
             'kode_barang' => $data->kode_barang,
             'nama_barang' => $data->nama_barang,

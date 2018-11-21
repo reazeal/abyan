@@ -29,7 +29,7 @@ class Pembayaran_piutang extends Admin_Controller
         $this->load->helper('text');
         $this->load->helper('url');
         $this->load->model('pembayaran_piutang_model');
-        
+        $this->load->model('piutang_model');
     }
 
     public function index()
@@ -98,39 +98,59 @@ class Pembayaran_piutang extends Admin_Controller
     public function add()
     {
 
-        $datax  = $this->input->post('dataDetail');
-        $json = json_decode($datax);
-        $gudang = $this->gudang_model->get($this->input->post('gudang_id'));
+        $rand = rand(1,100);
+        
+        $tanggal_asli = explode("-",$this->tanggaldb($this->input->post('tanggal')));
+        
+        $jumlah_bayar = $this->pembayaran_piutang_model->total_piutang_perbulan_tahun($tanggal_asli[1],$tanggal_asli[0]); 
+        
+        if($jumlah_bayar == 0){
+            $jumlah = 1;
+            $kode_awal = "001";
+        }else{
+            $jumlah = $jumlah_bayar + 1;
+
+            if(strlen($jumlah_bayar) == 1 ){
+                $kode_awal = "00".$jumlah;
+            }else if(strlen($jumlah_bayar) == 2) {
+                $kode_awal = "0".$jumlah;
+            }else{
+                $kode_awal = $jumlah;
+            }
+        }
+
+        $kode = $kode_awal."/BP/".$tanggal_asli[1]."/".$tanggal_asli[0];
+
+        $id = md5($kode.'pembayaran-piutang'.$rand.$this->input->post('kode_piutang').date('YmdHis'));
+
         $data = array(
-            'barang_id' => $this->input->post('barang_id'),
+            'id' => $id,
+            'kode_pembayaran_piutang' => $kode,
+            'kode_piutang' => $this->input->post('kode_piutang'),
+            'kode_relasi' => $this->input->post('kode_relasi'),
+            'nama_relasi' => $this->input->post('nama_relasi'),
+            'tanggal' => $this->tanggaldb($this->input->post('tanggal')),
+            'nominal' => $this->input->post('nominal_bayar'),
             'keterangan' => $this->input->post('keterangan'),
-            'nama_barang' => $this->input->post('nama_barang'),
-            'qty' => $this->input->post('qty'),
-            //'no_rak' => $this->input->post('no_rak'),
-            //'rak_id' => $this->input->post('rak_id'),
-            'nama_gudang' => $gudang->kode.'-'.$gudang->nama,
-            'gudang_id' => $this->input->post('gudang_id')
             
         );
-        $insert = $this->stok_model->save($data);
-        $id = $this->db->insert_id();
+        $insert = $this->pembayaran_piutang_model->save($data);
 
-        /*if($id){
-            $i=0;
-            foreach ($json as $ax) :
-                if(!is_object($ax)){
-                    if(is_string($ax[0])){
-                        $data_detail = array(
-                            'id_barang' => $id,
-                            'jenis_barang' => $ax[1],
-                            'barang' => $ax[2]
-                        );
-                        $this->detail_barang_model->insert($data_detail);
-                    }
-                }
-                $i++;
-            endforeach;
-        }*/
+        $total_bayar = $this->pembayaran_piutang_model->get_total_bayar_by_kode($this->input->post('kode_piutang'));
+       // echo $total_bayar;
+
+        if($total_bayar >= $this->input->post('nominal')){
+            $status_piutang = "Lunas";
+        }else{
+            $status_piutang = "Belum Lunas";
+        }
+
+        $data_piutang_baru = array(
+                'status' => $status_piutang
+            );
+
+        $this->piutang_model->update_by_kode($this->input->post('kode_piutang'), $data_piutang_baru);
+
 
         echo json_encode(array("status" => TRUE));
     }

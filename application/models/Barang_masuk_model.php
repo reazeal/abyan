@@ -155,13 +155,13 @@ class Barang_masuk_model extends MY_Model
 
     }
 
-    public function get_kode_by_kode_terima($kode_terima){
+    public function get_kode_by_kode_terima($kode_terima, $tanggal){
         $kode_barang_masuk = array();
         $this->db->select("
             kode_barang_masuk
         ");
         $this->db->where("nomor_referensi",$kode_terima);
-        //$this->db->where("tanggal",$tanggal);
+        $this->db->where("tanggal",$tanggal);
         $query = $this->db->get($this->table);
 
         $totaly2 = $query->num_rows();

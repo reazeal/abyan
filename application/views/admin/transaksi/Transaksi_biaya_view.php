@@ -7,7 +7,7 @@
                 <div class="col-md-12 col-sm-12 col-xs-12">
                     <div class="x_panel">
                         <div class="x_title">
-                            <h2>Data Pengiriman SO</h2>
+                            <h2>Data Transaksi Biaya</h2>
                             <ul class="nav navbar-right panel_toolbox">
                                 <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
                                 </li>
@@ -16,8 +16,8 @@
                         </div>
                         <div class="x_content">
                             <p>
-                                <!-- 
-                                <button class="btn btn-success" onclick="add_barang()"><i class="glyphicon glyphicon-plus"></i> Tambah piutang Barang</button> -->
+                                
+                                <button class="btn btn-success" onclick="add_transaksi_biaya()"><i class="glyphicon glyphicon-plus"></i> Tambah Transaksi</button>
                                 <button class="btn btn-default" onclick="reload_table()"><i class="glyphicon glyphicon-refresh"></i> Reload</button>
                             </p>
 
@@ -28,13 +28,9 @@
                                     <th>No</th>
                                     <th>id</th>
                                     <th>Tanggal</th>
-                                    <th>Kode Pengiriman</th>
-                                    <th>Kode SO</th>
-                                    <th>Kode Kurir</th>
-                                    <th>Nama Kurir</th>
-                                    <th>Qty</th>
-                                    <th>Keterangan</th>
-                                    
+                                    <th>Jenis Biaya</th>
+                                    <th>Nominal</th>
+                                    <th>Action</th>
                                 </tr>
                                 </thead>
 
@@ -70,7 +66,7 @@
             "order": [], //Initial no order.
             // Load data for the table's content from an Ajax source
             "ajax": {
-                "url": "<?php echo site_url('admin/transaksi/pengiriman_so/get_data_all');?>",
+                "url": "<?php echo site_url('admin/transaksi/transaksi_biaya/get_data_all');?>",
                 "type": "POST"
             },
             buttons: [
@@ -105,10 +101,6 @@
                 },{
                     "targets": [1],
                     "visible": false
-                },
-                {
-                    "targets": [5],
-                    "visible": false
                 }
             ]
         });
@@ -118,15 +110,7 @@
             "serverSide": false, //Feature control DataTables' server-side processing mode.
             "order": [], //Initial no order.
             responsive: true,
-            columns: [
-                { title: "Id" },
-                { title: "No. Bukti" },
-                { title: "Nama Barang" },
-                { title: "Nama Gudang" },
-                { title: "Expired" },
-                { title: "Qty" }
-                
-            ],
+
             "columnDefs": [
                 {
                     "targets": [ 0 ], //last column
@@ -149,35 +133,6 @@
     });
 
 
-    function detail_piutang($barang)
-    {
-        
-        table_detailpiutang.clear().draw();
-
-        $.ajax({
-            url : "<?php echo site_url('admin/transaksi/piutang/piutang')?>/"+ $barang,
-            type: "GET",
-            dataType: "JSON",
-            success: function(data)
-            {
-                //alert(data[0]['detailpiutang'].length);
-                for(var i = 0; i < data[0]['detailpiutang'].length; i++) {
-                    var obj = data[0]['detailpiutang'][i];
-                    table_detailpiutang.row.add([obj.no_bukti, obj.nama_barang, obj.nama_gudang, obj.expired, obj.qty, obj.action]).draw();
-                }
-
-                $('#modal_detail_piutang').modal('show'); // show bootstrap modal when complete loaded
-                $('.modal-title').text('piutang Barang'); // Set title to Bootstrap modal title
-
-            },
-            error: function (jqXHR, textStatus, errorThrown)
-            {
-                alert('Error get data from ajax');
-            }
-        });
-
-        $('#modal_detail_piutang').modal('show'); // show bootstrap modal
-    }
 
     function cekData() {
         var data = table_detail .rows().data();
@@ -193,33 +148,37 @@
         table_detail.ajax.reload(null,false); //reload datatable ajax
     }*/
 
-    
-    function bayar_hutang(id)
+    function add_transaksi_biaya()
     {
-        alert(id);
+        save_method = 'add';
+        $('#form_transaksi_biaya')[0].reset(); // reset form on modals
+        $('.form-group').removeClass('has-error'); // clear error class
+        $('.help-block').empty(); // clear error string
+        $('#modal_form').modal('show'); // show bootstrap modal
+        $('.modal-title').text('Tambah Transaksi Biaya'); // Set Title to Bootstrap modal title
+    }
+
+    function edit_transaksi_biaya(id)
+    {
         save_method = 'update';
-        $('#form_bayar')[0].reset(); // reset form on modals
+        $('#form_transaksi_biaya')[0].reset(); // reset form on modals
         $('.form-group').removeClass('has-error'); // clear error class
         $('.help-block').empty(); // clear error string
 
         //Ajax Load data from ajax
         $.ajax({
-            url : "<?php echo site_url('admin/transaksi/hutang/get/')?>" + id,
+            url : "<?php echo site_url('admin/transaksi/transaksi_biaya/edit/')?>/" + id,
             type: "GET",
             dataType: "JSON",
             success: function(data)
             {
                 $('[name="id"]').val(data[0]['id']);
-                $('[name="kode_hutang"]').val(data[0]['kode_hutang']);
-                $('[name="nomor_referensi"]').val(data[0]['nomor_referensi']);
-                $('[name="kode_relasi"]').val(data[0]['kode_relasi']);
-                $('[name="nama_relasi"]').val(data[0]['nama_relasi']);
-                $('[name="jenis"]').val(data[0]['jenis']);
+                $('[name="nama_biaya"]').val(data[0]['id_jenis_biaya']);
+                $('[name="tanggal"]').val(data[0]['tanggal']);
                 $('[name="nominal"]').val(data[0]['nominal']);
                 
-                
-                $('#modal_form_bayar').modal('show'); // show bootstrap modal when complete loaded
-                $('.modal-title').text('Bayar Hutang'); // Set title to Bootstrap modal title
+                $('#modal_form').modal('show'); // show bootstrap modal when complete loaded
+                $('.modal-title').text('Ubah Transaksi Biaya'); // Set title to Bootstrap modal title
 
             },
             error: function (jqXHR, textStatus, errorThrown)
@@ -229,83 +188,85 @@
         });
     }
 
+    function delete_transaksi_biaya(id)
+    {
+        if(confirm('Anda yakin mau menghapus data inix ?'))
+        {
+            // ajax delete data to database
+            $.ajax({
+                url : "<?php echo site_url('admin/transaksi/transaksi_biaya/delete')?>/"+id,
+                type: "POST",
+                dataType: "JSON",
+                success: function(data)
+                {
+                    //if success reload ajax table
+                    $('#modal_form').modal('hide');
+                    reload_table();
+                },
+                error: function (jqXHR, textStatus, errorThrown)
+                {
+                    alert('Error deleting data');
+                }
+            });
+
+        }
+    }
 
 </script>
 
 <!-- Bootstrap modal Terima-->
-<div class="modal fade" id="modal_form_bayar" role="dialog" style="overflow-y: auto !important;">
+<div class="modal fade" id="modal_form" role="dialog" style="overflow-y: auto !important;">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h3 class="modal-title">Form Pembayaran Hutang</h3>
+                <h3 class="modal-title">Form Tambah Transaksi Biaya</h3>
             </div>
             <div class="modal-body form">
-                <form action="#" id="form_bayar" class="form-horizontal">
+                <form action="#" id="form_transaksi_biaya" class="form-horizontal">
                     <input type="hidden" value="" name="id"/>
-                    <input type="hidden" value="" name="kode_relasi"/>
                     
                     <div class="form-body">
                         <div class="form-group">
-                            <label class="control-label col-md-3">Kode Hutang <span class="required">*</span></label>
+                            <label class="control-label col-md-3">Tanggal <span class="required">*</span></label>
                             <div class="col-md-9">
-                                <input name="kode_hutang" placeholder="Kode Hutang" readonly="true">
+                                <input placeholder="dd-mm-yyyy" name="tanggal" class="validate[required] form-control datepicker" type="text" required="required">
                                 <span class="help-block"></span>
                             </div>
-                        </div>                        
-                    </div>
-
-                    <div class="form-body">
-                        <div class="form-group">
-                            <label class="control-label col-md-3">Nomor Referensi <span class="required">*</span></label>
-                            <div class="col-md-9">
-                                <input name="nomor_referensi" placeholder="Nama Supplier" readonly="true">
-                                <span class="help-block"></span>
-                            </div>
-                        </div>                        
-                    </div>
-
-                    <div class="form-body">
-                        <div class="form-group">
-                            <label class="control-label col-md-3">Nama Relasi <span class="required">*</span></label>
-                            <div class="col-md-9">
-                                <input name="nama_relasi" placeholder="Nama Relasi" readonly="true">
-                                <span class="help-block"></span>
-                            </div>
-                        </div>                        
-                    </div>
-
-
-                    <div class="form-group">
-                         <label class="control-label col-md-3">Nominal<span class="required">*</span></label>
-                        <div class="col-md-6">
-                            <input name="nominal" placeholder="Nominal" class="validate[required,custom[number]] form-control" type="text" required="required" readonly="true">
-                        <span class="help-block"></span>
                         </div>
-                    </div>
+
 
                     <div class="form-group">
-                        <label class="control-label col-md-3">Tanggal Bayar <span class="required">*</span></label>
-                        <div class="col-md-9">
-                            <input placeholder="dd-mm-yyyy" name="tanggal" class="validate[required] form-control datepicker" type="text" required="required">
+                        <label class="control-label col-md-3">Jenis Biaya<span class="required">*</span></label>
+                        <div class="col-md-6">
+                            <select id="nama_biaya" name="nama_biaya" data-live-search="true"  class="selectpicker validate[required] form-control" required="required">
+                                <option value="">--Pilih Biaya--</option>
+                                <?php
+                                foreach ($pilihan_biaya as $row3):
+                                    ?>
+                                    <option value="<?php echo $row3->id; ?>"><?php echo $row3->kode_biaya."-".$row3->nama_biaya; ?></option>
+                                    <?php
+
+                                endforeach;
+                                ?>
+                            </select>
                             <span class="help-block"></span>
                         </div>
                     </div>
 
-
-
-                    <div class="form-group">
-                        <label class="control-label col-md-3">Nominal Bayar<span class="required">*</span></label>
-                        <div class="col-md-6">
-                            <input name="nominal_bayar" placeholder="Nominal Bayar" class="validate[required,custom[number]] form-control" type="text" required="required">
-                            <span class="help-block"></span>
+                        <div class="form-group">
+                            <label class="control-label col-md-3">Nominal <span class="required">*</span></label>
+                           <div class="col-md-9">
+                                <input name="nominal" placeholder="Nominal" class="validate[required,custom[number]] form-control" type="text" required="required"><span class="help-block"></span>
                             </div>
+                        </div>
+
                     </div>
 
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" id="btnSave" onclick="simpan_bayar()" class="btn btn-primary">Simpan</button>
+                <button type="button" id="btnSave" onclick="simpan_transaksi_biaya()" class="btn btn-primary">Simpan</button>
                 <button type="button" class="btn btn-danger" data-dismiss="modal">Batal</button>
             </div>
         </div><!-- /.modal-content -->
@@ -317,30 +278,29 @@
 <script>
     $(function() {
 
-        $('#barang_id').on('change', function(){
+        $('#nama_biaya').on('change', function(){
+            alert('tess');
             //var selected = $(this).find("option:selected").val();
-            $('[name="nama_barang"]').val($("#barang_id :selected").text());
+            $('[name="nama_biaya"]').val($("#nama_biaya :selected").text());
         });
 
-        $('#rak_id').on('change', function(){
-            //var selected = $(this).find("option:selected").val();
-            $('[name="no_rak"]').val($("#rak_id :selected").text());
-        });
 
     })
 
-    function simpan_bayar()
+    function simpan_transaksi_biaya()
     {
 
         var url;
-
-        url = "<?php echo site_url('admin/transaksi/pembayaran_hutang/add')?>";
-
+        if(save_method === 'add') {
+            url = "<?php echo site_url('admin/transaksi/transaksi_biaya/add')?>";
+        }else{
+            url = "<?php echo site_url('admin/transaksi/transaksi_biaya/update')?>";
+        }
         seen = [];
 
 
 
-        if(!$("#form_bayar").validationEngine('validate')){
+        if(!$("#form_transaksi_biaya").validationEngine('validate')){
             return false;
         }
 
@@ -352,7 +312,7 @@
         $.ajax({
             url : url,
             type: "POST",
-            data: $('#form_bayar').serialize() ,
+            data: $('#form_transaksi_biaya').serialize() ,
             dataType: "JSON",
             success: function(data)
             {
@@ -360,9 +320,9 @@
                 if(data.status) //if success close modal and reload ajax table
                 {
                     if(save_method === 'add') {
-                        $('#modal_form_bayar').modal('hide');
+                        $('#modal_form').modal('hide');
                     }else{
-                        $('#modal_form_bayar').modal('hide');
+                        $('#modal_form').modal('hide');
                     }
                     reload_table();
                 }

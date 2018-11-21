@@ -182,4 +182,33 @@ class Detail_barang_masuk_model extends MY_Model
 
     }
 
+    public function get_by_penerimaan(){
+        $data = array();
+        $this->db->select('detail_barang_masuk.kode_barang, detail_barang_masuk.id, detail_barang_masuk.nama_barang, barang_masuk.tanggal');
+        $this->db->join('barang_masuk','detail_barang_masuk.kode_barang_masuk = barang_masuk.kode_barang_masuk');
+
+        $query = $this->db->get($this->table);
+
+        $totaly2 = $query->num_rows();
+        //return $query->row();
+        return $query->result();
+        
+        /*
+        if ($totaly2 > 0) {
+            foreach ($query->result() as $atributy) {
+
+                    $data[] = array(
+                    'id' => $atributy->id,
+                    'kode_barang' => $atributy->kode_barang,
+                    'nama_barang' => $atributy->nama_barang,
+                    
+                );
+                
+            }
+
+        }
+        return $data;
+        */
+    }
+
 }

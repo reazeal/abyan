@@ -12,20 +12,26 @@
                     <li><a href="<?php echo site_url('admin/master/supplier');?>">Supplier</a></li> 
                     <li><a href="<?php echo site_url('admin/master/customers');?>">Customer</a></li> 
                     <li><a href="<?php echo site_url('admin/master/pegawai');?>">Pegawai</a></li> 
+                    <li><a href="<?php echo site_url('admin/master/jenis_biaya');?>">Jenis Biaya</a></li> 
                 </ul>
             </li>
-            <li><a><i class="fa fa-puzzle-piece"></i> Transaksi <span class="fa fa-chevron-down"></span></a>
+            <li><a><i class="fa fa-puzzle-piece"></i> Pembelian <span class="fa fa-chevron-down"></span></a>
                 <ul class="nav child_menu">
                     <li><a href="<?php echo site_url('admin/transaksi/purchase_order');?>">Purchase Order</a></li>
                     <li><a href="<?php echo site_url('admin/transaksi/penerimaan_po');?>">Penerimaan PO</a></li>
 
                     <li><a href="<?php echo site_url('admin/transaksi/barang_masuk');?>">Barang Masuk</a></li>
                 
-                    <li><a href="<?php echo site_url('admin/transaksi/barang_keluar');?>">Barang Keluar</a>
-                    </li>
+                </ul>
+            </li>
+            <li><a><i class="fa fa-puzzle-piece"></i> Penjualan <span class="fa fa-chevron-down"></span></a>
+                <ul class="nav child_menu">
                     
                     <li><a href="<?php echo site_url('admin/transaksi/sales_order');?>">Sales Order</a></li>
                     <li><a href="<?php echo site_url('admin/transaksi/pengiriman_so');?>">Pengiriman SO</a></li>
+                    <li><a href="<?php echo site_url('admin/transaksi/barang_keluar');?>">Barang Keluar</a>
+                    </li>
+                    
                 </ul>
             </li>
             <li><a><i class="fa fa-puzzle-piece"></i> Stok <span class="fa fa-chevron-down"></span></a>
@@ -40,6 +46,7 @@
                     <li><a href="<?php echo site_url('admin/transaksi/hutang');?>">Hutang</a></li>
                     <li><a href="<?php echo site_url('admin/transaksi/pembayaran_hutang');?>">Pembayaran Hutang</a></li>
                     <li><a href="<?php echo site_url('admin/transaksi/pembayaran_piutang');?>">Pembayaran Piutang</a></li>
+                    <li><a href="<?php echo site_url('admin/transaksi/transaksi_biaya');?>">Transaksi Biaya</a></li>
                 </ul>
             </li>
             <li><a><i class="fa fa-file"></i> Laporan <span class="fa fa-chevron-down"></span></a>

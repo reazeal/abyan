@@ -117,25 +117,23 @@ class Pegawai_model extends MY_Model
     }
 
 
-    public function total_hutang_perbulan_tahun($bulan,$tahun){
-        $total_hutang = array();
-        $filter = "$bulan"."/".$tahun;
+    public function total_pegawai(){
+        $total_pegawai = array();
         $this->db->select("
-            ifnull(max(abs(substring_index(kode_hutang, '/', 1))),0) as total_hutang
+            ifnull(max(abs(substring(kode_pegawai,2,3))),0) as total_pegawai
         ");
-        $this->db->where(" kode_hutang like '%$filter' ");
         $query = $this->db->get($this->table);
 
         $totaly2 = $query->num_rows();
         if ($totaly2 > 0) {
             foreach ($query->result() as $atributy) {
 
-                $total_hutang = $atributy->total_hutang ;
+                $total_pegawai = $atributy->total_pegawai ;
                 
             }
 
         }
-        return $total_hutang;
+        return $total_pegawai;
 
     }
 

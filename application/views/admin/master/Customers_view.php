@@ -239,36 +239,6 @@
 
     }
 
-    /*function saveDetail()
-    {
-        $('#btnSaveDetail').text('menyimpan...'); //change button text
-        $('#btnSaveDetail').attr('disabled',true); //set button disable
-        var url;
-
-        if(save_method_detail === 'add') {
-
-            var dd =  $('#formDetail').serialize();
-            var nama_barang =   $('#modal_formDetail').find('[name="nama_barang"]').val();
-            var aksi = "<a class='btn btn-sm btn-danger' href='javascript:void(0)' title='Hapus' onclick='hapus_dataDetail()'><i class='glyphicon glyphicon-trash'></i> Delete</a>";
-
-            iterasi++;
-            table_detail.row.add(['', nama_barang, aksi]).draw();
-
-            $('#modal_formDetail').modal('hide');
-            $('#btnSaveDetail').text('simpan'); //change button text
-            $('#btnSaveDetail').attr('disabled',false); //set button enable
-
-        } else {
-
-        }
-    }*/
-
-    /*function hapus_dataDetail() {
-        $('#datatable-detail').on( 'click', 'tbody tr', function () {
-            table_detail.row( this ).remove().draw();
-        } );
-    }*/
-
     function delete_customers(id)
     {
         if(confirm('Anda yakin mau menghapus data ini ?'))
@@ -306,13 +276,6 @@
                 <form action="#" id="form" class="form-horizontal">
                     <input type="hidden" value="" name="id"/>
                     <div class="form-body">
-                        <div class="form-group">
-                            <label class="control-label col-md-3">Kode <span class="required">*</span></label>
-                            <div class="col-md-9">
-                                <input name="kode_customer" placeholder="Kode Customer" class="validate[required,minSize[3]] form-control" type="text" required="required" data-validate-length-range="6" data-validate-words="2">
-                                <span class="help-block"></span>
-                            </div>
-                        </div>
                         <div class="form-group">
                             <label class="control-label col-md-3">Nama <span class="required">*</span></label>
                             <div class="col-md-9">

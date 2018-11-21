@@ -61,13 +61,19 @@ class Hutang extends Admin_Controller
             $row[] = $this->tanggal($dt->tanggal);
             $row[] = $dt->kode_hutang;
             $row[] = $dt->nomor_referensi;
+            $row[] = $dt->kode_bantu;
             $row[] = $dt->kode_relasi;
             $row[] = $dt->nama_relasi;
             $row[] = $dt->jenis;
             $row[] = $this->tanggal($dt->tanggal_jatuh_tempo);
             $row[] = $dt->nominal;
             $row[] = $dt->status;
+            if($dt->status != 'Lunas'){
+
             $row[] = '<a class="btn btn-sm btn-success" href="javascript:void(0)" title="Edit" onclick="bayar_hutang('."'".$dt->id."'".')"><i class="glyphicon glyphicon-check"></i> Bayar</a>';
+            }else{
+                $row[] = '';
+            }
             $data[] = $row;
         }
 
@@ -93,51 +99,12 @@ class Hutang extends Admin_Controller
             'kode_relasi' => $data->kode_relasi,
             'nama_relasi' => $data->nama_relasi,
             'nominal' => $data->nominal,
-            
+            'kode_bantu' => $data->kode_bantu,
           //  'detailBarang'=> (array) $this->detail_barang_model->getDataByTransaksi($id)
         );
         echo json_encode(array($data));
     }
 
-    public function add()
-    {
-
-        $datax  = $this->input->post('dataDetail');
-        $json = json_decode($datax);
-        $gudang = $this->gudang_model->get($this->input->post('gudang_id'));
-        $data = array(
-            'barang_id' => $this->input->post('barang_id'),
-            'keterangan' => $this->input->post('keterangan'),
-            'nama_barang' => $this->input->post('nama_barang'),
-            'qty' => $this->input->post('qty'),
-            //'no_rak' => $this->input->post('no_rak'),
-            //'rak_id' => $this->input->post('rak_id'),
-            'nama_gudang' => $gudang->kode.'-'.$gudang->nama,
-            'gudang_id' => $this->input->post('gudang_id')
-            
-        );
-        $insert = $this->stok_model->save($data);
-        $id = $this->db->insert_id();
-
-        /*if($id){
-            $i=0;
-            foreach ($json as $ax) :
-                if(!is_object($ax)){
-                    if(is_string($ax[0])){
-                        $data_detail = array(
-                            'id_barang' => $id,
-                            'jenis_barang' => $ax[1],
-                            'barang' => $ax[2]
-                        );
-                        $this->detail_barang_model->insert($data_detail);
-                    }
-                }
-                $i++;
-            endforeach;
-        }*/
-
-        echo json_encode(array("status" => TRUE));
-    }
 
     public function update()
     {

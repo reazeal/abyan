@@ -30,6 +30,7 @@
                                     <th>Tanggal</th>
                                     <th>Kode Hutang</th>
                                     <th>Kode Referensi</th>
+                                    <th>Kode Bantu</th>
                                     <th>Kode Relasi</th>
                                     <th>Nama Relasi</th>
                                     <th>Jenis</th>
@@ -109,7 +110,7 @@
                     "visible": false
                 },
                 {
-                    "targets": [5],
+                    "targets": [6],
                     "visible": false
                 }
             ]
@@ -198,7 +199,6 @@
     
     function bayar_hutang(id)
     {
-        alert(id);
         save_method = 'update';
         $('#form_bayar')[0].reset(); // reset form on modals
         $('.form-group').removeClass('has-error'); // clear error class
@@ -218,7 +218,7 @@
                 $('[name="nama_relasi"]').val(data[0]['nama_relasi']);
                 $('[name="jenis"]').val(data[0]['jenis']);
                 $('[name="nominal"]').val(data[0]['nominal']);
-                
+                $('[name="kode_bantu"]').val(data[0]['kode_bantu']);
                 
                 $('#modal_form_bayar').modal('show'); // show bootstrap modal when complete loaded
                 $('.modal-title').text('Bayar Hutang'); // Set title to Bootstrap modal title
@@ -261,7 +261,17 @@
                         <div class="form-group">
                             <label class="control-label col-md-3">Nomor Referensi <span class="required">*</span></label>
                             <div class="col-md-9">
-                                <input name="nomor_referensi" placeholder="Nama Supplier" readonly="true">
+                                <input name="nomor_referensi" placeholder="Nomor" readonly="true">
+                                <span class="help-block"></span>
+                            </div>
+                        </div>                        
+                    </div>
+
+                    <div class="form-body">
+                        <div class="form-group">
+                            <label class="control-label col-md-3">Kode Bantu <span class="required">*</span></label>
+                            <div class="col-md-9">
+                                <input name="kode_bantu" placeholder="Kode Bantu" readonly="true">
                                 <span class="help-block"></span>
                             </div>
                         </div>                        
@@ -302,6 +312,17 @@
                             <input name="nominal_bayar" placeholder="Nominal Bayar" class="validate[required,custom[number]] form-control" type="text" required="required">
                             <span class="help-block"></span>
                             </div>
+                    </div>
+
+
+                    <div class="form-body">
+                        <div class="form-group">
+                            <label class="control-label col-md-3">Keterangan <span class="required">*</span></label>
+                            <div class="col-md-9">
+                                <input name="keterangan" placeholder="Keterangan">
+                                <span class="help-block"></span>
+                            </div>
+                        </div>                        
                     </div>
 
                 </form>

@@ -29,6 +29,7 @@
                                     <th>Kode Barang</th>
                                     <th>Nama Barang</th>
                                     <th>Qty</th>
+                                    <th>Satuan</th>
                                     <th>Status</th>
                                     <th>Action</th>
                                 </tr>

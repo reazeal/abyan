@@ -29,7 +29,7 @@ class Pembayaran_hutang extends Admin_Controller
         $this->load->helper('text');
         $this->load->helper('url');
         $this->load->model('pembayaran_hutang_model');
-        
+        $this->load->model('hutang_model');
     }
 
     public function index()
@@ -64,8 +64,10 @@ class Pembayaran_hutang extends Admin_Controller
             $row[] = $dt->kode_relasi;
             $row[] = $dt->nama_relasi;
             $row[] = $dt->nominal;
-            $row[] = $dt->status;
+            $row[] = $dt->keterangan;
+            /*
             $row[] = '<a class="btn btn-sm btn-primary" href="javascript:void(0)" title="Edit" onclick="detail_stok('."'".$dt->id."'".')"><i class="glyphicon glyphicon-pencil"></i> Detail</a>';
+            */
             $data[] = $row;
         }
 
@@ -102,23 +104,17 @@ class Pembayaran_hutang extends Admin_Controller
         $json = json_decode($datax);
         $rand = rand(1,100);
         
-        $tanggal_asli = explode("-",$this->tanggaldb($this->input->post('tanggal_bayar')));
+        $tanggal_asli = explode("-",$this->tanggaldb($this->input->post('tanggal')));
         
         $jumlah_bayar = $this->pembayaran_hutang_model->total_pembayaran_hutang_perbulan_tahun($tanggal_asli[1],$tanggal_asli[0]); 
         
         if($jumlah_bayar == 0){
             $jumlah = 1;
-            $kode_awal = "00001";
+            $kode_awal = "001";
         }else{
             $jumlah = $jumlah_bayar + 1;
 
             if(strlen($jumlah_bayar) == 1 ){
-                $kode_awal = "0000".$jumlah;
-            }else if(strlen($jumlah_bayar) == 2){
-                $kode_awal = "000".$jumlah;
-            }else if(strlen($jumlah_bayar) == 3){
-                $kode_awal = "00".$jumlah;
-            }else if(strlen($jumlah_bayar) == 4){
                 $kode_awal = "0".$jumlah;
             }else {
                 $kode_awal = $jumlah;
@@ -136,10 +132,27 @@ class Pembayaran_hutang extends Admin_Controller
             'kode_relasi' => $this->input->post('kode_relasi'),
             'nama_relasi' => $this->input->post('nama_relasi'),
             'tanggal' => $this->tanggaldb($this->input->post('tanggal')),
-            'nominal' => $this->input->post('nominal_bayar')
+            'nominal' => $this->input->post('nominal_bayar'),
+            'keterangan' => $this->input->post('keterangan'),
             
         );
         $insert = $this->pembayaran_hutang_model->save($data);
+
+        $total_bayar = $this->pembayaran_hutang_model->get_total_bayar_by_kode($this->input->post('kode_hutang'));
+       // echo $total_bayar;
+
+        if($total_bayar >= $this->input->post('nominal')){
+            $status_hutang = "Lunas";
+        }else{
+            $status_hutang = "Belum Lunas";
+        }
+
+        $data_hutang_baru = array(
+                'status' => $status_hutang
+            );
+
+        $this->hutang_model->update_by_kode($this->input->post('kode_hutang'), $data_hutang_baru);
+
 
         echo json_encode(array("status" => TRUE));
     }

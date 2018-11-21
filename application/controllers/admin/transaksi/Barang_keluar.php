@@ -61,12 +61,13 @@ class Barang_keluar extends Admin_Controller
             $row[] = $this->tanggal($dt->tanggal);
             $row[] = $dt->kode_barang_keluar;
             $row[] = $dt->nomor_referensi;
+            /*
             $row[] = $dt->kode_barang;
             $row[] = $dt->nama_barang;
             $row[] = $dt->qty;
+            */
             $row[] = $dt->keterangan;
-            $row[] = '<a class="btn btn-sm btn-primary" href="javascript:void(0)" title="Edit" onclick="edit_barang('."'".$dt->id."'".')"><i class="glyphicon glyphicon-pencil"></i> Edit</a>
-				  <a class="btn btn-sm btn-danger" href="javascript:void(0)" title="Hapus" onclick="delete_barang('."'".$dt->id."'".')"><i class="glyphicon glyphicon-trash"></i> Delete</a>
+            $row[] = '
                   <a class="btn btn-sm btn-primary" href="javascript:void(0)" title="Detail" onclick="detail_barang_keluar('."'".$dt->id."'".')"><i class="glyphicon glyphicon-pencil"></i> Detail</a>';
             $data[] = $row;
         }
@@ -231,7 +232,7 @@ class Barang_keluar extends Admin_Controller
     public function get_detail($id)
     {
         $data  = array(
-            'detailBarang'=> (array) $this->detail_barang_keluar_model->getDataByTransaksi2($id)
+            'detailBarang'=> (array) $this->detail_barang_keluar_model->getDataByTransaksi($id)
         );
         echo json_encode(array($data));
     }

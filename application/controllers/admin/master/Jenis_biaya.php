@@ -16,7 +16,7 @@
  * @property  rak_model $rak_model
  * @property  stok_fisik_model $stok_fisik_model
  */
-class Pegawai extends Admin_Controller
+class Jenis_biaya extends Admin_Controller
 {
 
     function __construct()
@@ -28,7 +28,7 @@ class Pegawai extends Admin_Controller
         $this->load->library('form_validation');
         $this->load->helper('text');
         $this->load->helper('url');
-        $this->load->model('pegawai_model');
+        $this->load->model('jenis_biaya_model');
         
     }
 
@@ -37,12 +37,12 @@ class Pegawai extends Admin_Controller
         //$this->data['pilihan_barang'] = $this->barang_model->get_all();
         //$this->data['pilihan_rak'] = $this->rak_model->get_all();
         //$this->data['pilihan_gudang'] = $this->gudang_model->get_all();
-        $this->render('admin/master/Pegawai_view');
+        $this->render('admin/master/Jenis_biaya_view');
     }
 
     public function get_data_all(){
 
-        $list = $this->pegawai_model->get_datatables();
+        $list = $this->jenis_biaya_model->get_datatables();
         $data = array();
         $no = $this->input->post('start');
         foreach ($list as $dt) {
@@ -50,17 +50,17 @@ class Pegawai extends Admin_Controller
             $row = array();
             $row[] = $no;
             $row[] = $dt->id;
-            $row[] = $dt->kode_pegawai;
-            $row[] = $dt->nama_pegawai;
-            $row[] = '<a class="btn btn-sm btn-primary" href="javascript:void(0)" title="Edit" onclick="edit_pegawai('."'".$dt->id."'".')"><i class="glyphicon glyphicon-pencil"></i> Edit</a>
-                  <a class="btn btn-sm btn-danger" href="javascript:void(0)" title="Hapus" onclick="delete_pegawai('."'".$dt->id."'".')"><i class="glyphicon glyphicon-trash"></i> Delete</a>';
+            $row[] = $dt->kode_biaya;
+            $row[] = $dt->nama_biaya;
+            $row[] = '<a class="btn btn-sm btn-primary" href="javascript:void(0)" title="Edit" onclick="edit_jenis_biaya('."'".$dt->id."'".')"><i class="glyphicon glyphicon-pencil"></i> Edit</a>
+                  <a class="btn btn-sm btn-danger" href="javascript:void(0)" title="Hapus" onclick="delete_jenis_biaya('."'".$dt->id."'".')"><i class="glyphicon glyphicon-trash"></i> Delete</a>';
             $data[] = $row;
         }
 
         $output = array(
             "draw" => $this->input->post('draw'),
-            "recordsTotal" => $this->pegawai_model->count_all(),
-            "recordsFiltered" => $this->pegawai_model->count_filtered(),
+            "recordsTotal" => $this->jenis_biaya_model->count_all(),
+            "recordsFiltered" => $this->jenis_biaya_model->count_filtered(),
             "data" => $data,
         );
         //output to json format
@@ -87,10 +87,10 @@ class Pegawai extends Admin_Controller
 
     public function edit($id)
     {
-        $data = $this->pegawai_model->get_by_id($id);
+        $data = $this->jenis_biaya_model->get_by_id($id);
         $data  = array(
             'id' => $data->id,
-            'nama_pegawai' => $data->nama_pegawai,
+            'nama_biaya' => $data->nama_biaya,
         );
         echo json_encode(array($data));
     }
@@ -98,13 +98,13 @@ class Pegawai extends Admin_Controller
     public function add()
     {
 
-        $jumlah_pegawai = $this->pegawai_model->total_pegawai(); 
+        $jumlah_biaya = $this->jenis_biaya_model->total_jenis_biaya(); 
         
-        if($jumlah_pegawai == 0){
+        if($jumlah_biaya == 0){
             $jumlah = 1;
             $kode_awal = "001";
         }else{
-            $jumlah = $jumlah_pegawai + 1;
+            $jumlah = $jumlah_biaya + 1;
 
             if(strlen($jumlah) == 1 ){
                 $kode_awal = "00".$jumlah;
@@ -116,16 +116,15 @@ class Pegawai extends Admin_Controller
         }
 
         $rand = rand(1,100);
-        $id_pegawai = md5($rand.'master-pegawai'.$this->input->post('kode_pegawai').$this->input->post('nama_pegawai'));
+        $id_biaya = md5($rand.'master-jenis-biaya'.$this->input->post('kode_biaya').$this->input->post('nama_biaya'));
         $data = array(
-            'id' => $id_pegawai,
-            'kode_pegawai' => "P".$kode_awal,
-            'nama_pegawai' => $this->input->post('nama_pegawai'),
+            'id' => $id_biaya,
+            'kode_biaya' => "B".$kode_awal,
+            'nama_biaya' => $this->input->post('nama_biaya'),
             
         );
-        $insert = $this->pegawai_model->save($data);
-        $id = $this->db->insert_id();
-
+        $insert = $this->jenis_biaya_model->save($data);
+        
         echo json_encode(array("status" => TRUE));
     }
 
@@ -134,10 +133,10 @@ class Pegawai extends Admin_Controller
 
      
         $data = array(
-            'nama_pegawai' => $this->input->post('nama_pegawai')
+            'nama_biaya' => $this->input->post('nama_biaya')
             
         );
-        $this->pegawai_model->update_by_id(array('id' => $this->input->post('id')), $data);
+        $this->jenis_biaya_model->update_by_id(array('id' => $this->input->post('id')), $data);
 
 
         echo json_encode(array("status" => TRUE));
@@ -146,7 +145,7 @@ class Pegawai extends Admin_Controller
     public function delete($id)
     {
      
-        $this->pegawai_model->delete_by_id($id);
+        $this->jenis_biaya_model->delete_by_id($id);
 
 
         echo json_encode(array("status" => TRUE));

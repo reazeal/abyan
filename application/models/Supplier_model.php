@@ -132,56 +132,6 @@ class Supplier_model extends MY_Model
     }
 
 
-    function get_barang()
-    {
-        //echo $jenis;
-        $data = array();
-         $this->db->select("
-            barang.id as barang_id,
-        kode,
-        barang.nama,
-        barang.keterangan,
-        batas_stok,
-        sum(qty) as qty,
-        status_stok,
-        satuan
-        ");
-        $this->db->join('stok_fisik','barang.id = stok_fisik.barang_id','left');       
-        $this->db->group_by('barang.id');
-        $query = $this->db->get('barang');
-        foreach($query->result() as $row){
-            $data[] = array(
-                'kode' => $row->kode,
-                'nama' => $row->nama,
-                'satuan' => $row->satuan,
-                'qty' => $row->qty,
-            );
-        }
-        //print_r($data);
-        return $data;
-    }
-
-    public function total_limit_perbarang($kode){
-        $total_masuk = array();
-        $this->db->select("
-            batas_stok
-        ");
-        $this->db->where("kode",$kode);
-        $query = $this->db->get($this->table);
-
-        $totaly2 = $query->num_rows();
-        if ($totaly2 > 0) {
-            foreach ($query->result() as $atributy) {
-
-                $batas_stok = $atributy->batas_stok ;
-                
-            }
-
-        }
-        return $batas_stok;
-
-    }
-
      public function get_by_kode($kode)
     {
         $this->db->from($this->table);
@@ -189,6 +139,26 @@ class Supplier_model extends MY_Model
         $query = $this->db->get();
 
         return $query->row();
+    }
+
+    public function total_sup(){
+        $total_sup = array();
+        $this->db->select("
+            ifnull(max(abs(substring(kode_supplier,2,3))),0) as total_sup
+        ");
+        $query = $this->db->get($this->table);
+
+        $totaly2 = $query->num_rows();
+        if ($totaly2 > 0) {
+            foreach ($query->result() as $atributy) {
+
+                $total_sup = $atributy->total_sup ;
+                
+            }
+
+        }
+        return $total_sup;
+
     }
 
 }

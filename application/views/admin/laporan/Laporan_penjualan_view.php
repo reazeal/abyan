@@ -45,26 +45,16 @@
                                 </div>
                             </div>
 
-                            <div class="form-group">
-                                <label class="control-label col-md-3">Status <span class="required">*</span></label>
-                                <div class="col-md-9">
-                                    <select name="status" id="status" class="validate[required] form-control" required="required">
-                                        <option value="">--Pilih Status--</option>
-                                        <option value="NAIK">NAIK</option>
-                                        <option value="TURUN">TURUN</option>
-                                        <option value="ALL">ALL</option>
-                                    </select>
-                                    <span class="help-block"></span>
-                                </div>
-                            </div>
 
 						</div>
 					</form>
 				</div>
 				<div class="modal-footer">
-					<button type="button" id="btnCetak" onclick="cetak()" class="btn btn-primary">Cetak</button>
+					<button type="button" id="btnCetak" onclick="cetak()" class="btn btn-primary">Cetak Per Barang</button>
+                    <button type="button" id="btnCetakFaktur" onclick="cetak_faktur()" class="btn btn-primary">Cetak Per SO</button>
 					<button type="button" class="btn btn-danger" data-dismiss="modal">Batal</button>
 				</div>
+
 			</div><!-- /.modal-content -->
 		</div><!-- /.modal-dialog -->
 	</div><!-- /.modal -->
@@ -118,6 +108,26 @@
         eModal.iframe('<?php echo  site_url('admin/laporan/penjualan_barang/cetak');?>?tgl_awal='+$('#tgl_awal').val()+'&tgl_akhir='+ $('#tgl_akhir').val()+'&status='+ $('#status').val(), 'Laporan Penjualan Barang');
 
 		$('#btnCetak').text('Cetak'); //change button text
+        $('#btnCetak').attr('disabled',false); //set button enable
+    }
+
+function cetak_faktur()
+    {
+
+        if(!$("#form").validationEngine('validate')){
+            return false;
+        }
+
+
+        $('#btnCetakFaktur').text('proses mencetak...'); //change button text
+        $('#btnCetakFaktur').attr('disabled',true); //set button disable
+
+
+        var form_dt = $('#form').serialize();
+
+        eModal.iframe('<?php echo  site_url('admin/laporan/penjualan_barang/cetak_per_faktur');?>?tgl_awal='+$('#tgl_awal').val()+'&tgl_akhir='+ $('#tgl_akhir').val()+'&status='+ $('#status').val(), 'Laporan Penjualan Per Faktur');
+
+        $('#btnCetak').text('Cetak'); //change button text
         $('#btnCetak').attr('disabled',false); //set button enable
     }
 

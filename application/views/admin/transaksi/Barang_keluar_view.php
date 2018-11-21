@@ -29,9 +29,6 @@
                                     <th>Tanggal</th>
                                     <th>Kode Keluar</th>
                                     <th>Nomor Referensi</th>
-                                    <th>Kode Barang</th>
-                                    <th>Nama Barang</th>
-                                    <th>Qty</th>
                                     <th>Keterangan</th>
                                     <th>Action</th>
                                 </tr>
@@ -156,11 +153,13 @@
             "serverSide": false, //Feature control DataTables' server-side processing mode.
             "order": [], //Initial no order.
             responsive: true,
+            /*
             columns: [
                 { title: "Nama Barang" },
                 { title: "Qty" }
                 
             ],
+            */
             "columnDefs": [
                 {
                     "targets": [ -1 ], //last column
@@ -293,7 +292,7 @@
                 //alert(data[0]['detailStok'].length);
                 for(var i = 0; i < data[0]['detailBarang'].length; i++) {
                     var obj = data[0]['detailBarang'][i];
-                    table_detailbarang.row.add([obj.nama_barang, obj.qty]).draw();
+                    table_detailbarang.row.add([obj.kode_barang_keluar, obj.nomor_referensi, obj.kode_barang, obj.nama_barang, obj.qty]).draw();
                 }
 
                 $('#modal_detail_barang').modal('show'); // show bootstrap modal when complete loaded
@@ -844,6 +843,9 @@
                 <table id="datatable-detailbarang" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
                         <thead>
                         <tr>
+                            <th>Kode Keluar</th>
+                            <th>Referensi</th>
+                            <th>Kode Barang</th>
                             <th>Nama Barang</th>
                             <th>Qty</th>
                             

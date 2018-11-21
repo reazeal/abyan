@@ -16,7 +16,8 @@ class Barang_keluar_model extends MY_Model
     }
 
     private function _get_datatables_query()
-    {
+    {   
+        /*
         $this->db->select("
         barang_keluar.id,
         barang_keluar.tanggal,
@@ -28,6 +29,7 @@ class Barang_keluar_model extends MY_Model
         qty
         ");
         $this->db->join('detail_barang_keluar','detail_barang_keluar.id_barang_keluar=barang_keluar.id');
+        */
         $this->db->from($this->table);
           $i = 0;
         foreach ($this->column_search as $item) // loop column
@@ -133,7 +135,26 @@ class Barang_keluar_model extends MY_Model
 
     }
 
+    public function get_kode_by_kode_keluar($kode_keluar, $tanggal){
+        $kode_barang_keluar = array();
+        $this->db->select("
+            kode_barang_keluar
+        ");
+        $this->db->where("nomor_referensi",$kode_keluar);
+        $this->db->where("tanggal",$tanggal);
+        $query = $this->db->get($this->table);
 
+        $totaly2 = $query->num_rows();
+        if ($totaly2 > 0) {
+            foreach ($query->result() as $atributy) {
+
+                $kode_barang_keluar = $atributy->kode_barang_keluar ;
+                
+            }
+
+        }
+        return $kode_barang_keluar;
+    }
 
 
 }

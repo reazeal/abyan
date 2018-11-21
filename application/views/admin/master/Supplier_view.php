@@ -176,7 +176,6 @@
             success: function(data)
             {
                 $('[name="id"]').val(data[0]['id']);
-                $('[name="kode"]').val(data[0]['kode_supplier']);
                 $('[name="nama"]').val(data[0]['nama_supplier']);
                 $('[name="alamat"]').val(data[0]['alamat_supplier']);
                 $('[name="nomor_telp"]').val(data[0]['nomor_telp']);
@@ -316,13 +315,6 @@
                 <form action="#" id="form" class="form-horizontal">
                     <input type="hidden" value="" name="id"/>
                     <div class="form-body">
-                        <div class="form-group">
-                            <label class="control-label col-md-3">Kode <span class="required">*</span></label>
-                            <div class="col-md-9">
-                                <input name="kode" placeholder="Kode Barang" class="validate[required,minSize[3]] form-control" type="text" required="required" data-validate-length-range="6" data-validate-words="2">
-                                <span class="help-block"></span>
-                            </div>
-                        </div>
                         <div class="form-group">
                             <label class="control-label col-md-3">Nama <span class="required">*</span></label>
                             <div class="col-md-9">

@@ -140,11 +140,12 @@ class Detail_purchase_order_model extends MY_Model
         
      $this->db->select(" detail_po.id as id,
             purchase_order.kode_po as kode_po,
-            detail_po.kode_barang as kode_barang, detail_po.nama_barang as nama_barang, qty, harga, detail_po.id as id, detail_po.status as status, sum(ifnull(qty_terima,0)) as terima
+            detail_po.kode_barang as kode_barang, detail_po.nama_barang as nama_barang, qty, harga, detail_po.id as id, detail_po.status as status, sum(ifnull(detail_penerimaan_po.qty_terima,0)) as terima
         ");
         $this->db->join('purchase_order','purchase_order.kode_po = detail_po.kode_po');
-        $this->db->join('penerimaan_po','penerimaan_po.kode_penerimaan_po = penerimaan_po.kode_penerimaan_po and detail_po.kode_barang = penerimaan_po.kode_barang','left');
-        $this->db->group_by('detail_po.kode_barang');
+        $this->db->join('penerimaan_po','penerimaan_po.kode_po = purchase_order.kode_po','left');
+        $this->db->join('detail_penerimaan_po','detail_penerimaan_po.kode_penerimaan_po = penerimaan_po.kode_penerimaan_po and detail_penerimaan_po.kode_barang = detail_po.kode_barang','left');
+        $this->db->group_by('purchase_order.kode_po, detail_po.kode_barang');
         $this->db->where('purchase_order.id',$id);
         $query = $this->db->get($this->table);
 

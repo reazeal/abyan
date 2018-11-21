@@ -75,9 +75,11 @@ class Detail_so_model extends MY_Model
 
     public function get_by_id($id)
     {
-        
+        $this->db->select('sales_order.id as id_so, detail_so.id as id, sales_order.kode_so as kode_so, detail_so.kode_barang as kode_barang,
+            detail_so.nama_barang as nama_barang, detail_so.qty as qty, detail_so.harga as harga');
+        $this->db->join('sales_order','sales_order.kode_so = detail_so.kode_so');
         $this->db->from($this->table);
-        $this->db->where($this->primary_key,$id);
+        $this->db->where('detail_so.id',$id);
         $query = $this->db->get();
 
         return $query->row();
@@ -110,5 +112,79 @@ class Detail_so_model extends MY_Model
         return $this->db->affected_rows();
     }
 
+    public function getDataByNoSO($id){
+        $data = array();
+        $this->db->select('detail_so.id as id, sales_order.kode_so as kode_so, detail_so.kode_barang as kode_barang,
+            detail_so.nama_barang as nama_barang, detail_so.qty as qty, detail_so.harga as harga, sum(pengiriman_so.qty) as kirim');
+        $this->db->join('sales_order','sales_order.kode_so = detail_so.kode_so');
+        $this->db->join('pengiriman_so','pengiriman_so.kode_so = detail_so.kode_so');
+        $this->db->where('sales_order.id',$id);
+        $query = $this->db->get($this->table);
 
+        $totaly2 = $query->num_rows();
+        if ($totaly2 > 0) {
+            foreach ($query->result() as $atributy) {
+                if($atributy->kirim >= $atributy->kirim){
+                    $data[] = array(
+                    'id' => $atributy->id,
+                    'kode_so' => $atributy->kode_so,
+                    'kode_barang' => $atributy->kode_barang,
+                    'nama_barang' => $atributy->nama_barang,
+                    'qty' => $atributy->qty,
+                    'harga' => $atributy->harga,
+                    'total' => $atributy->harga * $atributy->qty,
+                    'kirim' => $atributy->kirim,
+                    'action' => ''
+                        
+                    
+                    );
+                }else{
+                    $data[] = array(
+                    'id' => $atributy->id,
+                    'kode_so' => $atributy->kode_so,
+                    'kode_barang' => $atributy->kode_barang,
+                    'nama_barang' => $atributy->nama_barang,
+                    'qty' => $atributy->qty,
+                    'harga' => $atributy->harga,
+                    'total' => $atributy->harga * $atributy->qty,
+                    'kirim' => $atributy->kirim,
+                    'action' => '<a class="btn btn-sm btn-success" href="javascript:void(0)" title="Kirim" onclick="kirim_so('."'".$atributy->id."'".')"><i class="glyphicon glyphicon-check"></i> Kirim</a>'
+                     );
+                }    
+            }
+
+        }
+        return $data;
+
+    }
+
+
+    public function get_jumlah_barang_between($awal, $akhir){
+        $data = array();
+        $this->db->select('detail_so.kode_barang as kode_barang, barang.satuan as satuan,
+            detail_so.nama_barang as nama_barang, sum(detail_so.qty) as qty');
+        $this->db->join('sales_order','sales_order.kode_so = detail_so.kode_so');
+        $this->db->join('barang','barang.kode = detail_so.kode_barang');
+        $this->db->where('sales_order.tanggal >= ',$awal);
+        $this->db->where('sales_order.tanggal <= ',$akhir);
+        $this->db->group_by('detail_so.kode_barang');
+        $query = $this->db->get($this->table);
+
+        $totaly2 = $query->num_rows();
+        if ($totaly2 > 0) {
+            foreach ($query->result() as $atributy) {
+
+                $data[] = array(
+                'kode_barang' => $atributy->kode_barang,
+                'nama_barang' => $atributy->nama_barang,
+                'qty' => $atributy->qty,
+                'satuan' => $atributy->satuan,
+                    
+                );
+            }
+
+        }
+        return $data;
+
+    }
 }

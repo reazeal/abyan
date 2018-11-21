@@ -2,13 +2,13 @@
 
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Customer_model extends MY_Model
+class Transaksi_biaya_model extends MY_Model
 {
-    public $table = 'customers';
+    public $table = 'transaksi_biaya';
     public $primary_key = 'id';
-    public $column_order = array(null, 'id','kode_customer','nama_customer','alamat_customer','no_telp','jenis',null);
-    public $column_search = array('id','kode_customer','nama_customer','alamat_customer','no_telp','jenis');
-    public $order = array('id' => 'desc'); // default order
+    public $column_order = array(null, 'transaksi_biaya.id','nama_biaya','tanggal','nominal','status',null);
+    public $column_search = array('transaksi_biaya.id','nama_biaya','tanggal','nominal','status');
+    public $order = array('tanggal' => 'desc'); // default order
 
     public function __construct()
     {
@@ -17,8 +17,10 @@ class Customer_model extends MY_Model
 
     private function _get_datatables_query()
     {
-        $this->db->from($this->table);
-        $i = 0;
+        $this->db->select('transaksi_biaya.id, nama_biaya, tanggal, nominal, status');
+        $this->db->join('jenis_biaya','jenis_biaya.id = transaksi_biaya.id_jenis_biaya');
+       $this->db->from($this->table);
+          $i = 0;
         foreach ($this->column_search as $item) // loop column
         {
             if($_POST['search']['value']) // if datatable send POST for search
@@ -78,14 +80,7 @@ class Customer_model extends MY_Model
         $this->db->from($this->table);
         $this->db->where($this->primary_key,$id);
         $query = $this->db->get();
-        return $query->row();
-    }
 
-    public function get_by_kode($kode)
-    {
-        $this->db->from($this->table);
-        $this->db->where('kode_customer',$kode);
-        $query = $this->db->get();
         return $query->row();
     }
 
@@ -107,24 +102,6 @@ class Customer_model extends MY_Model
         $this->db->delete($this->table);
     }
 
-    public function total_cust(){
-        $total_cust = array();
-        $this->db->select("
-            ifnull(max(abs(substring(kode_customer,2,5))),0) as total_cust
-        ");
-        $query = $this->db->get($this->table);
-
-        $totaly2 = $query->num_rows();
-        if ($totaly2 > 0) {
-            foreach ($query->result() as $atributy) {
-
-                $total_cust = $atributy->total_cust ;
-                
-            }
-
-        }
-        return $total_cust;
-
-    }
+    
 
 }

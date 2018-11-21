@@ -2,12 +2,12 @@
 
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Customer_model extends MY_Model
+class Jenis_biaya_model extends MY_Model
 {
-    public $table = 'customers';
+    public $table = 'jenis_biaya';
     public $primary_key = 'id';
-    public $column_order = array(null, 'id','kode_customer','nama_customer','alamat_customer','no_telp','jenis',null);
-    public $column_search = array('id','kode_customer','nama_customer','alamat_customer','no_telp','jenis');
+    public $column_order = array(null, 'id','kode_biaya', 'nama_biaya',null);
+    public $column_search = array('kode_biaya', 'nama_biaya');
     public $order = array('id' => 'desc'); // default order
 
     public function __construct()
@@ -17,8 +17,10 @@ class Customer_model extends MY_Model
 
     private function _get_datatables_query()
     {
-        $this->db->from($this->table);
-        $i = 0;
+        //$this->db->group_by('kode');
+        $this->db->order_by('kode_biaya','desc');
+        $this->db->from('jenis_biaya');
+          $i = 0;
         foreach ($this->column_search as $item) // loop column
         {
             if($_POST['search']['value']) // if datatable send POST for search
@@ -39,6 +41,7 @@ class Customer_model extends MY_Model
             $i++;
         }
 
+        /*
         if(isset($_POST['order'])) // here order processing
         {
             $this->db->order_by($this->column_order[$_POST['order']['0']['column']], $_POST['order']['0']['dir']);
@@ -48,6 +51,7 @@ class Customer_model extends MY_Model
             $order = $this->order;
             $this->db->order_by(key($order), $order[key($order)]);
         }
+        */
     }
 
     function get_datatables()
@@ -71,6 +75,9 @@ class Customer_model extends MY_Model
         $this->db->select($this->primary_key);
         $this->db->from($this->table);
         return $this->db->count_all_results();
+        
+        
+
     }
 
     public function get_by_id($id)
@@ -78,14 +85,7 @@ class Customer_model extends MY_Model
         $this->db->from($this->table);
         $this->db->where($this->primary_key,$id);
         $query = $this->db->get();
-        return $query->row();
-    }
 
-    public function get_by_kode($kode)
-    {
-        $this->db->from($this->table);
-        $this->db->where('kode_customer',$kode);
-        $query = $this->db->get();
         return $query->row();
     }
 
@@ -99,6 +99,7 @@ class Customer_model extends MY_Model
     {
         $this->db->update($this->table, $data, $where);
         return $this->db->affected_rows();
+        //$this->db->update($this->table,array("upload_rate"=>0,"download_rate"=>0));
     }
 
     public function delete_by_id($id)
@@ -107,10 +108,19 @@ class Customer_model extends MY_Model
         $this->db->delete($this->table);
     }
 
-    public function total_cust(){
-        $total_cust = array();
+    public function update_by_kode($kode, $data)
+    {
+        $this->db->where('kode',$kode);
+        $this->db->update($this->table, $data);
+        return $this->db->affected_rows();
+        //$this->db->update($this->table,array("upload_rate"=>0,"download_rate"=>0));
+    }
+
+
+    public function total_jenis_biaya(){
+        $total_biaya = array();
         $this->db->select("
-            ifnull(max(abs(substring(kode_customer,2,5))),0) as total_cust
+            ifnull(max(abs(substring(kode_biaya,2,3))),0) as total_biaya
         ");
         $query = $this->db->get($this->table);
 
@@ -118,13 +128,14 @@ class Customer_model extends MY_Model
         if ($totaly2 > 0) {
             foreach ($query->result() as $atributy) {
 
-                $total_cust = $atributy->total_cust ;
+                $total_biaya = $atributy->total_biaya;
                 
             }
 
         }
-        return $total_cust;
+        return $total_biaya;
 
     }
+
 
 }

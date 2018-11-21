@@ -63,11 +63,19 @@ class Piutang extends Admin_Controller
             $row[] = $dt->kode_referensi;
             $row[] = $dt->kode_relasi;
             $row[] = $dt->nama_relasi;
-            $row[] = $dt->jenis;
+           
             $row[] = $this->tanggal($dt->tanggal_jatuh_tempo);
             $row[] = $dt->nominal;
-            
-            $row[] = '<a class="btn btn-sm btn-primary" href="javascript:void(0)" title="Edit" onclick="detail_stok('."'".$dt->id."'".')"><i class="glyphicon glyphicon-pencil"></i> Detail</a>';
+            $row[] = $dt->status;
+             $row[] = $dt->jenis;
+             if($dt->status != "Lunas"){
+                $row[] = '<a class="btn btn-sm btn-success" href="javascript:void(0)" title="Edit" onclick="bayar_piutang('."'".$dt->id."'".')"><i class="glyphicon glyphicon-check"></i> Bayar</a>';
+             }else{
+                $row[] = "";
+             }
+            /*
+            $row[] = '<a class="btn btn-sm btn-primary" href="javascript:void(0)" title="Edit" onclick="detail_stok('."'".$dt->id."'".')"><i class="glyphicon glyphicon-pencil"></i> Detail</a>'; */
+             
             $data[] = $row;
         }
 
@@ -119,6 +127,24 @@ class Piutang extends Admin_Controller
 
 
         echo json_encode(array("status" => TRUE));
+    }
+
+    public function get($id)
+    {
+       // echo $id;
+       // die();
+        $data = $this->piutang_model->get_by_id($id);
+        $data  = array(
+            'id' => $data->id,
+            'kode_piutang' => $data->kode_piutang,
+            'nomor_referensi' => $data->kode_referensi,
+            'kode_relasi' => $data->kode_relasi,
+            'nama_relasi' => $data->nama_relasi,
+            'nominal' => $data->nominal,
+            'kode_bantu' => $data->kode_bantu,
+          //  'detailBarang'=> (array) $this->detail_barang_model->getDataByTransaksi($id)
+        );
+        echo json_encode(array($data));
     }
 
     public function update()

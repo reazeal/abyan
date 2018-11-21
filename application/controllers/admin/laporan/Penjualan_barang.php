@@ -1,7 +1,7 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed');
 /**
  * Created by PhpStorm.
- * User: hqeem
+ * User: pudak digital
  * Date: 5/31/2017
  * Time: 1:14 PM
  */
@@ -28,14 +28,8 @@ class Penjualan_barang extends Admin_Controller
             redirect('auth/session_not_authorized', 'refresh');
         }
         $this->load->library('form_validation');
-        $this->load->model('laporan_model');
-        $this->load->model('laporan_stok_model');
-        $this->load->model('barang_model');
-        $this->load->model('barang_keluar_model');
-        $this->load->model('barang_masuk_model');
-        $this->load->model('laporan_penjualan_model');
-        $this->load->model('stok_fisik_model');
-        $this->load->model('rak_model');
+        $this->load->model('sales_order_model');
+        $this->load->model('detail_so_model');
         $this->load->helper('text');
         $this->load->helper('url');
     }
@@ -69,23 +63,21 @@ class Penjualan_barang extends Admin_Controller
         $tanggal_awal_kemaren = date('Y-m',strtotime('-1 months', strtotime($this->tanggaldb($tgl_awal))));
 
         $tanggal_akhir_kemaren = date('Y-m-t', strtotime($tanggal_awal_kemaren."-01"));
-         
-        //echo $jenis;
-        //$data  = $this->laporan_stok_model->getdata($this->tanggaldb($tgl_awal),$this->tanggaldb($tgl_akhir));
         
+
         $i=0;
 
         $this->load->library('fpdf');
         $pdf = new FPDF('P','mm',"A4");
-        $pdf->Open();
+       // $pdf->Open();
         $pdf->AddPage();
         $pdf->AliasNbPages();
         $pdf->SetMargins(1,1,1);
 
         $pdf->SetFont('Times','BU',14);
-        $pdf->Cell(0,5,"LAPORAN PENJUALAN BARANG ",0,1,'C');
+        $pdf->Cell(0,5,"LAPORAN PENJUALAN Per BARANG ",0,1,'C');
         $pdf->SetFont('Times','B',10);
-        $pdf->Cell(0,5,"            Tanggal : " . $tanggal_awal_kemaren."-01" ." s/d ".$tanggal_akhir_kemaren,0,1,'C');
+        $pdf->Cell(0,5,"            Tanggal : " . $tgl_awal." s/d ".$tgl_akhir,0,1,'C');
         $pdf->SetFont('Times','BI',12);
         $pdf->Ln(2);
         
@@ -95,77 +87,95 @@ class Penjualan_barang extends Admin_Controller
         $pdf->Cell(10,10,"No",1,0,'C');
         $pdf->Cell(25,10,"Kode Barang",1,0,'C');
         $pdf->Cell(100,10,"Nama Barang",1,0,'C');
-        $pdf->Cell(30,10,"Bulan Kemarin",1,0,'C');
-        $pdf->Cell(30,10,"Bulan Sekarang",1,1,'C');
-        /*
-        $pdf->SetWidths(array(10,50,25));
-        $pdf->SetAligns(array('C','L','R'));
-        $pdf->SetBorders(array('LR','LR','LR'));
-        */
+        $pdf->Cell(25,10,"Satuan",1,0,'C');
+        $pdf->Cell(30,10,"Qty",1,1,'C');
+        
         $i = 1;
-        $grand_total = 0;
-            
-            $data_barang = $this->barang_model->get_barang_all();
-            
-            $sub_total = 0;
-            
-            foreach($data_barang as $row){
+        $data = $this->detail_so_model->get_jumlah_barang_between($this->tanggaldb($tgl_awal), $this->tanggaldb($tgl_akhir));
 
-                $data_penjualan_kemaren = $this->laporan_penjualan_model->get_jumlah_barang_keluar($row['barang_id'],$tanggal_awal_kemaren."-01", $tanggal_akhir_kemaren);
+            foreach($data as $hasil){
+                    
+                $kode_barang = $hasil['kode_barang'];
+                $nama_barang = $hasil['nama_barang'];
+                $qty = $hasil['qty'];
+                $satuan = $hasil['satuan'];
 
-                $data_penjualan_sekarang = $this->laporan_penjualan_model->get_jumlah_barang_keluar($row['barang_id'],$this->tanggaldb($tgl_awal), $this->tanggaldb($tgl_akhir));
-
-                $kode = $row['kode'];
-                $nama = $row['nama'];
-                $satuan = $row['satuan'];
-                
-                $pdf->setX(5);
-                $pdf->Cell(10,10,$i,1,0,'R');
-                $pdf->Cell(25,10,$kode,1,0,'L');
-                $pdf->Cell(100,10,$nama,1,0,'L');
-                $pdf->Cell(30,10,$data_penjualan_kemaren,1,0,'L');
-                $pdf->Cell(30,10,$data_penjualan_sekarang,1,1,'L');
-                $i++;
+                    $pdf->setX(5);
+                    $pdf->Cell(10,5,$i,1,0,'C');
+                    $pdf->Cell(25,5,$kode_barang,1,0,'L');
+                    $pdf->Cell(100,5,$nama_barang,1,0,'L');
+                    $pdf->Cell(25,5,$satuan,1,0,'L');
+                    $pdf->Cell(30,5,$qty,1,1,'R');
+                    $i = $i + 1;
             }
 
-            /*
-            if($kode_jenis == 'A'){
-                $merk = "Theraskin";
-            }else if($kode_jenis == 'B'){
-                $merk = "Hi-Derm";
-            }else if($kode_jenis == 'C'){
-                $merk = "Immortal";
-            }else if($kode_jenis == 'D'){
-                $merk = "Primadera";
-            }else if($kode_jenis == 'E'){
-                $merk = "Pesona  Sagara";
-            }else if ($kode_jenis == 'F') {
-                $merk = "Kotoderm";
-            }else{
-                $merk = "Lain lain";
-            }
+        $pdf->SetFont('arial','',10);
+        $pdf->Output();
+    }
+   
 
-            $pdf->setX(5);
-            $pdf->Cell(155,10,"Sub Total ".$merk,1,0,'L');
-            $pdf->Cell(20,10,number_format((($sub_total)?$sub_total:'0'),0,",","."),1,1,'R');
-            $grand_total = $grand_total + $sub_total;
 
-            */
+    public function cetak_per_faktur()
+    {
+
+        $tgl_awal = $this->input->get('tgl_awal');
+        $tgl_akhir = $this->input->get('tgl_akhir');
+        $status = $this->input->get('status');
+        
+        $tanggal_awal_kemaren = date('Y-m',strtotime('-1 months', strtotime($this->tanggaldb($tgl_awal))));
+
+        $tanggal_akhir_kemaren = date('Y-m-t', strtotime($tanggal_awal_kemaren."-01"));
         
 
+        $i=0;
+
+        $this->load->library('fpdf');
+        $pdf = new FPDF('P','mm',"A4");
+       // $pdf->Open();
+        $pdf->AddPage();
+        $pdf->AliasNbPages();
+        $pdf->SetMargins(1,1,1);
+
+        $pdf->SetFont('Times','BU',14);
+        $pdf->Cell(0,5,"LAPORAN PENJUALAN Per SO ",0,1,'C');
+        $pdf->SetFont('Times','B',10);
+        $pdf->Cell(0,5,"            Tanggal : " . $tgl_awal." s/d ".$tgl_akhir,0,1,'C');
+        $pdf->SetFont('Times','BI',12);
+        $pdf->Ln(2);
+        
+        $pdf->Ln(5);
         $pdf->setX(5);
-        $pdf->Cell(155,10,"Grand Total ",1,0,'L');
-        $pdf->Cell(20,10,number_format((($grand_total)?$grand_total:'0'),0,",","."),1,1,'R');
-            
-        /*
-        if(count($data)<10){
-            for($j=$i;$j<11;$j++){
-                $pdf->RowBorder(array('','','','','','','',''));
-            }
-        }
-        */
-
+        $pdf->SetFont('Times','B',10);
+        $pdf->Cell(10,10,"No",1,0,'C');
+        $pdf->Cell(25,10,"Tanggal",1,0,'C');
+        $pdf->Cell(25,10,"No. SO",1,0,'C');
+        $pdf->Cell(25,10,"Kode Barang",1,0,'C');
+        $pdf->Cell(70,10,"Nama Barang",1,0,'C');
+        $pdf->Cell(25,10,"Satuan",1,0,'C');
+        $pdf->Cell(10,10,"Qty",1,1,'C');
         
+        $i = 1;
+        $data = $this->sales_order_model->get_so_between($this->tanggaldb($tgl_awal), $this->tanggaldb($tgl_akhir));
+
+            foreach($data as $hasil){
+                    
+                $kode_barang = $hasil['kode_barang'];
+                $nama_barang = $hasil['nama_barang'];
+                $qty = $hasil['qty'];
+                $satuan = $hasil['satuan'];
+                $tanggal = $hasil['tanggal'];
+                $kode_so = $hasil['kode_so'];
+
+                    $pdf->setX(5);
+                    $pdf->Cell(10,5,$i,1,0,'C');
+                    $pdf->Cell(25,5,$tanggal,1,0,'L');
+                    $pdf->Cell(25,5,$kode_so,1,0,'L');
+                    $pdf->Cell(25,5,$kode_barang,1,0,'L');
+                    $pdf->Cell(70,5,$nama_barang,1,0,'L');
+                    $pdf->Cell(25,5,$satuan,1,0,'L');
+                    $pdf->Cell(10,5,$qty,1,1,'R');
+                    $i = $i + 1;
+            }
 
         $pdf->SetFont('arial','',10);
         $pdf->Output();

@@ -64,7 +64,7 @@ class Customers extends Admin_Controller
 
     public function edit($id)
     {
-        $data = $this->customer_model->get($id);
+        $data = $this->customer_model->get_by_id($id);
         $data  = array(
             'id' => $data->id,
             'kode_customer' => $data->kode_customer,
@@ -81,10 +81,30 @@ class Customers extends Admin_Controller
 
         //$datax  = $this->input->post('dataDetail');
 //        $json = json_decode($datax);
+
+        $jumlah_cust = $this->customer_model->total_cust(); 
+        
+        if($jumlah_cust == 0){
+            $jumlah = 1;
+            $kode_awal = "00001";
+        }else{
+            $jumlah = $jumlah_cust + 1;
+
+            if(strlen($jumlah) == 1 ){
+                $kode_awal = "000".$jumlah;
+            }else if(strlen($jumlah) == 2){
+                $kode_awal = "00".$jumlah;
+            }else if(strlen($jumlah) == 1){
+                   $kode_awal = "0".$jumlah;
+            }else {
+                $kode_awal = $jumlah;
+            }
+        }
+
         $i = rand(1,100);
         $data = array(
             'id' => md5('customer'.date("YmdHis").$this->input->post('kode_customer').$this->input->post('nama_customer').$i),
-            'kode_customer' => $this->input->post('kode_customer'),
+            'kode_customer' => "C".$kode_awal,
             'nama_customer' => $this->input->post('nama_customer'),
             'alamat_customer' => $this->input->post('alamat_customer'),
             'jenis' => $this->input->post('jenis'),
@@ -158,7 +178,7 @@ class Customers extends Admin_Controller
             $this->detail_barang_model->delete($rw['id']);
         endforeach;*/
 
-        $this->customer_model->delete($id);
+        $this->customer_model->delete_by_id($id);
         echo json_encode(array("status" => TRUE));
     }
 

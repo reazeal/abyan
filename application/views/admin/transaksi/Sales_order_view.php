@@ -29,11 +29,7 @@
                                     <th>Tanggal</th>
                                     <th>Kode So</th>
                                     <th>Customer</th>
-                                    <th>Kode Barang</th>
-                                    <th>Nama Barang</th>
-                                    <th>Qty</th>
-                                    <th>Harga</th>
-                                    <th>Satuan</th>
+                                    <th>Tgl Kirim</th>
                                     <th>Status</th>
                                     <th>Action</th>
                                 </tr>
@@ -108,7 +104,7 @@
                     "visible": false
                 },{
                     "targets": [5],
-                    "visible": false
+                    "visible": true
                 }
             ]
         });
@@ -166,6 +162,35 @@
             ]
         });
 
+         table_detailso = $('#datatable-detailso').DataTable({
+            "processing": true, //Feature control the processing indicator.
+            "serverSide": false, //Feature control DataTables' server-side processing mode.
+            "order": [], //Initial no order.
+            responsive: true,
+            /*
+            columns: [
+                { title: "Nama Barang" },
+                { title: "Expired" },
+                { title: "Qty" }
+                
+            ],
+            */
+            "columnDefs": [
+                {
+                    "targets": [ -1 ], //last column
+                    "orderable": false
+                },{
+                    "targets": [0], //last column
+                    "visible": false
+                },{
+                    "targets": [2], //last column
+                    "visible": false
+                }
+
+            ]
+        });
+
+
         //datepicker
         $('.datepicker').datepicker({
             autoclose: true,
@@ -208,6 +233,9 @@
 
     function kirim_so(id)
     {
+
+        $('#modal_detail_so').modal('hide');
+
         save_method = 'update';
         $('#form_kirim')[0].reset(); // reset form on modals
         $('.form-group').removeClass('has-error'); // clear error class
@@ -220,12 +248,13 @@
             dataType: "JSON",
             success: function(data)
             {
+                $('[name="id_so"]').val(data[0]['id_so']);                
                 $('[name="id"]').val(data[0]['id']);
                 $('[name="kode_so"]').val(data[0]['kode_so']);
                 $('[name="kode_barang"]').val(data[0]['kode_barang']);
                 $('[name="nama_barang"]').val(data[0]['nama_barang']);
                 $('[name="harga"]').val(data[0]['harga']);
-                  
+                $('[name="qty_order"]').val(data[0]['qty']);
 
                 $('#modal_form_kirim').modal('show'); // show bootstrap modal when complete loaded
                 $('.modal-title').text('Kirim Sales Order'); // Set title to Bootstrap modal title
@@ -238,25 +267,25 @@
         });
     }
 
-    function detail_barang_masuk($id)
+    function detail_so($id)
     {
         
-        table_detailbarang.clear().draw();
+        table_detailso.clear().draw();
 
         $.ajax({
-            url : "<?php echo site_url('admin/transaksi/barang_masuk/get_detail')?>/"+ $id,
+            url : "<?php echo site_url('admin/transaksi/sales_order/get_detail')?>/"+ $id,
             type: "GET",
             dataType: "JSON",
             success: function(data)
             {
                 //alert(data[0]['detailStok'].length);
-                for(var i = 0; i < data[0]['detailBarang'].length; i++) {
-                    var obj = data[0]['detailBarang'][i];
-                    table_detailbarang.row.add([obj.nama_barang, obj.expired, obj.qty]).draw();
+                for(var i = 0; i < data[0]['detailSo'].length; i++) {
+                    var obj = data[0]['detailSo'][i];
+                    table_detailso.row.add([obj.id, obj.kode_so, obj.kode_barang, obj.nama_barang, obj.qty, obj.harga, obj.total, obj.kirim,  obj.action]).draw();
                 }
 
-                $('#modal_detail_barang').modal('show'); // show bootstrap modal when complete loaded
-                $('.modal-title').text('Detail Barang Masuk'); // Set title to Bootstrap modal title
+                $('#modal_detail_so').modal('show'); // show bootstrap modal when complete loaded
+                $('.modal-title').text('Detail Sales Order'); // Set title to Bootstrap modal title
 
             },
             error: function (jqXHR, textStatus, errorThrown)
@@ -265,8 +294,9 @@
             }
         });
 
-        $('#modal_detail_barang').modal('show'); // show bootstrap modal
+        $('#modal_detail_po').modal('show'); // show bootstrap modal
     }
+
 
     function cekData() {
         var data = table_detail .rows().data();
@@ -280,6 +310,29 @@
     function reload_Detailtable()
     {
         table_detail.ajax.reload(null,false); //reload datatable ajax
+    }
+
+    function get_harga(id) {
+
+    //$('[name="qty_stok"]').val('100');
+
+     $.ajax({
+            url : "<?php echo site_url('admin/transaksi/detail_barang_masuk/get_by_id/')?>" + id,
+            type: "GET",
+            dataType: "JSON",
+            success: function(data)
+            {
+                $('[name="qty_stok"]').val(data[0]['qty_stok']);
+                $('[name="bottom_retail"]').val(data[0]['bottom_retail']);
+                $('[name="bottom_supplier"]').val(data[0]['bottom_supplier']);                
+
+            },
+            error: function (jqXHR, textStatus, errorThrown)
+            {
+                alert('Error get data from ajax');
+            }
+        });
+
     }
 
     function save()
@@ -350,73 +403,6 @@
         });
     }
 
-    function update()
-    {
-
-        var url;
-
-        if(save_method === 'add') {
-            url = "<?php echo site_url('admin/transaksi/barang_masuk/add')?>";
-        } else {
-            url = "<?php echo site_url('admin/transaksi/barang_masuk/update')?>";
-        }
-
-        seen = [];
-
-        json = JSON.stringify(table_detail .rows().data(), function(key, val) {
-            if (typeof val === "object") {
-                if (seen.indexOf(val) >= 0)
-                    return
-                    seen.push(val)
-            }
-            return val
-        });
-
-
-        if(!$("#form_edit").validationEngine('validate')){
-            return false;
-        }
-
-        if(!$("#formDetail").validationEngine('validate')){
-            return false;
-        }
-
-        $('#btnSave').text('menyimpan...'); //change button text
-        $('#btnSave').attr('disabled',true); //set button disable
-
-        // ajax adding data to database
-        $.ajax({
-            url : url,
-            type: "POST",
-            data: $('#form_edit').serialize() + "&dataDetail=" + json,
-            dataType: "JSON",
-            success: function(data)
-            {
-
-                if(data.status) //if success close modal and reload ajax table
-                {
-                    if(save_method === 'add') {
-                        $('#modal_form').modal('hide');
-                    }else{
-                        $('#modal_form_edit').modal('hide');
-                    }
-                    reload_table();
-                }
-
-                $('#btnSave').text('simpan'); //change button text
-                $('#btnSave').attr('disabled',false); //set button enable
-
-
-            },
-            error: function (jqXHR, textStatus, errorThrown)
-            {
-                alert('Error adding / update data');
-                $('#btnSave').text('simpan'); //change button text
-                $('#btnSave').attr('disabled',false); //set button enable
-
-            }
-        });
-    }
 
 
     function simpan_kirim()
@@ -428,6 +414,7 @@
 
         seen = [];
 
+        var id_so = $('#form_kirim').find('input[name="id_so"]').val();
 
         if(!$("#form_kirim").validationEngine('validate')){
             return false;
@@ -459,6 +446,7 @@
                 $('#btnSave').text('simpan'); //change button text
                 $('#btnSave').attr('disabled',false); //set button enable
 
+                detail_so(id_so);
 
             },
             error: function (jqXHR, textStatus, errorThrown)
@@ -472,7 +460,7 @@
     }
 
     function hapus_dataDetail() {
-        alert('tes');
+        //alert('tes');
         $('#datatable-detail').on( 'click', '.hapus-detail', function () {
             if(confirm('Anda yakin mau menghapus data ini ?')){
                 
@@ -489,45 +477,7 @@
 
     }
 
-    function delete_barang_masuk(id)
-    {
-        if(confirm('Anda yakin mau menghapus data ini ?'))
-        {
-            // ajax delete data to database
-            $.ajax({
-                url : "<?php echo site_url('admin/transaksi/barang_masuk/delete')?>/"+id,
-                type: "POST",
-                dataType: "JSON",
-                success: function(data)
-                {
-                    //if success reload ajax table
-                    $('#modal_form').modal('hide');
-                    reload_table();
-                },
-                error: function (jqXHR, textStatus, errorThrown)
-                {
-                    alert('Error deleting data');
-                }
-            });
-
-        }
-    }
-
-    function cetak_barang_masuk(id)
-    {
-
-
-        $('#btnCetak').text('proses mencetak...'); //change button text
-        $('#btnCetak').attr('disabled',true); //set button disable
-
-
-        var form_dt = $('#form').serialize();
-
-        eModal.iframe('<?php echo  site_url('admin/transaksi/barang_masuk/cetak');?>?id='+id, 'Laporan Stok Barang');
-
-        $('#btnCetak').text('Cetak'); //change button text
-        $('#btnCetak').attr('disabled',false); //set button enable
-    }
+   
 </script>
 
 <!-- Bootstrap modal -->
@@ -574,6 +524,14 @@
                             <input name="top" placeholder="TOP" class="validate[required,custom[number]] form-control" type="text" required="required">
                             <span class="help-block"></span>
                             </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label col-md-3">Tgl Kirim<span class="required">*</span></label>
+                        <div class="col-md-9">
+                            <input placeholder="dd-mm-yyyy" name="tanggal_kirim" class="validate[required] form-control datepicker" type="text" required="required">
+                            <span class="help-block"></span>
+                        </div>
                     </div>
 
                         <div class="form-group">
@@ -626,6 +584,7 @@
             <div class="modal-body form">
                 <form action="#" id="form_kirim" class="form-horizontal">
                     <input type="hidden" value="" name="id"/>
+                    <input type="hidden" value="" name="id_so"/>
                     <input type="hidden" value="" name="kode_barang"/>
                     <input type="hidden" value="" name="harga"/>
 
@@ -651,6 +610,14 @@
                             <div class="col-md-9">
                                 <input name="nama_barang" placeholder="Nama Barang" class="validate[required,minSize[6]] form-control" type="text" required="required" data-validate-length-range="6" data-validate-words="2" readonly="true">
                                 <span class="help-block"></span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label col-md-3">QTY Order<span class="required">*</span></label>
+                            <div class="col-md-6">
+                                <input name="qty_order" placeholder="Qty order" class="validate[required,custom[number]] form-control" type="text" readonly="true">
+                            <span class="help-block"></span>
                             </div>
                         </div>
 
@@ -732,12 +699,12 @@
                     <div class="form-group">
                         <label class="control-label col-md-3">Barang<span class="required">*</span></label>
                         <div class="col-md-6">
-                            <select id="nama_barang_so" name="nama_barang_so" data-live-search="true"  class="selectpicker validate[required] form-control" required="required">
+                            <select id="nama_barang_so" name="nama_barang_so" data-live-search="true"  class="selectpicker validate[required] form-control" required="required" onchange="get_harga(this.value)">
                                 <option value="">--Pilih Barang--</option>
                                 <?php
-                                foreach ($pilihan_barang as $row3):
+                                foreach ($pilihan_barang_masuk as $row3):
                                     ?>
-                                    <option value="<?php echo $row3->id; ?>"><?php echo $row3->kode."-".$row3->nama."-".$row3->satuan; ?></option>
+                                    <option value="<?php echo $row3->id; ?>"><?php echo $row3->kode_barang."-".$row3->nama_barang."-".$row3->tanggal; ?></option>
                                     <?php
 
                                 endforeach;
@@ -748,12 +715,38 @@
                     </div>
 
                     <div class="form-group">
-                        <label class="control-label col-md-3">Qty<span class="required">*</span></label>
+                        <label class="control-label col-md-3">Qty Stok<span class="required">*</span></label>
+                        <div class="col-md-6">
+                            <input name="qty_stok" placeholder="Qty Stok" class="validate[required,custom[number]] form-control" type="text" required="required" readonly="true">
+                            <span class="help-block"></span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label col-md-3">Harga Retail<span class="required">*</span></label>
+                        <div class="col-md-6">
+                            <input name="bottom_retail" placeholder="Bottom Retail" class="validate[required,custom[number]] form-control" type="text" required="required" readonly="true">
+                            <span class="help-block"></span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label col-md-3">Harga Supplier<span class="required">*</span></label>
+                        <div class="col-md-6">
+                            <input name="bottom_supplier" placeholder="Bottom Supplier" class="validate[required,custom[number]] form-control" type="text" required="required" readonly="true">
+                            <span class="help-block"></span>
+                        </div>
+                    </div>
+
+
+                    <div class="form-group">
+                        <label class="control-label col-md-3">Qty Order<span class="required">*</span></label>
                         <div class="col-md-6">
                             <input name="qty" placeholder="Qty" class="validate[required,custom[number]] form-control" type="text" required="required">
                             <span class="help-block"></span>
                         </div>
                     </div>
+
 
                     <div class="form-group">
                         <label class="control-label col-md-3">Harga<span class="required">*</span></label>
@@ -775,6 +768,36 @@
 </div><!-- /.modal -->
 <!-- End Bootstrap modal -->
 
+<div class="modal fade" id="modal_detail_so" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h3>Form Detail SO</h3>
+            </div>
+            <div class="panel-body">
+                <table id="datatable-detailso" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
+                        <thead>
+                        <tr>
+                            <th>id detail</th>
+                            <th>Kode SO</th>
+                            <th>Kode Barang</th>
+                            <th>Nama Barang</th>                            
+                            <th>Qty</th>
+                            <th>Harga</th>
+                            <th>Total</th>
+                            <th>Kirim</th>
+                            <th>Action</th>
+                        </tr>
+                        </thead>
+                    </table>
+            </div>
+            
+        </div>
+    </div>
+</div>
+
+
 <script>
 
     $("#nama_barang :selected").text(); // The text content of the selected option
@@ -784,35 +807,44 @@
     {
 
 
-        if(!$("#formDetail").validationEngine('validate')){
-            return false;
+        var bottom_retail = $('#formDetail').find('input[name="bottom_retail"]').val();
+        var harga = $('#formDetail').find('input[name="harga"]').val();
+        
+        if(parseInt(harga) < parseInt(bottom_retail)){
+            alert('Harga Tidak dibolehkah');
+        }else{
+            
+            if(!$("#formDetail").validationEngine('validate')){
+                return false;
+            }
+
+            $('#btnSaveDetail').text('menyimpan...'); //change button text
+            $('#btnSaveDetail').attr('disabled',true); //set button disable
+
+            var url;
+
+            if(save_method_detail === 'add') {
+
+                var dd =  $('#formDetail').serialize();
+                var barang_id =   $('#modal_formDetail').find('[name="nama_barang_so"]').val();
+                var nama_barang =    $("#nama_barang_so :selected").text();
+                var qty =   $('#modal_formDetail').find('[name="qty"]').val();
+                var harga =   $('#modal_formDetail').find('[name="harga"]').val();
+                var total =   harga * qty;
+                var aksi = "<a class='btn btn-sm btn-danger hapus-detail' href='javascript:void(0)' title='Hapus' onclick='hapus_dataDetail()'><i class='glyphicon glyphicon-trash'></i> Delete</a>";
+
+                 iterasi++;
+                table_detail.row.add(['','', barang_id,nama_barang, qty, harga, total, aksi]).draw();
+
+                $('#modal_formDetail').modal('hide');
+                $('#btnSaveDetail').text('simpan'); //change button text
+                $('#btnSaveDetail').attr('disabled',false); //set button enable
+
+            } else {
+
+            }            
         }
 
-        $('#btnSaveDetail').text('menyimpan...'); //change button text
-        $('#btnSaveDetail').attr('disabled',true); //set button disable
-
-        var url;
-
-        if(save_method_detail === 'add') {
-
-            var dd =  $('#formDetail').serialize();
-            var barang_id =   $('#modal_formDetail').find('[name="nama_barang_so"]').val();
-            var nama_barang =    $("#nama_barang_so :selected").text();
-            var qty =   $('#modal_formDetail').find('[name="qty"]').val();
-            var harga =   $('#modal_formDetail').find('[name="harga"]').val();
-            var total =   harga * qty;
-            var aksi = "<a class='btn btn-sm btn-danger hapus-detail' href='javascript:void(0)' title='Hapus' onclick='hapus_dataDetail()'><i class='glyphicon glyphicon-trash'></i> Delete</a>";
-
-             iterasi++;
-            table_detail.row.add(['','', barang_id,nama_barang, qty, harga, total, aksi]).draw();
-
-            $('#modal_formDetail').modal('hide');
-            $('#btnSaveDetail').text('simpan'); //change button text
-            $('#btnSaveDetail').attr('disabled',false); //set button enable
-
-        } else {
-
-        }
     }
 
 </script>

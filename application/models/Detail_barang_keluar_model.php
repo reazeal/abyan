@@ -17,13 +17,13 @@ class Detail_barang_keluar_model extends MY_Model
 
         $this->db->select("
         detail_barang_keluar.id,
-        detail_barang_keluar.barang_keluar_id,
-        detail_barang_keluar.barang_id,
-        detail_barang_kelaur.nama_barang,
-        detail_barang_masuk.qty
+        barang_keluar.kode_barang_keluar,
+        detail_barang_keluar.kode_barang,
+        detail_barang_keluar.nama_barang,
+        detail_barang_keluar.qty, detail_barang_keluar.nomor_referensi
         ");
-        $this->db->join('barang_keluar','barang_keluar.id=detail_barang_keluar.barang_keluar_id');
-        $this->db->where('barang_masuk_id',$id);
+        $this->db->join('barang_keluar','barang_keluar.kode_barang_keluar = detail_barang_keluar.kode_barang_keluar');
+        $this->db->where('barang_keluar.id',$id);
         $query = $this->db->get($this->table);
 
         $totaly2 = $query->num_rows();
@@ -32,9 +32,10 @@ class Detail_barang_keluar_model extends MY_Model
 
                 $data[] = array(
                     'id' => $atributy->id,
-                    'barang_keluar_id' => $atributy->barang_keluar_id,
-                    'barang_id' => $atributy->barang_id,
+                    'kode_barang_keluar' => $atributy->kode_barang_keluar,
+                    'kode_barang' => $atributy->kode_barang,
                     'nama_barang' => $atributy->nama_barang,
+                    'nomor_referensi' => $atributy->nomor_referensi,
                     'qty' => $atributy->qty,
                     'action' => "<a class='btn btn-sm btn-danger' href='javascript:void(0)' title='Hapus' onclick='hapus_dataDetail()'><i class='glyphicon glyphicon-trash'></i> Delete</a>"
                 );

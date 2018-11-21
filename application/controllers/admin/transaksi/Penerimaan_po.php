@@ -198,17 +198,13 @@ class Penerimaan_po extends Admin_Controller
             
             if($jumlah_masuk == 0){
                 $jumlah = 1;
-                $kode_awal = "00001";
+                $kode_awal = "001";
             }else{
                 $jumlah = $jumlah_masuk + 1;
 
                 if(strlen($jumlah_masuk) == 1 ){
-                    $kode_awal = "0000".$jumlah;
-                }else if(strlen($jumlah_masuk) == 2){
-                    $kode_awal = "000".$jumlah;
-                }else if(strlen($jumlah_masuk) == 3){
                     $kode_awal = "00".$jumlah;
-                }else if(strlen($jumlah_masuk) == 4){
+                }else if(strlen($jumlah_masuk) == 2){
                     $kode_awal = "0".$jumlah;
                 }else {
                     $kode_awal = $jumlah;
@@ -238,8 +234,8 @@ class Penerimaan_po extends Admin_Controller
                 'nama_barang' =>  $this->input->post('nama_barang'),
                 'qty' =>  $this->input->post('qty_terima'),
                 'harga_beli' =>  $this->input->post('harga'),
-                'buttom_retail' =>  $this->input->post('buttom_retail'),
-                'buttom_supplier' =>  $this->input->post('buttom_supplier'),                
+                'bottom_retail' =>  $this->input->post('bottom_retail'),
+                'bottom_supplier' =>  $this->input->post('bottom_supplier'),                
                 'keluar' => 0
                                         );
 
@@ -257,8 +253,8 @@ class Penerimaan_po extends Admin_Controller
                 'nama_barang' =>  $this->input->post('nama_barang'),
                 'qty' =>  $this->input->post('qty_terima'),
                 'harga_beli' =>  $this->input->post('harga'),
-                'buttom_retail' =>  $this->input->post('buttom_retail'),
-                'buttom_supplier' =>  $this->input->post('buttom_supplier'),
+                'bottom_retail' =>  $this->input->post('bottom_retail'),
+                'bottom_supplier' =>  $this->input->post('bottom_supplier'),
                 
               //  'kode_penerimaan_po' => $kode,
                 'keluar' => 0
@@ -271,6 +267,9 @@ class Penerimaan_po extends Admin_Controller
         
         $jumlah_order = $this->input->post('qty');
         $jumlah_terima = $this->penerimaan_po_model->total_kode_po($this->input->post('kode_po'));
+       // print_r($jumlah_terima);
+       // echo $jumlah_terima;
+       // die();
         if($jumlah_terima >=  $jumlah_order){
             $status_po = 'Selesai';
         }else{
@@ -285,7 +284,7 @@ class Penerimaan_po extends Admin_Controller
 
         // hutang 
 
-        $data_kode_hutang = $this->hutang_model->get_kode_hutang_by_kode_terima($kode_terima_po, $this->tanggaldb($this->input->post('tanggal')));
+        $data_kode_hutang = $this->hutang_model->get_kode_hutang_by_kode_terima_po($kode_terima_po, $this->tanggaldb($this->input->post('tanggal')));
 
         if($data_kode_hutang == null ){
 
@@ -295,17 +294,13 @@ class Penerimaan_po extends Admin_Controller
             
             if($jumlah_hutang == 0){
                 $jumlah = 1;
-                $kode_awal_hutang = "00001";
+                $kode_awal_hutang = "001";
             }else{
                 $jumlah = $jumlah_hutang + 1;
 
                 if(strlen($jumlah_hutang) == 1 ){
-                    $kode_awal_hutang = "0000".$jumlah;
-                }else if(strlen($jumlah_hutang) == 2){
-                    $kode_awal_hutang = "000".$jumlah;
-                }else if(strlen($jumlah_hutang) == 3){
                     $kode_awal_hutang = "00".$jumlah;
-                }else if(strlen($jumlah_hutang) == 4){
+                }else if(strlen($jumlah_hutang) == 2){
                     $kode_awal_hutang = "0".$jumlah;
                 }else {
                     $kode_awal_hutang = $jumlah;
@@ -324,6 +319,7 @@ class Penerimaan_po extends Admin_Controller
                 'kode_relasi' => $this->input->post('kode_supplier'),
                 'nama_relasi' => $this->input->post('nama_supplier'),
                 'nomor_referensi' => $kode_terima_po,
+                'kode_bantu' => $this->input->post('kode_po'),
                 'jenis' => 'PEMBELIAN' ,
                 'nominal' => $this->input->post('qty_terima') * $this->input->post('harga'),
                 'tanggal' => $this->tanggaldb($this->input->post('tanggal')) ,

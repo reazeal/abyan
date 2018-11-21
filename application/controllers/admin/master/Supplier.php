@@ -65,7 +65,7 @@ class Supplier extends Admin_Controller
 
     public function edit($id)
     {
-        $data = $this->supplier_model->get($id);
+        $data = $this->supplier_model->get_by_id($id);
         $data  = array(
             'id' => $data->id,
             'kode_supplier' => $data->kode_supplier,
@@ -81,13 +81,29 @@ class Supplier extends Admin_Controller
     public function add()
     {
 
-        $datax  = $this->input->post('dataDetail');
-        $json = json_decode($datax);
+        $jumlah_sup = $this->supplier_model->total_sup(); 
+        
+        if($jumlah_sup == 0){
+            $jumlah = 1;
+            $kode_awal = "001";
+        }else{
+            $jumlah = $jumlah_sup + 1;
+
+            if(strlen($jumlah) == 1 ){
+                $kode_awal = "00".$jumlah;
+            }else if(strlen($jumlah) == 2){
+                $kode_awal = "0".$jumlah;
+            }else {
+                $kode_awal = $jumlah;
+            }
+        }
+
+
 
         $data = array(
             'id' => md5('supplier'.$this->input->post('nama').$this->input->post('kode').date('YmdHis')),
             'nama_supplier' => $this->input->post('nama'),
-            'kode_supplier' => $this->input->post('kode'),            
+            'kode_supplier' => "S".$kode_awal,            
             'alamat_supplier' => $this->input->post('alamat'),
             'nomor_telp' => $this->input->post('nomor_telp'),
             //'tgl' => $this->tanggaldb($this->input->post('tgl'))
@@ -99,15 +115,10 @@ class Supplier extends Admin_Controller
 
     public function update()
     {
-        $datax  = $this->input->post('dataDetail');
-        $json = json_decode($datax);
-
         $data = array(
             'nama_supplier' => $this->input->post('nama'),
-            'kode_supplier' => $this->input->post('kode'),            
             'alamat_supplier' => $this->input->post('alamat'),
             'nomor_telp' => $this->input->post('nomor_telp'),
-            //'tgl' => $this->tanggaldb($this->input->post('tgl'))
         );
         $this->supplier_model->update_by_id(array('id' => $this->input->post('id')), $data);
 
