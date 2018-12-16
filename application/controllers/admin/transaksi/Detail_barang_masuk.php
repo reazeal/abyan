@@ -38,9 +38,11 @@ class detail_barang_masuk extends Admin_Controller
     {
         $data = $this->detail_barang_masuk_model->get_by_id($id);
         $data  = array(            
-            'qty_stok' => $data->qty,
+            'qty_stok' => $data->qty - $data->keluar,
             'bottom_retail' => $data->bottom_retail,
             'bottom_supplier' => $data->bottom_supplier,
+            'harga' => $data->harga_beli,
+            'id_detail_barang_masuk' => $data->id
         );
         echo json_encode(array($data));
     }

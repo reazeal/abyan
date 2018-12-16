@@ -162,5 +162,24 @@ class Pengiriman_so_model extends MY_Model
 
     }
 
+    public function get_total_kirim_by_so($noSo)
+    {
+        $this->db->select('sum(qty) as total');
+        $this->db->from($this->table);
+
+        $this->db->where('kode_so',$noSo);
+        $query = $this->db->get();
+
+        $totaly2 = $query->num_rows();
+        if ($totaly2 > 0) {
+            foreach ($query->result() as $atributy) {
+
+                $total_kirim = $atributy->total ;
+                
+            }
+
+        }
+        return $total_kirim;
+    }
 
 }

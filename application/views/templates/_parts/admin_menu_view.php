@@ -31,6 +31,8 @@
                     <li><a href="<?php echo site_url('admin/transaksi/pengiriman_so');?>">Pengiriman SO</a></li>
                     <li><a href="<?php echo site_url('admin/transaksi/barang_keluar');?>">Barang Keluar</a>
                     </li>
+                    <li><a href="<?php echo site_url('admin/transaksi/return_masuk');?>">Return Masuk</a>
+                    </li>
                     
                 </ul>
             </li>
@@ -47,6 +49,12 @@
                     <li><a href="<?php echo site_url('admin/transaksi/pembayaran_hutang');?>">Pembayaran Hutang</a></li>
                     <li><a href="<?php echo site_url('admin/transaksi/pembayaran_piutang');?>">Pembayaran Piutang</a></li>
                     <li><a href="<?php echo site_url('admin/transaksi/transaksi_biaya');?>">Transaksi Biaya</a></li>
+                    <li><a href="<?php echo site_url('admin/transaksi/laba_rugi');?>">Laba Rugi</a></li>
+                </ul>
+            </li>
+            <li><a><i class="fa fa-puzzle-piece"></i> Kunjungan <span class="fa fa-chevron-down"></span></a>
+                <ul class="nav child_menu">
+                    <li><a href="<?php echo site_url('admin/transaksi/kunjungan_outlet');?>">Kunjungan</a></li>
                 </ul>
             </li>
             <li><a><i class="fa fa-file"></i> Laporan <span class="fa fa-chevron-down"></span></a>

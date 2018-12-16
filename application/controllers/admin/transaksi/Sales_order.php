@@ -80,6 +80,7 @@ class Sales_order extends Admin_Controller
            */
                      $row[] = '
                   <a class="btn btn-sm btn-primary" href="javascript:void(0)" title="Detail" onclick="detail_so('."'".$dt->id."'".')"><i class="glyphicon glyphicon-pencil"></i> Detail</a>
+                  <a class="btn btn-sm btn-primary" href="javascript:void(0)" title="Cetak" onclick="cetak_so('."'".$dt->id."'".')"><i class="glyphicon glyphicon-pencil"></i> Cetak</a>
                 ';
             $data[] = $row;
         }
@@ -226,9 +227,23 @@ class Sales_order extends Admin_Controller
             'nama_barang' => $data->nama_barang,
             'qty' => $data->qty,
             'harga' => $data->harga,
+            'harga_beli' => $data->harga_beli,
+            'bottom_retail' => $data->bottom_retail,
+            'bottom_supplier' => $data->bottom_supplier,
+            'id_detail_barang_masuk' => $data->id_detail_barang_masuk,
         );
         echo json_encode(array($data));
     }
 
+    public function cetak_so()
+
+    {
+
+        $datax = $this->detail_so_model->getDataByNoSoCetak('08b14dcdf1214933894bb6f28596fff7');
+       // $datax = $this->detail_so_model->get_by_id();
+        $data['datanya'] = $datax;
+        $this->load->view('admin/transaksi/cetak_so',$data);
+
+    }
 
 }

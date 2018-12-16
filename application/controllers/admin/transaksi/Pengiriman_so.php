@@ -36,6 +36,8 @@ class Pengiriman_so extends Admin_Controller
         $this->load->model('piutang_model');
         $this->load->model('barang_keluar_model');
         $this->load->model('detail_barang_keluar_model');
+        $this->load->model('detail_barang_masuk_model');
+        $this->load->model('detail_so_model');
          
     }
 
@@ -145,6 +147,42 @@ class Pengiriman_so extends Admin_Controller
         $insert = $this->pengiriman_so_model->save($data);
 
 
+        $order = $this->detail_so_model->get_total_qty_so($this->input->post('kode_so'));
+
+        $kirim = $this->pengiriman_so_model->get_total_kirim_by_so($this->input->post('kode_so'));
+
+       // die();
+        //echo $order;
+        //echo $kirim;
+        if( $order > $kirim ){
+            $status_order = "Proses";
+          //  echo "satu";
+        }else{
+            $status_order = "Selesai";
+            //echo "dua";
+        }
+
+        //die();
+
+        $data_so = array(
+            'status' => $status_order
+            
+        );
+        $this->sales_order_model->update_by_no_so($this->input->post('kode_so'), $data_so);
+
+        // update barang masuk
+
+        $barang_masuk_keluar = $this->detail_barang_masuk_model->get_qty_keluar($this->input->post('id_detail_barang_masuk'));
+
+        $data_keluar = array(
+            'keluar' => $barang_masuk_keluar + $this->input->post('qty_kirim')
+            
+        );
+
+        $this->detail_barang_masuk_model->update_by_id($this->input->post('id_detail_barang_masuk'), $data_keluar);        
+
+        // tutup barang masuk
+
         // barang keluar
 
         $kode_keluar = $this->barang_keluar_model->get_kode_by_kode_keluar($kode_kirim,$this->tanggaldb($this->input->post('tanggal')));
@@ -189,6 +227,7 @@ class Pengiriman_so extends Admin_Controller
                 'kode_barang' =>  $this->input->post('kode_barang'),
                 'nama_barang' =>  $this->input->post('nama_barang'),
                 'qty' =>  $this->input->post('qty_kirim'),
+                'id_detail_barang_masuk' =>  $this->input->post('id_detail_barang_masuk'),
                 
             );
 
@@ -206,7 +245,7 @@ class Pengiriman_so extends Admin_Controller
                 'kode_barang' =>  $this->input->post('kode_barang'),
                 'nama_barang' =>  $this->input->post('nama_barang'),
                 'qty' =>  $this->input->post('qty_kirim'),
-                
+                'id_detail_barang_masuk' =>  $this->input->post('id_detail_barang_masuk'),
             );
 
             $this->detail_barang_keluar_model->insert($data_detail_barang);

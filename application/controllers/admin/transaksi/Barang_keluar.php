@@ -31,12 +31,16 @@ class Barang_keluar extends Admin_Controller
         $this->load->model('detail_barang_keluar_model');
         $this->load->model('stok_model');
         $this->load->model('stok_keluar_model');
+        $this->load->model('detail_barang_masuk_model');
+        $this->load->model('transaksi_biaya_model');
+        $this->load->model('jenis_biaya_model');
         
     }
 
     public function index()
     {
         $this->data['pilihan_barang'] = $this->barang_model->get_all();
+        $this->data['pilihan_barang_masuk'] = $this->detail_barang_masuk_model->get_by_penerimaan();
         $this->render('admin/transaksi/Barang_keluar_view');
     }
 
@@ -61,6 +65,7 @@ class Barang_keluar extends Admin_Controller
             $row[] = $this->tanggal($dt->tanggal);
             $row[] = $dt->kode_barang_keluar;
             $row[] = $dt->nomor_referensi;
+            $row[] = $dt->jenis_trans;
             /*
             $row[] = $dt->kode_barang;
             $row[] = $dt->nama_barang;
@@ -115,17 +120,13 @@ class Barang_keluar extends Admin_Controller
         
         if($jumlah_keluar == 0){
             $jumlah = 1;
-            $kode_awal = "00001";
+            $kode_awal = "001";
         }else{
             $jumlah = $jumlah_keluar + 1;
 
             if(strlen($jumlah_keluar) == 1 ){
-                $kode_awal = "0000".$jumlah;
-            }else if(strlen($jumlah_keluar) == 2){
-                $kode_awal = "000".$jumlah;
-            }else if(strlen($jumlah_keluar) == 3){
                 $kode_awal = "00".$jumlah;
-            }else if(strlen($jumlah_keluar) == 4){
+            }else if(strlen($jumlah_keluar) == 2){
                 $kode_awal = "0".$jumlah;
             }else {
                 $kode_awal = $jumlah;
@@ -150,15 +151,15 @@ class Barang_keluar extends Admin_Controller
         if($id){
     
             $i=0;
-            
+            $biaya = 0;
             foreach ($json as $ax) :
               
                 if(!is_object($ax)){
                     if(is_string($ax[0])){
                     
-                        $stok_barang = $this->stok_model->total_perbarang($ax[0]);
+//                        $stok_barang = $this->stok_model->total_perbarang($ax[0]);
                         
-                        $id_detail = md5($id.$ax[0].$ax[1].$stok_barang.date("YmdHis"));
+                        $id_detail = md5($id.$ax[0].$ax[1].date("YmdHis"));
 
                         $data_detail = array(
                             'id' => $id_detail,
@@ -166,13 +167,31 @@ class Barang_keluar extends Admin_Controller
                             'kode_barang' => $ax[0],
                             'nama_barang' => $ax[1],
                             'qty' => $ax[2],
+                            'kode_barang_keluar' => $kode,
                             'nomor_referensi' => $this->input->post('nomor_referensi'),
-                            'saldo_awal' => $stok_barang,
+                            'id_detail_barang_masuk' => $ax[4],
                             'tanggal' => $this->tanggaldb($this->input->post('tanggal'))
                         );
 
+
                         $this->detail_barang_keluar_model->insert($data_detail);
                         
+                        // update barang masuk
+
+                        $barang_masuk_keluar = $this->detail_barang_masuk_model->get_qty_keluar($ax[4]);
+
+                        $data_keluar = array(
+                            'keluar' => $barang_masuk_keluar + $ax[2]
+                            
+                        );
+
+                        $this->detail_barang_masuk_model->update_by_id($ax[4], $data_keluar);        
+
+                        // tutup barang masuk
+
+                        $biaya = $ax[3] + $biaya;
+
+                        /*
                         $stok_limit = $this->barang_model->total_limit_perbarang($ax[0]);
 
                         if($stok_barang - $ax[2] < $stok_limit){
@@ -187,12 +206,34 @@ class Barang_keluar extends Admin_Controller
                         );
 
                         $this->stok_model->update_by_kode($ax[0], $data_stok);
+                        
+                        */
 
                     }   
                 }
                 $i++;
             endforeach;
         }
+
+        if($this->input->post('nama_biaya') == 'PRIBADI'){
+            $jenis_biaya = "100";
+        }else if($this->input->post('nama_biaya') == 'SAMPLE'){
+            $jenis_biaya = "101";
+        }else {
+            $jenis_biaya = "102";
+        }
+
+        $data = array(
+            'id' => md5(rand(1,100).'transaksi_biaya'.$this->input->post('nama_biaya').$this->input->post('nominal').date('YmdHis')),
+            'id_jenis_biaya' => $jenis_biaya,
+            'nominal' => $biaya,            
+            'tanggal' => $this->tanggaldb($this->input->post('tanggal')),
+            'status' => 'Lunas',
+            
+        );
+
+        $insert = $this->transaksi_biaya_model->save($data);
+
         echo json_encode(array("status" => TRUE));
     }
 

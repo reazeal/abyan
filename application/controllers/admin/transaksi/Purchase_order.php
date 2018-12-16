@@ -93,8 +93,8 @@ class Purchase_order extends Admin_Controller
             'qty' => $data->qty,
             'harga' => $data->harga,
             'top' => $data->top,
-            'buttom_retail' => $data->buttom_retail,
-            'buttom_supplier' => $data->buttom_supplier,
+            'bottom_retail' => $data->bottom_retail,
+            'bottom_supplier' => $data->bottom_supplier,
             'tanggal' => $this->tanggal($data->tanggal),
            // 'detailBarangMasuk'=> (array) $this->detail_barang_masuk_model->getDataByTransaksi($id)
         );
@@ -166,8 +166,8 @@ class Purchase_order extends Admin_Controller
                             'nama_barang' => $kode_barang[1],
                             'qty' => $ax[4],
                             'harga' => $ax[5],
-                            'buttom_retail' => $ax[6],
-                            'buttom_supplier' => $ax[7],
+                            'bottom_retail' => $ax[7],
+                            'bottom_supplier' => $ax[8],
                             'status' => 'Proses',
                                                     );
 

@@ -76,8 +76,9 @@ class Detail_so_model extends MY_Model
     public function get_by_id($id)
     {
         $this->db->select('sales_order.id as id_so, detail_so.id as id, sales_order.kode_so as kode_so, detail_so.kode_barang as kode_barang,
-            detail_so.nama_barang as nama_barang, detail_so.qty as qty, detail_so.harga as harga');
+            detail_so.nama_barang as nama_barang, detail_so.qty as qty, detail_so.harga as harga, id_detail_barang_masuk, detail_so.harga_beli, bottom_retail, bottom_supplier');
         $this->db->join('sales_order','sales_order.kode_so = detail_so.kode_so');
+        $this->db->join('detail_barang_masuk','detail_barang_masuk.id = detail_so.id_detail_barang_masuk');
         $this->db->from($this->table);
         $this->db->where('detail_so.id',$id);
         $query = $this->db->get();
@@ -115,16 +116,16 @@ class Detail_so_model extends MY_Model
     public function getDataByNoSO($id){
         $data = array();
         $this->db->select('detail_so.id as id, sales_order.kode_so as kode_so, detail_so.kode_barang as kode_barang,
-            detail_so.nama_barang as nama_barang, detail_so.qty as qty, detail_so.harga as harga, sum(pengiriman_so.qty) as kirim');
+            detail_so.nama_barang as nama_barang, detail_so.qty as qty, detail_so.harga as harga, ifnull(sum(pengiriman_so.qty),0) as kirim');
         $this->db->join('sales_order','sales_order.kode_so = detail_so.kode_so');
-        $this->db->join('pengiriman_so','pengiriman_so.kode_so = detail_so.kode_so');
+        $this->db->join('pengiriman_so','pengiriman_so.kode_so = detail_so.kode_so','left');
         $this->db->where('sales_order.id',$id);
         $query = $this->db->get($this->table);
 
         $totaly2 = $query->num_rows();
         if ($totaly2 > 0) {
             foreach ($query->result() as $atributy) {
-                if($atributy->kirim >= $atributy->kirim){
+                if($atributy->qty > $atributy->kirim){
                     $data[] = array(
                     'id' => $atributy->id,
                     'kode_so' => $atributy->kode_so,
@@ -133,9 +134,9 @@ class Detail_so_model extends MY_Model
                     'qty' => $atributy->qty,
                     'harga' => $atributy->harga,
                     'total' => $atributy->harga * $atributy->qty,
-                    'kirim' => $atributy->kirim,
-                    'action' => ''
-                        
+                    'kirim' => $atributy->kirim,                    
+                    'action' => '<a class="btn btn-sm btn-success" href="javascript:void(0)" title="Kirim" onclick="kirim_so('."'".$atributy->id."'".')"><i class="glyphicon glyphicon-check"></i> Kirim</a>
+                        <a class="btn btn-sm btn-success" href="javascript:void(0)" title="Return" onclick="return_so('."'".$atributy->id."'".')"><i class="glyphicon glyphicon-repeat"></i> Return</a>'    
                     
                     );
                 }else{
@@ -148,7 +149,7 @@ class Detail_so_model extends MY_Model
                     'harga' => $atributy->harga,
                     'total' => $atributy->harga * $atributy->qty,
                     'kirim' => $atributy->kirim,
-                    'action' => '<a class="btn btn-sm btn-success" href="javascript:void(0)" title="Kirim" onclick="kirim_so('."'".$atributy->id."'".')"><i class="glyphicon glyphicon-check"></i> Kirim</a>'
+                    'action' => '<a class="btn btn-sm btn-success" href="javascript:void(0)" title="Return" onclick="return_so('."'".$atributy->id."'".')"><i class="glyphicon glyphicon-repeat"></i>Return</a>'
                      );
                 }    
             }
@@ -158,6 +159,25 @@ class Detail_so_model extends MY_Model
 
     }
 
+    public function get_total_qty_so($noSo)
+    {
+        $this->db->select('sum(qty) as total');
+        $this->db->from($this->table);
+
+        $this->db->where('kode_so',$noSo);
+        $query = $this->db->get();
+
+        $totaly2 = $query->num_rows();
+        if ($totaly2 > 0) {
+            foreach ($query->result() as $atributy) {
+
+                $total_order = $atributy->total ;
+                
+            }
+
+        }
+        return $total_order;
+    }
 
     public function get_jumlah_barang_between($awal, $akhir){
         $data = array();
@@ -181,6 +201,36 @@ class Detail_so_model extends MY_Model
                 'satuan' => $atributy->satuan,
                     
                 );
+            }
+
+        }
+        return $data;
+
+    }
+
+
+    public function getDataByNoSoCetak($id){
+        $data = array();
+        $this->db->select('detail_so.id as id, sales_order.kode_so as kode_so, detail_so.kode_barang as kode_barang,
+            detail_so.nama_barang as nama_barang, detail_so.qty as qty, detail_so.harga as harga, ifnull(sum(pengiriman_so.qty),0) as kirim');
+        $this->db->join('sales_order','sales_order.kode_so = detail_so.kode_so');
+        $this->db->join('pengiriman_so','pengiriman_so.kode_so = detail_so.kode_so','left');
+        $this->db->where('sales_order.id',$id);
+        $query = $this->db->get($this->table);
+
+        $totaly2 = $query->num_rows();
+        if ($totaly2 > 0) {
+            foreach ($query->result() as $atributy) {
+                    $data[] = array(
+                    'id' => $atributy->id,
+                    'kode_so' => $atributy->kode_so,
+                    'kode_barang' => $atributy->kode_barang,
+                    'nama_barang' => $atributy->nama_barang,
+                    'qty' => $atributy->qty,
+                    'harga' => $atributy->harga,
+                    'total' => $atributy->harga * $atributy->qty,
+                    'kirim' => $atributy->kirim,
+                    );       
             }
 
         }

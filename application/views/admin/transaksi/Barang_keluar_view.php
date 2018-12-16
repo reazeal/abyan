@@ -29,6 +29,7 @@
                                     <th>Tanggal</th>
                                     <th>Kode Keluar</th>
                                     <th>Nomor Referensi</th>
+                                    <th>Jenis</th>
                                     <th>Keterangan</th>
                                     <th>Action</th>
                                 </tr>
@@ -114,6 +115,8 @@
                 { title: "Id" },
                 { title: "Nama Barang" },
                 { title: "Qty" },
+                { title: "Harga" },
+                { title: "ID Detail" },
                 { title: "Action" , width:'25'}
             ],
             "columnDefs": [
@@ -122,6 +125,12 @@
                     "orderable": false
                 },{
                     "targets": [0],
+                    "visible": false
+                },{
+                    "targets": [3],
+                    "visible": false
+                },{
+                    "targets": [4],
                     "visible": false
                 }
             ]
@@ -506,47 +515,24 @@
 
         if(save_method_detail === 'add') {
 
+            
 
             var dd =  $('#formDetail').serialize();
             var barang_id =   $('#modal_formDetail').find('[name="nama_barang"]').val();
-            var nama_barang =    $("#nama_barang :selected").text();
+            var nama_barangx =    $("#nama_barang :selected").text();
+            var nama_barang = nama_barangx.split("-");
             var qty =   $('#modal_formDetail').find('[name="qty"]').val();
+            var harga =   $('#modal_formDetail').find('[name="harga"]').val();
+            var id_detail_barang_masuk =   $('#modal_formDetail').find('[name="id_detail_barang_masuk"]').val();
             var aksi = "<a class='btn btn-sm btn-danger hapus-detail' href='javascript:void(0)' title='Hapus' onclick='hapus_dataDetail()'><i class='glyphicon glyphicon-trash'></i> Delete</a>";
 
             //alert(barang_id);
             
-            $.ajax({
-                url : "<?php echo site_url('admin/transaksi/barang_keluar/cek_stok')?>/"+barang_id+"/"+qty, 
-                type: "POST",
-                dataType: "JSON",
-                success: function(data)
-                {   
-                    
-                    if(data.status){ //if success close modal and reload ajax table
-                        //$('#modal_form').modal('hide');
-                        //reload_table();
-
                         iterasi++;
-                        table_detail.row.add([barang_id,nama_barang, qty, aksi]).draw();
+                        table_detail.row.add([nama_barang[0],nama_barang[1], qty, harga, id_detail_barang_masuk, aksi]).draw();
 
                         $('#modal_formDetail').modal('hide');
-                        
-
-                    } else {
-                        alert(data.info);
-                    }
-
-                    //if success reload ajax table
-                   // $('#modal_form').modal('hide');
-                   // reload_table();
-                },
-                error: function (jqXHR, textStatus, errorThrown)
-                {
-                    alert('Error deleting data');
-                }
-            });
             
-
            // iterasi++;
             //table_detail.row.add([barang_id,nama_barang, qty, aksi]).draw();
 
@@ -605,6 +591,32 @@
 
         }
     }
+
+    function get_harga(id) {
+
+    //$('[name="qty_stok"]').val('100');
+
+     $.ajax({
+            url : "<?php echo site_url('admin/transaksi/detail_barang_masuk/get_by_id/')?>" + id,
+            type: "GET",
+            dataType: "JSON",
+            success: function(data)
+            {
+                $('[name="qty_stok"]').val(data[0]['qty_stok']);
+                $('[name="bottom_retail"]').val(data[0]['bottom_retail']);
+                $('[name="bottom_supplier"]').val(data[0]['bottom_supplier']);                
+                $('[name="harga"]').val(data[0]['harga']);                
+                $('[name="id_detail_barang_masuk"]').val(data[0]['id_detail_barang_masuk']); 
+
+            },
+            error: function (jqXHR, textStatus, errorThrown)
+            {
+                alert('Error get data from ajax');
+            }
+        });
+
+    }
+
 </script>
 
 <!-- Bootstrap modal -->
@@ -642,8 +654,9 @@
                             <div class="col-md-9">
                                 <select name="jenis_trans" class="validate[required] form-control" required="required">
                                     <option value="">--Pilih Trans--</option>
-                                    <option value="PEMBELIAN">Penjualan</option>
-                                    <option value="RETURN">Return</option>                                    
+                                    <option value="PRIBADI">Pribadi</option>
+                                    <option value="SAMPLE">Sample</option>    
+                                    <option value="SPONSORSHIP">Sponsorship</option>                         
                                 </select>
                                 <span class="help-block"></span>
                             </div>
@@ -668,6 +681,8 @@
                         <th>Id</th>
                         <th>Nama Barang</th>
                         <th>Qty</th>
+                        <th>Harga</th>
+                        <th>ID</th>
                         <th>Action</th>
                     </tr>
                     </thead>
@@ -764,32 +779,56 @@
             <div class="modal-body form">
                 <form action="#" id="formDetail" class="form-horizontal">
                     <input type="hidden" value="" name="id"/>
+                    <input type="hidden" value="" name="harga"/>
+                    <input type="hidden" value="" name="id_detail_barang_masuk"/>
                     <div class="form-body">
 
                         <div class="form-group">
-                        <label class="col-sm-3 control-label">Barang</label>
-
-                        <div class="col-sm-9">
-                          
-                          <div class="input-group">
-                            <select id="nama_barang" name="nama_barang" data-live-search="true"  class="selectpicker validate[required] form-control" required="required">
+                            <label class="control-label col-md-3">Barang<span class="required">*</span></label>
+                            <div class="col-md-6">
+                                <select id="nama_barang" name="nama_barang" data-live-search="true"  class="selectpicker validate[required] form-control" required="required" onchange="get_harga(this.value)">
                                     <option value="">--Pilih Barang--</option>
                                     <?php
-                                    foreach ($pilihan_barang as $row3):
+                                    foreach ($pilihan_barang_masuk as $row3):
                                         ?>
-                                        <option value="<?php echo $row3->kode; ?>"><?php echo $row3->nama." (".($row3->satuan)." )"; ?></option>
+                                        <option value="<?php echo $row3->id; ?>"><?php echo $row3->kode_barang."-".$row3->nama_barang."-".$row3->tanggal; ?></option>
                                         <?php
 
                                     endforeach;
                                     ?>
-                                </select>                           
-                          </div>
+                                </select>
+                                <span class="help-block"></span>
+                            </div>
                         </div>
-                      </div>
+
                       <div class="divider-dashed"></div>
 
+                      <div class="form-group">
+                            <label class="control-label col-md-3">Qty Stok<span class="required">*</span></label>
+                            <div class="col-md-6">
+                                <input name="qty_stok" placeholder="Qty Stok" class="validate[required,custom[number]] form-control" type="text" required="required" readonly="true">
+                                <span class="help-block"></span>
+                            </div>
+                        </div>
+
                         <div class="form-group">
-                            <label class="control-label col-md-3">Qty<span class="required">*</span></label>
+                            <label class="control-label col-md-3">Harga Retail<span class="required">*</span></label>
+                            <div class="col-md-6">
+                                <input name="bottom_retail" placeholder="Bottom Retail" class="validate[required,custom[number]] form-control" type="text" required="required" readonly="true">
+                                <span class="help-block"></span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label col-md-3">Harga Supplier<span class="required">*</span></label>
+                            <div class="col-md-6">
+                                <input name="bottom_supplier" placeholder="Bottom Supplier" class="validate[required,custom[number]] form-control" type="text" required="required" readonly="true">
+                                <span class="help-block"></span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label col-md-3">Qty Keluar<span class="required">*</span></label>
                             <div class="col-md-6">
                                 <input name="qty" placeholder="Qty" class="validate[required,custom[number]] form-control" type="text" required="required">
                                 <span class="help-block"></span>

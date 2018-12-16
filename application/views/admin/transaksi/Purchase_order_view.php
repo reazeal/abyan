@@ -282,8 +282,8 @@
                 $('[name="qty"]').val(data[0]['qty']);
                 $('[name="harga"]').val(data[0]['harga']);
                 $('[name="top"]').val(data[0]['top']);
-                $('[name="buttom_supplier"]').val(data[0]['buttom_supplier']);
-                $('[name="buttom_retail"]').val(data[0]['buttom_retail']);
+                $('[name="bottom_supplier"]').val(data[0]['bottom_supplier']);
+                $('[name="bottom_retail"]').val(data[0]['bottom_retail']);
                 $('[name="harga_beli"]').val(data[0]['harga_beli']);
                 $('[name="qty_terima"]').val("0");
 
@@ -811,8 +811,8 @@
                     <input type="hidden" value="" name="kode_supplier"/>
                     <input type="hidden" value="" name="kode_barang"/>
                     <input type="hidden" value="" name="harga"/>
-                    <input type="hidden" value="" name="buttom_retail"/>
-                    <input type="hidden" value="" name="buttom_supplier"/>
+                    <input type="hidden" value="" name="bottom_retail"/>
+                    <input type="hidden" value="" name="bottom_supplier"/>
                     <input type="hidden" value="" name="top"/>
                     <div class="form-group">
                         <label class="control-label col-md-3">Tanggal Terima <span class="required">*</span></label>

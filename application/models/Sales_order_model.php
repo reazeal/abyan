@@ -134,6 +134,13 @@ class Sales_order_model extends MY_Model
         return $this->db->affected_rows();
     }
 
+    public function update_by_no_so($kode_so, $data)
+    {
+        $this->db->where('kode_so',$kode_so);
+        $this->db->update($this->table, $data);
+        return $this->db->affected_rows();
+    }
+
     public function delete_by_id($id)
     {
         $this->db->where($this->primary_key, $id);

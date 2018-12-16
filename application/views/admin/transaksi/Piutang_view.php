@@ -216,7 +216,7 @@
                 $('[name="kode_bantu"]').val(data[0]['kode_bantu']);
                 
                 $('#modal_form_bayar').modal('show'); // show bootstrap modal when complete loaded
-                $('.modal-title').text('Bayar Hutang'); // Set title to Bootstrap modal title
+                $('.modal-title').text('Bayar Piutang'); // Set title to Bootstrap modal title
 
             },
             error: function (jqXHR, textStatus, errorThrown)

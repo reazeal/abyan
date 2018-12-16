@@ -93,7 +93,7 @@ class Purchase_order_model extends MY_Model
         kode_barang,
         kode_supplier,
         nama_barang,
-        qty, harga, top, buttom_retail, buttom_supplier
+        qty, harga, top, bottom_retail, bottom_supplier
         ");
 
         $this->db->join('detail_po','purchase_order.kode_po = detail_po.kode_po');

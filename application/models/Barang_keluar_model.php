@@ -8,7 +8,7 @@ class Barang_keluar_model extends MY_Model
     public $primary_key = 'id';
     public $column_order = array(null, 'id','tanggal','nomor_referensi','kode_barang_keluar','keterangan',null);
     public $column_search = array('id','tanggal','nomor_referensi','keterangan','kode_barang_keluar');
-    public $order = array('id' => 'desc'); // default order
+    public $order = array('tanggal' => 'desc'); // default order
 
     public function __construct()
     {

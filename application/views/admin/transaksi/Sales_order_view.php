@@ -255,9 +255,51 @@
                 $('[name="nama_barang"]').val(data[0]['nama_barang']);
                 $('[name="harga"]').val(data[0]['harga']);
                 $('[name="qty_order"]').val(data[0]['qty']);
-
+                
+                $('[name="id_detail_barang_masuk"]').val(data[0]['id_detail_barang_masuk']);
                 $('#modal_form_kirim').modal('show'); // show bootstrap modal when complete loaded
                 $('.modal-title').text('Kirim Sales Order'); // Set title to Bootstrap modal title
+
+            },
+            error: function (jqXHR, textStatus, errorThrown)
+            {
+                alert('Error get data from ajax');
+            }
+        });
+    }
+
+    function return_so(id)
+    {
+
+        $('#modal_detail_so').modal('hide');
+
+        save_method = 'update';
+        $('#form_return')[0].reset(); // reset form on modals
+        $('.form-group').removeClass('has-error'); // clear error class
+        $('.help-block').empty(); // clear error string
+
+        //Ajax Load data from ajax
+        $.ajax({
+            url : "<?php echo site_url('admin/transaksi/sales_order/edit/')?>" + id,
+            type: "GET",
+            dataType: "JSON",
+            success: function(data)
+            {
+                $('[name="id_so"]').val(data[0]['id_so']);                
+                $('[name="id"]').val(data[0]['id']);
+                $('[name="kode_so"]').val(data[0]['kode_so']);
+                $('[name="kode_barang"]').val(data[0]['kode_barang']);
+                $('[name="nama_barang"]').val(data[0]['nama_barang']);
+                $('[name="harga"]').val(data[0]['harga']);
+                $('[name="qty_order"]').val(data[0]['qty']);
+                $('[name="harga"]').val(data[0]['harga']);
+                $('[name="harga_beli"]').val(data[0]['harga_beli']);
+                $('[name="bottom_supplier"]').val(data[0]['bottom_supplier']);
+                $('[name="bottom_retail"]').val(data[0]['bottom_retail']);
+                $('[name="id_detail_barang_masuk"]').val(data[0]['id_detail_barang_masuk']);
+                //$('#modal_form_kirim').modal('show'); // show bootstrap modal when complete loaded
+                $('#modal_form_return').modal('show'); // show bootstrap modal when complete loaded
+                $('.modal-title').text('Return Sales Order'); // Set title to Bootstrap modal title
 
             },
             error: function (jqXHR, textStatus, errorThrown)
@@ -459,6 +501,62 @@
         });
     }
 
+
+    function simpan_return()
+    {
+
+        var url;
+
+        url = "<?php echo site_url('admin/transaksi/return_masuk/add')?>";
+
+        seen = [];
+
+        var id_so = $('#form_kirim').find('input[name="id_so"]').val();
+
+        if(!$("#form_return").validationEngine('validate')){
+            return false;
+        }
+
+
+        $('#btnSave').text('menyimpan...'); //change button text
+        $('#btnSave').attr('disabled',true); //set button disable
+
+        // ajax adding data to database
+        $.ajax({
+            url : url,
+            type: "POST",
+            data: $('#form_return').serialize(),
+            dataType: "JSON",
+            success: function(data)
+            {
+
+                if(data.status) //if success close modal and reload ajax table
+                {
+                    if(save_method === 'add') {
+                        $('#modal_form_return').modal('hide');
+                    }else{
+                        $('#modal_form_return').modal('hide');
+                    }
+                    reload_table();
+                }
+
+                $('#btnSave').text('simpan'); //change button text
+                $('#btnSave').attr('disabled',false); //set button enable
+
+                detail_so(id_so);
+
+            },
+            error: function (jqXHR, textStatus, errorThrown)
+            {
+                alert('Error adding / update data');
+                $('#btnSave').text('simpan'); //change button text
+                $('#btnSave').attr('disabled',false); //set button enable
+
+            }
+        });
+    }
+
+
     function hapus_dataDetail() {
         //alert('tes');
         $('#datatable-detail').on( 'click', '.hapus-detail', function () {
@@ -587,6 +685,7 @@
                     <input type="hidden" value="" name="id_so"/>
                     <input type="hidden" value="" name="kode_barang"/>
                     <input type="hidden" value="" name="harga"/>
+                    <input type="hidden" value="" name="id_detail_barang_masuk"/>
 
                     <div class="form-group">
                         <label class="control-label col-md-3">Tanggal Kirim<span class="required">*</span></label>
@@ -659,6 +758,112 @@
     </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 <!-- End Bootstrap modal -->
+
+
+
+<!-- Bootstrap modal -->
+<div class="modal fade" id="modal_form_return" role="dialog" style="overflow-y: auto !important;">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h3 class="modal-title">Form Retun SO</h3>
+            </div>
+            <div class="modal-body form">
+                <form action="#" id="form_return" class="form-horizontal">
+                    <input type="hidden" value="" name="id"/>
+                    <input type="hidden" value="" name="id_so"/>
+                    <input type="hidden" value="" name="kode_barang"/>
+                    <input type="hidden" value="" name="harga_beli"/>
+                    <input type="hidden" value="" name="id_detail_barang_masuk"/>
+
+                    <div class="form-group">
+                        <label class="control-label col-md-3">Tanggal Return<span class="required">*</span></label>
+                        <div class="col-md-9">
+                            <input placeholder="dd-mm-yyyy" name="tanggal" class="validate[required] form-control datepicker" type="text" required="required">
+                            <span class="help-block"></span>
+                        </div>
+                    </div>
+
+                    <div class="form-body">
+                        <div class="form-group">
+                            <label class="control-label col-md-3">No. So <span class="required">*</span></label>
+                            <div class="col-md-9">
+                                <input name="kode_so" placeholder="Nomor So" class="validate[required,minSize[6]] form-control" type="text" required="required" data-validate-length-range="6" data-validate-words="2" readonly="true">
+                                <span class="help-block"></span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label col-md-3">Nama Barang <span class="required">*</span></label>
+                            <div class="col-md-9">
+                                <input name="nama_barang" placeholder="Nama Barang" class="validate[required,minSize[6]] form-control" type="text" required="required" data-validate-length-range="6" data-validate-words="2" readonly="true">
+                                <span class="help-block"></span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label col-md-3">QTY Order<span class="required">*</span></label>
+                            <div class="col-md-6">
+                                <input name="qty_order" placeholder="Qty order" class="validate[required,custom[number]] form-control" type="text" readonly="true">
+                            <span class="help-block"></span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                        <label class="control-label col-md-3">QTY Return<span class="required">*</span></label>
+                        <div class="col-md-6">
+                            <input name="qty_return" placeholder="Qty Return" class="validate[required,custom[number]] form-control" type="text" required="required">
+                            <span class="help-block"></span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                        <label class="control-label col-md-3">Harga<span class="required">*</span></label>
+                        <div class="col-md-6">
+                            <input name="harga" placeholder="Harga" class="validate[required,custom[number]] form-control" type="text" required="required">
+                            <span class="help-block"></span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                        <label class="control-label col-md-3">Bottom Retail<span class="required">*</span></label>
+                        <div class="col-md-6">
+                            <input name="bottom_retail" placeholder="Bottom Retail" class="validate[required,custom[number]] form-control" type="text" required="required" readonly="true">
+                            <span class="help-block"></span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                        <label class="control-label col-md-3">Bottom Supplier<span class="required">*</span></label>
+                        <div class="col-md-6">
+                            <input name="bottom_supplier" placeholder="Bottom Supplier" class="validate[required,custom[number]] form-control" type="text" required="required" readonly="true">
+                            <span class="help-block"></span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label col-md-3">Alasan Return <span class="required">*</span></label>
+                            <div class="col-md-9">
+                                <input name="alasan_return" placeholder="Alasan Return" class="validate[required,minSize[6]] form-control" type="text" required="required" data-validate-length-range="6" data-validate-words="2" >
+                                <span class="help-block"></span>
+                            </div>
+                        </div>
+
+                       
+                    </div>
+
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btnSave" onclick="simpan_return()" class="btn btn-primary">Simpan</button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Batal</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+<!-- End Bootstrap modal -->
+
 
 
 <div class="modal fade" id="modal_detail_barang" role="dialog">
@@ -797,6 +1002,24 @@
     </div>
 </div>
 
+<div class="modal fade modal-lg" id="cetakan_gt" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg col-xs-12 col-md-12" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Cetakan</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <iframe id='attachment' width='100%' height='400' frameborder='0' allowfullscreen></iframe>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Tutup</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <script>
 
@@ -809,9 +1032,13 @@
 
         var bottom_retail = $('#formDetail').find('input[name="bottom_retail"]').val();
         var harga = $('#formDetail').find('input[name="harga"]').val();
+        var qty_stok = $('#formDetail').find('input[name="qty_stok"]').val();
+        var qty = $('#formDetail').find('input[name="qty"]').val();
         
         if(parseInt(harga) < parseInt(bottom_retail)){
-            alert('Harga Tidak dibolehkah');
+            alert('Tidak di perbolehkan dibawah harga minimum');
+        }else if(parseInt(qty_stok) < parseInt(qty)){
+            alert('Jumlah Order Melebihi Stok');
         }else{
             
             if(!$("#formDetail").validationEngine('validate')){
@@ -845,6 +1072,21 @@
             }            
         }
 
+    }
+
+    function cetak_so($id)
+    {
+
+        if(!$("#form").validationEngine('validate')){
+            return false;
+        }
+
+        $('.modal-title').text('Cetak'); // Set Title to Bootstrap modal title
+        //var src = '<?php echo site_url('admin/sales_order/cetak_so/')?>'+$id;
+        var src = '<?php echo site_url('admin/transaksi/sales_order/cetak_so')?>';
+        $("#attachment").attr('src', src);
+        $('#cetakan_gt').modal('show');
+        return false;
     }
 
 </script>

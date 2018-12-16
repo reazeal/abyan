@@ -103,9 +103,10 @@ class Detail_barang_masuk_model extends MY_Model
 
    
 
-    public function update_by_id($where, $data)
+    public function update_by_id($id, $data)
     {
-        $this->db->update($this->table, $data, $where);
+        $this->db->where('id',$id);
+        $this->db->update($this->table, $data);
         return $this->db->affected_rows();
     }
 
@@ -186,29 +187,34 @@ class Detail_barang_masuk_model extends MY_Model
         $data = array();
         $this->db->select('detail_barang_masuk.kode_barang, detail_barang_masuk.id, detail_barang_masuk.nama_barang, barang_masuk.tanggal');
         $this->db->join('barang_masuk','detail_barang_masuk.kode_barang_masuk = barang_masuk.kode_barang_masuk');
-
+        $this->db->where('detail_barang_masuk.qty != detail_barang_masuk.keluar ');
         $query = $this->db->get($this->table);
 
         $totaly2 = $query->num_rows();
         //return $query->row();
         return $query->result();
         
-        /*
+       
+    }
+
+    public function get_qty_keluar($id)
+    {
+        $this->db->select('keluar');
+        $this->db->from($this->table);
+
+        $this->db->where('id',$id);
+        $query = $this->db->get();
+
+        $totaly2 = $query->num_rows();
         if ($totaly2 > 0) {
             foreach ($query->result() as $atributy) {
 
-                    $data[] = array(
-                    'id' => $atributy->id,
-                    'kode_barang' => $atributy->kode_barang,
-                    'nama_barang' => $atributy->nama_barang,
-                    
-                );
+                $keluar = $atributy->keluar ;
                 
             }
 
         }
-        return $data;
-        */
+        return $keluar;
     }
 
 }
