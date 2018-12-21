@@ -35,6 +35,12 @@ class Dashboard extends Admin_Controller
         $this->data['nominal_piutang']= $this->piutang_model->get_piutang_sekarang();
         $this->data['jml_qty']= $this->sales_order_model->get_penjualan_bulan_sekarang();
         $this->data['top_customer']= $this->sales_order_model->get_top_customer();
+        $qty_bulan= $this->sales_order_model->get_qty_per_bulan();
+        
+        $this->data['a_qty_bulan']=array();
+        foreach ($qty_bulan as $row){
+            $this->data['a_qty_bulan'][$row->bulan]=$row->jmlqty;
+        }
         
         $this->data['menu_data'] = array('master' =>false,'transaksi'=>false,'dashboard'=>true,'cetakan'=>false,'class_master'=>'collapse','class_transaksi'=>'collapse');
 
