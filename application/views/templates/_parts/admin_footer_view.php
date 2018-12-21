@@ -13,13 +13,9 @@
 <script src="<?php echo site_url('assets/vendors/fastclick/lib/fastclick.js');?>"></script>
 <!-- NProgress -->
 <script src="<?php echo site_url('assets/vendors/nprogress/nprogress.js');?>"></script>
-<!-- Chart.js -->
-<script src="<?php echo site_url('assets/vendors/Chart.js/dist/Chart.min.js');?>"></script>
 <!-- jQuery Sparklines -->
 <script src="<?php echo site_url('assets/vendors/jquery-sparkline/dist/jquery.sparkline.min.js');?>"></script>
 <!-- morris.js -->
-<script src="<?php echo site_url('assets/vendors/raphael/raphael.min.js');?>"></script>
-<script src="<?php echo site_url('assets/vendors/morris.js/morris.min.js');?>"></script>
 <!-- gauge.js -->
 <script src="<?php echo site_url('assets/vendors/gauge.js/dist/gauge.min.js');?>"></script>
 <!-- bootstrap-progressbar -->

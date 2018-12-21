@@ -201,5 +201,35 @@ class Sales_order_model extends MY_Model
 
     }
 
-
+    public function get_penjualan_bulan_sekarang(){
+        $this->db->select("sum(qty) as jmlqty");
+        $this->db->from($this->table.' so');
+        $this->db->join('detail_so dso','so.kode_so=dso.kode_so');
+        $this->db->where("month(so.tanggal) = month(curdate()) and year(tanggal)=year(curdate())");
+        $query = $this->db->get();
+        return $query->row()->jmlqty;
+    }
+    
+    public function get_top_customer(){
+        $this->db->select("nama_customer, count(1) as jumlah");
+        $this->db->from($this->table);
+        $this->db->where("month(tanggal) = month(curdate()) and year(tanggal)=year(curdate())");
+        $this->db->group_by("nama_customer");
+        $this->db->order_by("jumlah", "desc");
+        $this->db->limit('5');
+        $query = $this->db->get();
+        
+        return $query->result();
+    }
+    
+    public function get_qty_per_bulan(){
+        $this->db->select("month(so.tanggal) as bulan, sum(qty) as jmlqty");
+        $this->db->from($this->table.' so');
+        $this->db->join('detail_so dso','so.kode_so=dso.kode_so');
+        $this->db->where("year(tanggal)=year(curdate())");
+        $this->db->group_by("month(so.tanggal)");
+        $this->db->order_by("bulan", "asc");
+        $query = $this->db->get();
+        return $query->result();
+    }
 }
