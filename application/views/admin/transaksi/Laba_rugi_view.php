@@ -15,9 +15,47 @@
                             <div class="clearfix"></div>
                         </div>
                         <div class="x_content">
-                            <p>
-                                <!-- 
-                                <button class="btn btn-success" onclick="add_barang()"><i class="glyphicon glyphicon-plus"></i> Tambah piutang Barang</button> -->
+                            <!-- Modal -->
+                            <div id="modalGenerate" class="modal fade" role="dialog">
+                              <div class="modal-dialog">
+
+                                <!-- Modal content-->
+                                <div class="modal-content">
+                                    <form action="<?= site_url('admin/transaksi/laba_rugi/generate')?>" method="POST">
+                                  <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                    <h4 class="modal-title">Generate Laba Rugi</h4>
+                                  </div>
+                                  <div class="modal-body" style="min-height: 100px;">
+                                    <div class="form-group">
+                                      <label class="control-label col-md-3">Bulan Awal:</label>
+                                      <div class="col-md-4">
+                                        <select name="bulan" class="form-control">
+                                          <?php foreach($a_bulan as $key => $value){
+                                              echo '<option value="'.$key.'">'.$value.'</option>';
+                                          }?>
+                                        </select>
+                                      </div>
+                                      <div class="col-md-4">
+                                        <select name="tahun" class="form-control">
+                                          <?php foreach($a_tahun as $key => $value){
+                                              echo '<option value="'.$key.'">'.$value.'</option>';
+                                          }?>
+                                        </select>
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div class="modal-footer">
+                                    <button type="submit" class="btn btn-primary">Generate</button>
+                                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                                  </div>
+                                      </form> 
+                                </div>
+
+                              </div>
+                            </div>
+                            <p> 
+                                <button class="btn btn-success" data-toggle="modal" data-target="#modalGenerate"><i class="glyphicon glyphicon-usd"></i> Generate laba rugi</button>
                                 <button class="btn btn-default" onclick="reload_table()"><i class="glyphicon glyphicon-refresh"></i> Reload</button>
                             </p>
 
@@ -28,11 +66,11 @@
                                     <th>No</th>
                                     <th>id</th>
                                     <th>Tanggal</th>
-                                    <th>Piutang</th>
+                                    <th>Periode</th>
                                     <th>Total Pendapatan</th>
                                     <th>Total Biaya</th>
-                                    <th>Laba Rugi</th>                                    
-                                    <th>Action</th>
+                                    <th>Total Pembelian</th>
+                                    <th>Laba Rugi</th>   
                                 </tr>
                                 </thead>
 

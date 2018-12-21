@@ -152,6 +152,68 @@ class Laba_rugi_model extends MY_Model
 
         return $query->row();
     }
+    
+    //untuk laba rugi
+    public function total_pendapatan_perbulan_tahun($bulan,$tahun){
+        $this->db->select("
+            ifnull(sum(pp.nominal),0) as total 
+            from piutang p
+            join pembayaran_piutang pp using (kode_piutang)
+        ");
+        $this->db->where(" month(pp.tanggal)='$bulan' and year(pp.tanggal) = '$tahun' ");
+        $query = $this->db->get();
 
+        $totaly2 = $query->num_rows();
+        if ($totaly2 > 0) {
+            foreach ($query->result() as $atributy) {
+
+                $total = $atributy->total ;
+                
+            }
+
+        }
+        return $total;
+    }
+
+    public function total_biaya_perbulan_tahun($bulan,$tahun){
+        $this->db->select("
+            ifnull(sum(nominal),0) as total 
+            from transaksi_biaya
+        ");
+        $this->db->where(" month(tanggal)='$bulan' and year(tanggal) = '$tahun' and status='Lunas' ");
+        $query = $this->db->get();
+
+        $totaly2 = $query->num_rows();
+        if ($totaly2 > 0) {
+            foreach ($query->result() as $atributy) {
+
+                $total = $atributy->total ;
+                
+            }
+
+        }
+        return $total;
+    }
+    
+    
+    public function total_hutang_perbulan_tahun($bulan,$tahun){
+        $this->db->select("
+            ifnull(sum(pp.nominal),0) as total 
+            from hutang p
+            join pembayaran_hutang pp using (kode_hutang)
+        ");
+        $this->db->where(" month(pp.tanggal)='$bulan' and year(pp.tanggal) = '$tahun' ");
+        $query = $this->db->get();
+
+        $totaly2 = $query->num_rows();
+        if ($totaly2 > 0) {
+            foreach ($query->result() as $atributy) {
+
+                $total = $atributy->total ;
+                
+            }
+        }
+        return $total;
+    }
 
 }
