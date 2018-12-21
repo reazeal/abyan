@@ -37,7 +37,56 @@ class Laba_rugi extends Admin_Controller
         //$this->data['pilihan_barang'] = $this->barang_model->get_all();
         //$this->data['pilihan_rak'] = $this->rak_model->get_all();
         //$this->data['pilihan_gudang'] = $this->gudang_model->get_all();
+        $this->data['a_bulan']=array('1'=>'Januari',
+            '2'=>'Februari',
+            '3'=>'Maret',
+            '4'=>'April',
+            '5'=>'Mei',
+            '6'=>'Juni',
+            '7'=>'Juli',
+            '8'=>'Agustus',
+            '9'=>'September',
+            '10'=>'Oktober',
+            '11'=>'November',
+            '12'=>'Desember'
+            );
+        
+        $tahunskrng=date('Y');
+        $a_tahun[$tahunskrng]=$tahunskrng;
+        for($i=0;$i<=5;$i++){
+            $tahunskrng=$tahunskrng-1;
+            $a_tahun[$tahunskrng]=$tahunskrng;
+        };
+        
+        $this->data['a_tahun']=$a_tahun;
         $this->render('admin/transaksi/Laba_rugi_view');
+    }
+    
+    public function generate(){
+        $bulan=$this->input->post('bulan');
+        $tahun=$this->input->post('tahun');
+        $pendapatan=$this->laba_rugi_model->total_pendapatan_perbulan_tahun($bulan,$tahun); 
+        $biaya=$this->laba_rugi_model->total_biaya_perbulan_tahun($bulan,$tahun);
+        $hutang=$this->laba_rugi_model->total_hutang_perbulan_tahun($bulan,$tahun);
+        $id=md5($bulan.'/'.$tahun);
+        $data = array(
+            'id' => $id,
+            'periode' => $bulan.'/'.$tahun,
+            'total_pendapatan' => $pendapatan,            
+            'total_biaya' => $biaya,          
+            'total_pembelian' => $hutang,
+            'tanggal' => date('Y-m-d'),
+            'created_at' => date('Y-m-d H:i:s'),
+            'updated_at' => ''
+        );
+        
+        $dataexist=$this->laba_rugi_model->get_by_id($id);
+        if($dataexist){
+            $this->laba_rugi_model->update_by_id(array('id' => $id), $data);
+        }else{
+            $this->laba_rugi_model->save($data);
+        }
+        redirect('admin/transaksi/laba_rugi', 'refresh');
     }
 
     public function get_nobukti()
@@ -62,10 +111,9 @@ class Laba_rugi extends Admin_Controller
             $row[] = $dt->periode;
             $row[] = $dt->total_pendapatan;
             $row[] = $dt->total_biaya;
-            $row[] = $dt->total_pendapatan - $dt->total_biaya;
-           
-            $row[] = '<a class="btn btn-sm btn-success" href="javascript:void(0)" title="Edit" onclick="bayar_piutang('."'".$dt->id."'".')"><i class="glyphicon glyphicon-check"></i> Bayar</a>';
-            /*
+            $row[] = $dt->total_pembelian;
+            $row[] = $dt->total_pendapatan - $dt->total_biaya - $dt->total_pembelian;
+           /*
             $row[] = '<a class="btn btn-sm btn-primary" href="javascript:void(0)" title="Edit" onclick="detail_stok('."'".$dt->id."'".')"><i class="glyphicon glyphicon-pencil"></i> Detail</a>'; */
              
             $data[] = $row;
