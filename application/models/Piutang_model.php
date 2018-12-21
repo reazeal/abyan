@@ -152,6 +152,15 @@ class Piutang_model extends MY_Model
 
         return $query->row();
     }
-
-
+    
+    public function get_piutang_sekarang(){
+        $this->db->select("p.nominal-sum(pp.nominal) as nominalpiutang");
+        $this->db->from($this->table.' p');
+        $this->db->join('pembayaran_piutang pp','p.kode_piutang=pp.kode_piutang');
+        $this->db->where("p.tanggal_jatuh_tempo <= curdate()");
+        $this->db->group_by("p.kode_piutang");
+        $this->db->having("nominalpiutang <> 0");
+        $query = $this->db->get();
+        return $query->row()->nominalpiutang;
+    }
 }

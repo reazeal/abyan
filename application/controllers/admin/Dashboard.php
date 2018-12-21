@@ -30,10 +30,14 @@ class Dashboard extends Admin_Controller
 
     public function index()
     {   
-
+        $this->load->model('piutang_model');
+        $this->load->model('sales_order_model');
+        $this->data['nominal_piutang']= $this->piutang_model->get_piutang_sekarang();
+        $this->data['jml_qty']= $this->sales_order_model->get_penjualan_bulan_sekarang();
+        $this->data['top_customer']= $this->sales_order_model->get_top_customer();
+        
         $this->data['menu_data'] = array('master' =>false,'transaksi'=>false,'dashboard'=>true,'cetakan'=>false,'class_master'=>'collapse','class_transaksi'=>'collapse');
 
-        
         $this->render('admin/Dashboard_view');
     }
 

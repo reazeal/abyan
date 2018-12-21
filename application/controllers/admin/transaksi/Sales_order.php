@@ -245,5 +245,5 @@ class Sales_order extends Admin_Controller
         $this->load->view('admin/transaksi/cetak_so',$data);
 
     }
-
+    
 }
