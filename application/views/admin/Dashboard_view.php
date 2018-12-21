@@ -24,10 +24,10 @@
         </div>
 
         <div class="row">
-            <div class="col-md-12">
+            <div class="col-md-9">
                 <div class="x_panel">
                     <div class="x_title">
-                        <h2>Trend Penjualan <small>per bulan</small></h2>
+                        <h2>Trend Penjualan Tahun <?= date('Y')?></h2>
                         <!--div class="filter">
                             <div id="reportrange" class="pull-right" style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc">
                                 <i class="glyphicon glyphicon-calendar fa fa-calendar"></i>
@@ -37,64 +37,26 @@
                         <div class="clearfix"></div>
                     </div>
                     <div class="x_content">
-                        <div class="col-md-9 col-sm-12 col-xs-12">
-                            <div class="demo-container" style="height:280px">
+                        <div class="col-md-12 col-sm-12 col-xs-12">
+                            <div class="demo-container" >
                                 <div class="col-md-4 tile">
-                                    <span>Total Revenue</span>
-                                    <h2>$231,809</h2>
-                                    <span class="sparkline22 graph" >
-                                    <canvas style="display: inline-block; vertical-align: top;"></canvas>
-                                    </span>
                                 </div>
+                                <canvas id="myChart"></canvas>
                             </div>
-                            <div class="tiles">
-                                <div class="col-md-4 tile">
-                                    <span>Total Sessions</span>
-                                    <h2>231,809</h2>
-                                    <span class="sparkline11 graph" style="height: 160px;">
-                               <canvas width="200" height="60" style="display: inline-block; vertical-align: top; width: 94px; height: 30px;"></canvas>
-                          </span>
-                                </div>
-                                <div class="col-md-4 tile">
-                                    <span>Total Revenue</span>
-                                    <h2>$231,809</h2>
-                                    <span class="sparkline22 graph" style="height: 160px;">
-                                <canvas width="200" height="60" style="display: inline-block; vertical-align: top; width: 94px; height: 30px;"></canvas>
-                          </span>
-                                </div>
-                                <div class="col-md-4 tile">
-                                    <span>Total Sessions</span>
-                                    <h2>231,809</h2>
-                                    <span class="sparkline11 graph" style="height: 160px;">
-                                 <canvas width="200" height="60" style="display: inline-block; vertical-align: top; width: 94px; height: 30px;"></canvas>
-                          </span>
-                                </div>
-                            </div>
-
                         </div>
-
-                        <div class="col-md-3 col-sm-12 col-xs-12">
-                            <div>
-                                <div class="x_title">
-                                    <h2>Top Customer</h2>
-                                    <ul class="nav navbar-right panel_toolbox">
-                                        <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
-                                        </li>
-                                        <!--li class="dropdown">
-                                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
-                                            <ul class="dropdown-menu" role="menu">
-                                                <li><a href="#">Settings 1</a>
-                                                </li>
-                                                <li><a href="#">Settings 2</a>
-                                                </li>
-                                            </ul>
-                                        </li-->
-                                        <li><a class="close-link"><i class="fa fa-close"></i></a>
-                                        </li>
-                                    </ul>
-                                    <div class="clearfix"></div>
-                                </div>
-                                <ul class="list-unstyled top_profiles scroll-view">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-3">
+                <div class="x_panel">
+                    <div class="x_title">
+                        <h2>Top Customer <small>per bulan</small></h2>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="x_content">
+                        <div class="col-md-12 col-sm-12 col-xs-12">
+                            <ul class="list-unstyled top_profiles scroll-view">
                                     <?php foreach($top_customer as $row){?>
                                     <li class="media event">
                                         <a class="pull-left border-aero profile_thumb">
@@ -108,9 +70,7 @@
                                     </li>
                                     <?php }?>
                                 </ul>
-                            </div>
                         </div>
-
                     </div>
                 </div>
             </div>
@@ -171,13 +131,6 @@
                 </div>
             </div>
         </div>
-
-<div class="row">
-    <div class="col-sm-6 text-center">
-       <label class="label label-success">Line Chart</label>
-      <div id="line-chart"></div>
-    </div>   
-</div>
 
         <div class="row">
             <div class="col-md-4">
@@ -411,33 +364,35 @@
     </div>
 </div>
 <!-- /page content -->
-<script type="text/javascript">
-var data = [
-      { y: '2014', a: 50, b: 90},
-      { y: '2015', a: 65,  b: 75},
-      { y: '2016', a: 50,  b: 50},
-      { y: '2017', a: 75,  b: 60},
-      { y: '2018', a: 80,  b: 65},
-      { y: '2019', a: 90,  b: 70},
-      { y: '2020', a: 100, b: 75},
-      { y: '2021', a: 115, b: 75},
-      { y: '2022', a: 120, b: 85},
-      { y: '2023', a: 145, b: 85},
-      { y: '2024', a: 160, b: 95}
-    ],
-    config = {
-      data: data,
-      xkey: 'y',
-      ykeys: ['a', 'b'],
-      labels: ['Total Income', 'Total Outcome'],
-      fillOpacity: 0.6,
-      hideHover: 'auto',
-      behaveLikeLine: true,
-      resize: true,
-      pointFillColors:['#ffffff'],
-      pointStrokeColors: ['black'],
-      lineColors:['gray','red']
-  };
-config.element = 'line-chart';
-Morris.Line(config);
+
+<script>
+var ctx = document.getElementById("myChart").getContext('2d');
+var myChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+        labels: ["Januari", "Februari", "Maret", "April", "Mei", "Juni",
+        "Juli", "Agustus", "September", "Oktober", "November", "Desember"],
+        datasets: [{
+            label: 'Penjualan',
+            data: [
+                <?php for($i=1;$i<=12;$i++){
+                    if(!empty($a_qty_bulan[$i]))
+                        echo $a_qty_bulan[$i].',';
+                    else
+                        echo '0,';
+                }?>
+            ],
+            borderWidth: 1
+        }]
+    },
+    options: {
+        scales: {
+            yAxes: [{
+                ticks: {
+                    beginAtZero:true
+                }
+            }]
+        }
+    }
+});
 </script>
