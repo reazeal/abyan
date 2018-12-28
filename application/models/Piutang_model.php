@@ -161,6 +161,17 @@ class Piutang_model extends MY_Model
         $this->db->group_by("p.kode_piutang");
         $this->db->having("nominalpiutang <> 0");
         $query = $this->db->get();
-        return $query->row()->nominalpiutang;
+        
+        $totaly2 = $query->num_rows();
+        if ($totaly2 > 0) {
+            
+            return $query->row()->nominalpiutang;
+
+        }else{
+            return '0';
+        }
+
+//        return $query->row()->nominalpiutang;
+        //return '0';
     }
 }

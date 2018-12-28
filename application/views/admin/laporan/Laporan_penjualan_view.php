@@ -45,6 +45,17 @@
                                 </div>
                             </div>
 
+                            <div class="form-group">
+                                <label class="control-label col-md-3">Order By <span class="required">*</span></label>
+                                <div class="col-md-9">
+                                    <select name="order" class="validate[required] form-control" required="required">
+                                        <option value="">--Pilih Urutan--</option>
+                                        <option value="customer">Customer</option>
+                                        <option value="tanggal">Tanggal</option>                                    
+                                    </select>
+                                    <span class="help-block"></span>
+                                </div>
+                            </div>
 
 						</div>
 					</form>
@@ -125,7 +136,7 @@ function cetak_faktur()
 
         var form_dt = $('#form').serialize();
 
-        eModal.iframe('<?php echo  site_url('admin/laporan/penjualan_barang/cetak_per_faktur');?>?tgl_awal='+$('#tgl_awal').val()+'&tgl_akhir='+ $('#tgl_akhir').val()+'&status='+ $('#status').val(), 'Laporan Penjualan Per Faktur');
+        eModal.iframe('<?php echo  site_url('admin/laporan/penjualan_barang/cetak_per_faktur');?>?tgl_awal='+$('#tgl_awal').val()+'&tgl_akhir='+ $('#tgl_akhir').val()+'&status='+ $('#status').val()+'&order='+ $('#order').val(), 'Laporan Penjualan Per Faktur');
 
         $('#btnCetak').text('Cetak'); //change button text
         $('#btnCetak').attr('disabled',false); //set button enable
