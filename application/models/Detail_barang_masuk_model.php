@@ -185,7 +185,7 @@ class Detail_barang_masuk_model extends MY_Model
 
     public function get_by_penerimaan(){
         $data = array();
-        $this->db->select('detail_barang_masuk.kode_barang, detail_barang_masuk.id, detail_barang_masuk.nama_barang, barang_masuk.tanggal');
+        $this->db->select('detail_barang_masuk.kode_barang, detail_barang_masuk.id, detail_barang_masuk.nama_barang, barang_masuk.tanggal, barang_masuk.kode_barang_masuk');
         $this->db->join('barang_masuk','detail_barang_masuk.kode_barang_masuk = barang_masuk.kode_barang_masuk');
         $this->db->where('detail_barang_masuk.qty != detail_barang_masuk.keluar ');
         $query = $this->db->get($this->table);

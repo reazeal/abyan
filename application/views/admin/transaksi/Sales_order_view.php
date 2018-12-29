@@ -729,6 +729,14 @@
                         </div>
 
                         <div class="form-group">
+                        <label class="control-label col-md-3">Biaya Kardus<span class="required">*</span></label>
+                        <div class="col-md-6">
+                            <input name="biaya_kardus" placeholder="Biaya Kardus" class="validate[required,custom[number]] form-control" type="text" required="required">
+                            <span class="help-block"></span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
                         <label class="control-label col-md-3">Kurir<span class="required">*</span></label>
                         <div class="col-md-6">
                             <select id="nama_pegawai" name="nama_pegawai" data-live-search="true"  class="selectpicker validate[required] form-control" required="required">
@@ -909,7 +917,7 @@
                                 <?php
                                 foreach ($pilihan_barang_masuk as $row3):
                                     ?>
-                                    <option value="<?php echo $row3->id; ?>"><?php echo $row3->kode_barang."-".$row3->nama_barang."-".$row3->tanggal; ?></option>
+                                    <option value="<?php echo $row3->id; ?>"><?php echo $row3->kode_barang."-".$row3->nama_barang."-".$row3->kode_barang_masuk; ?></option>
                                     <?php
 
                                 endforeach;
@@ -1083,7 +1091,7 @@
 
         $('.modal-title').text('Cetak'); // Set Title to Bootstrap modal title
         //var src = '<?php echo site_url('admin/sales_order/cetak_so/')?>'+$id;
-        var src = '<?php echo site_url('admin/transaksi/sales_order/cetak_so')?>';
+        var src = '<?php echo site_url('admin/transaksi/sales_order/cetak_so/')?>'+$id;
         $("#attachment").attr('src', src);
         $('#cetakan_gt').modal('show');
         return false;

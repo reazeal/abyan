@@ -20,7 +20,7 @@
     <link href="<?php echo site_url('assets/vendors/bootstrap-progressbar/css/bootstrap-progressbar-3.3.4.min.css');?>" rel="stylesheet">
     <!-- bootstrap-daterangepicker -->
     <link href="<?php echo site_url('assets/vendors/bootstrap-daterangepicker/daterangepicker.css');?>" rel="stylesheet">
-<!--    <link href="<?php echo site_url('assets/jqueryui/jquery-ui.min.css');?>" rel="stylesheet">-->
+    <link href="<?php echo site_url('assets/jqueryui/jquery-ui.min.css');?>" rel="stylesheet">
     <!-- Custom Theme Style -->
     <link href="<?php echo site_url('assets/build/css/custom.min.css');?>" rel="stylesheet">
     <link rel="stylesheet" href="<?php echo site_url('assets/plugins/bootstrap-table/bootstrap-table.css');?>">

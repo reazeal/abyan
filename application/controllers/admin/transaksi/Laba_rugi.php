@@ -53,7 +53,7 @@ class Laba_rugi extends Admin_Controller
         
         $tahunskrng=date('Y');
         $a_tahun[$tahunskrng]=$tahunskrng;
-        for($i=0;$i<=5;$i++){
+        for($i=0;$i<=1;$i++){
             $tahunskrng=$tahunskrng-1;
             $a_tahun[$tahunskrng]=$tahunskrng;
         };

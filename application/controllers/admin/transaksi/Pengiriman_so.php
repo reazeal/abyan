@@ -38,6 +38,7 @@ class Pengiriman_so extends Admin_Controller
         $this->load->model('detail_barang_keluar_model');
         $this->load->model('detail_barang_masuk_model');
         $this->load->model('detail_so_model');
+        $this->load->model('transaksi_biaya_model');
          
     }
 
@@ -312,6 +313,31 @@ class Pengiriman_so extends Admin_Controller
 
 
         }
+
+        $data_biaya_kardus = array(
+            'id' => md5(rand(1,100).'62cce0f72ae42c43f71f7c2c74ce65ba'.$this->input->post('tanggal').$this->input->post('kode_so').date("YmdHis")),
+            'kode_referensi' => $this->input->post('kode_so'),
+            'tanggal' => $this->tanggaldb($this->input->post('tanggal')),
+            'nominal' => $this->input->post('biaya_kardus'),
+            'id_jenis_biaya' => '62cce0f72ae42c43f71f7c2c74ce65ba',
+            'status' => 'Lunas' ,
+        );
+
+        $this->transaksi_biaya_model->insert($data_biaya_kardus);
+
+        $data_so_bunga = $this->detail_so_model->get_by_no_so_barang($this->input->post('kode_so'),$this->input->post('kode_barang'));
+
+
+        $data_bunga_bank = array(
+            'id' => md5(rand(1,100).'e6026106cfb7f0075ec6063cbd82307c'.$this->input->post('tanggal').$this->input->post('kode_so').date("YmdHis")),
+            'kode_referensi' => $this->input->post('kode_so'),
+            'tanggal' => $this->tanggaldb($this->input->post('tanggal')),
+            'nominal' => $data_so_bunga->harga * 2.5 / 100 ,
+            'id_jenis_biaya' => 'e6026106cfb7f0075ec6063cbd82307c',
+            'status' => 'Lunas' ,
+        );
+
+        $this->transaksi_biaya_model->insert($data_bunga_bank);
 
 
         echo json_encode(array("status" => TRUE));

@@ -86,6 +86,16 @@ class Detail_so_model extends MY_Model
         return $query->row();
     }
 
+        public function get_by_no_so_barang($no_so, $kode_barang)
+    {
+        $this->db->from($this->table);
+        $this->db->where('kode_so',$no_so);
+        $this->db->where('kode_barang',$kode_barang);
+        $query = $this->db->get();
+
+        return $query->row();
+    }
+
     public function save($data)
     {
         $this->db->insert($this->table, $data);
@@ -135,7 +145,7 @@ class Detail_so_model extends MY_Model
                     'harga' => $atributy->harga,
                     'total' => $atributy->harga * $atributy->qty,
                     'kirim' => $atributy->kirim,                    
-                    'action' => '<a class="btn btn-sm btn-success" href="javascript:void(0)" title="Kirim" onclick="kirim_so('."'".$atributy->id."'".')"><i class="glyphicon glyphicon-check"></i> Kirim</a>
+                    'action' => '<a class="btn btn-sm btn-success" href="javascript:void(0)" title="Kirim" onclick="kirim_so('."'".$atributy->id."'".')"><i class="glyphicon glyphicon-share"></i> Pengiriman</a>
                         <a class="btn btn-sm btn-success" href="javascript:void(0)" title="Return" onclick="return_so('."'".$atributy->id."'".')"><i class="glyphicon glyphicon-repeat"></i> Return</a>'    
                     
                     );

@@ -121,6 +121,7 @@ class Penjualan_barang extends Admin_Controller
         $tgl_awal = $this->input->get('tgl_awal');
         $tgl_akhir = $this->input->get('tgl_akhir');
         $status = $this->input->get('status');
+        $urut = $this->input->get('order');
         
         $tanggal_awal_kemaren = date('Y-m',strtotime('-1 months', strtotime($this->tanggaldb($tgl_awal))));
 
@@ -147,20 +148,22 @@ class Penjualan_barang extends Admin_Controller
         $pdf->setX(5);
         $pdf->SetFont('Times','B',10);
         $pdf->Cell(10,10,"No",1,0,'C');
-        $pdf->Cell(25,10,"Tanggal",1,0,'C');
+        $pdf->Cell(20,10,"Tanggal",1,0,'C');
         $pdf->Cell(25,10,"No. SO",1,0,'C');
-        $pdf->Cell(25,10,"Kode Barang",1,0,'C');
-        $pdf->Cell(70,10,"Nama Barang",1,0,'C');
-        $pdf->Cell(25,10,"Satuan",1,0,'C');
+        $pdf->Cell(35,10,"Customer",1,0,'C');
+        $pdf->Cell(20,10,"Kd Barang",1,0,'C');
+        $pdf->Cell(50,10,"Nama Barang",1,0,'C');
+        $pdf->Cell(15,10,"Satuan",1,0,'C');
         $pdf->Cell(10,10,"Qty",1,1,'C');
         
         $i = 1;
-        $data = $this->sales_order_model->get_so_between($this->tanggaldb($tgl_awal), $this->tanggaldb($tgl_akhir));
+        $data = $this->sales_order_model->get_so_between($this->tanggaldb($tgl_awal), $this->tanggaldb($tgl_akhir), $urut);
 
             foreach($data as $hasil){
                     
                 $kode_barang = $hasil['kode_barang'];
                 $nama_barang = $hasil['nama_barang'];
+                $nama_customer = $hasil['nama_customer'];
                 $qty = $hasil['qty'];
                 $satuan = $hasil['satuan'];
                 $tanggal = $hasil['tanggal'];
@@ -168,11 +171,12 @@ class Penjualan_barang extends Admin_Controller
 
                     $pdf->setX(5);
                     $pdf->Cell(10,5,$i,1,0,'C');
-                    $pdf->Cell(25,5,$tanggal,1,0,'L');
+                    $pdf->Cell(20,5,$tanggal,1,0,'L');
                     $pdf->Cell(25,5,$kode_so,1,0,'L');
-                    $pdf->Cell(25,5,$kode_barang,1,0,'L');
-                    $pdf->Cell(70,5,$nama_barang,1,0,'L');
-                    $pdf->Cell(25,5,$satuan,1,0,'L');
+                    $pdf->Cell(35,5,$nama_customer,1,0,'L');
+                    $pdf->Cell(20,5,$kode_barang,1,0,'L');
+                    $pdf->Cell(50,5,$nama_barang,1,0,'L');
+                    $pdf->Cell(15,5,$satuan,1,0,'L');
                     $pdf->Cell(10,5,$qty,1,1,'R');
                     $i = $i + 1;
             }

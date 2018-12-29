@@ -239,6 +239,9 @@ class Sales_order extends Admin_Controller
 
     {
 
+        //echo $_GET['id'];
+     //   $id = $this->input->get('id');
+
         $datax = $this->detail_so_model->getDataByNoSoCetak('08b14dcdf1214933894bb6f28596fff7');
        // $datax = $this->detail_so_model->get_by_id();
         $data['datanya'] = $datax;

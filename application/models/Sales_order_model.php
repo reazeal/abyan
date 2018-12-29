@@ -169,16 +169,25 @@ class Sales_order_model extends MY_Model
 
     }
 
-    public function get_so_between($awal, $akhir){
+    public function get_so_between($awal, $akhir, $order){
         $data = array();
         $this->db->select('sales_order.tanggal as tanggal, sales_order.kode_so as kode_so, detail_so.kode_barang as kode_barang, barang.satuan as satuan,
-            detail_so.nama_barang as nama_barang, sum(detail_so.qty) as qty');
+            detail_so.nama_barang as nama_barang, sum(detail_so.qty) as qty, sales_order.nama_customer');
         $this->db->join('detail_so','sales_order.kode_so = detail_so.kode_so');
         $this->db->join('barang','barang.kode = detail_so.kode_barang');
         $this->db->where('sales_order.tanggal >= ',$awal);
         $this->db->where('sales_order.tanggal <= ',$akhir);
-        $this->db->order_by('sales_order.kode_so','desc');
-        $this->db->order_by('sales_order.tanggal','asc');
+        if($order == 'tanggal'){
+            $this->db->order_by('sales_order.tanggal','asc');
+        }else if($order == 'customer'){
+            $this->db->order_by('sales_order.customer','asc');
+        }else{
+            $this->db->order_by('sales_order.tanggal','asc');
+        }
+
+//        $this->db->order_by('sales_order.kode_so','desc');
+
+        
         $query = $this->db->get($this->table);
 
         $totaly2 = $query->num_rows();
@@ -190,6 +199,7 @@ class Sales_order_model extends MY_Model
                 'kode_so' => $atributy->kode_so,
                 'kode_barang' => $atributy->kode_barang,
                 'nama_barang' => $atributy->nama_barang,
+                'nama_customer' => $atributy->nama_customer,
                 'qty' => $atributy->qty,
                 'satuan' => $atributy->satuan,
                     
