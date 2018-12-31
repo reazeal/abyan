@@ -103,5 +103,23 @@ class Transaksi_biaya_model extends MY_Model
     }
 
     
+    //untuk detail laba rugi
+    public function select_insert_biaya_perbulan_tahun($bulan,$tahun,$idlabarugi){
+        
+        $this->db->select("kode_referensi as kode_so, nominal, tanggal as tgl_trans");
+        $this->db->where(" month(tanggal)='$bulan' and year(tanggal) = '$tahun' and status='Lunas' ");
+        $query = $this->db->get($this->table);
+        $hasil = $query->result_array();
+        $i=1;
+        foreach($hasil as $row){
+            $row['id_detail_laba_rugi']=$id=md5($bulan.'/'.$tahun.'/biaya/'.$i);
+            $row['created_at']=date('Y-m-d H:i:s');
+            $row['id_laba_rugi']=$idlabarugi;
+            $row['jenis_trans']='biaya';
+            $insert = $this->db->insert('detail_laba_rugi', $row);
+            $i++;
+        }
+        return $insert;
+    }
 
 }

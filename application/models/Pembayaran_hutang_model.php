@@ -160,4 +160,25 @@ class Pembayaran_hutang_model extends MY_Model
         return $nominal;
     }
 
+    
+    //untuk detail laba rugi
+//    public function select_insert_hutang_perbulan_tahun($bulan,$tahun,$idlabarugi){
+//        
+//        $this->db->select("p.kode_relasi as kode_so, pp.nominal, pp.tanggal as tgl_trans");
+//        $this->db->where("month(pp.tanggal)='$bulan' and year(pp.tanggal) = '$tahun'");
+//        $this->db->from($this->table.' pp');
+//        $this->db->join('hutang p','p.kode_hutang=pp.kode_hutang');
+//        $query = $this->db->get();
+//        $hasil = $query->result_array();
+//        $i=1;
+//        foreach($hasil as $row){
+//            $row['id_detail_laba_rugi']=$id=md5($bulan.'/'.$tahun.'/hutang/'.$i);
+//            $row['created_at']=date('Y-m-d H:i:s');
+//            $row['id_laba_rugi']=$idlabarugi;
+//            $row['jenis_trans']='hutang';
+//            $insert = $this->db->insert('detail_laba_rugi', $row);
+//            $i++;
+//        }
+//        return $insert;
+//    }
 }

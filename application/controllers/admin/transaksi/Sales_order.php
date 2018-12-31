@@ -234,6 +234,25 @@ class Sales_order extends Admin_Controller
         );
         echo json_encode(array($data));
     }
+    
+    public function editby_noSO($noSO)
+    {
+        $data = $this->detail_so_model->get_by_id($noSO);
+        $data  = array(
+            'id' => $data->id,
+            'id_so' => $data->id_so,
+            'kode_so' => $data->kode_so,
+            'kode_barang' => $data->kode_barang,
+            'nama_barang' => $data->nama_barang,
+            'qty' => $data->qty,
+            'harga' => $data->harga,
+            'harga_beli' => $data->harga_beli,
+            'bottom_retail' => $data->bottom_retail,
+            'bottom_supplier' => $data->bottom_supplier,
+            'id_detail_barang_masuk' => $data->id_detail_barang_masuk,
+        );
+        echo json_encode(array($data));
+    }
 
     public function cetak_so()
 

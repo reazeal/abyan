@@ -160,5 +160,48 @@ class Pembayaran_piutang_model extends MY_Model
         return $nominal;
     }
 
+    
+    //untuk detail laba rugi
+    public function select_insert_pendapatan_perbulan_tahun($bulan,$tahun,$idlabarugi){
+        
+        $this->db->select("p.kode_referensi as kode_so, pp.nominal, pp.tanggal as tgl_trans");
+        $this->db->where("month(pp.tanggal)='$bulan' and year(pp.tanggal) = '$tahun'");
+        $this->db->from($this->table.' pp');
+        $this->db->join('piutang p','p.kode_piutang=pp.kode_piutang');
+        $query = $this->db->get();
+        $hasil = $query->result_array();
+        $i=1;
+        foreach($hasil as $row){
+            $row['id_detail_laba_rugi']=$id=md5($bulan.'/'.$tahun.'/pendapatan/'.$i);
+            $row['created_at']=date('Y-m-d H:i:s');
+            $row['id_laba_rugi']=$idlabarugi;
+            $row['jenis_trans']='pendapatan';
+            $insert = $this->db->insert('detail_laba_rugi', $row);
+            $i++;
+        }
+        return $insert;
+    }
+    
+    public function select_insert_pembelian_perbulan_tahun($bulan,$tahun,$idlabarugi){
+        
+        $this->db->select("p.kode_referensi as kode_so, dso.harga_beli as nominal, pp.tanggal as tgl_trans");
+        $this->db->where("month(pp.tanggal)='$bulan' and year(pp.tanggal) = '$tahun'");
+        $this->db->from($this->table.' pp');
+        $this->db->join('piutang p','p.kode_piutang=pp.kode_piutang');
+        $this->db->join('sales_order so','so.kode_so=p.kode_referensi');
+        $this->db->join('detail_so dso','dso.kode_so=so.kode_so');
+        $query = $this->db->get();
+        $hasil = $query->result_array();
+        $i=1;
+        foreach($hasil as $row){
+            $row['id_detail_laba_rugi']=$id=md5($bulan.'/'.$tahun.'/hutang/'.$i);
+            $row['created_at']=date('Y-m-d H:i:s');
+            $row['id_laba_rugi']=$idlabarugi;
+            $row['jenis_trans']='hutang';
+            $insert = $this->db->insert('detail_laba_rugi', $row);
+            $i++;
+        }
+        return $insert;
+    }
 
 }

@@ -174,7 +174,7 @@ class Laba_rugi_model extends MY_Model
         }
         return $total;
     }
-
+    
     public function total_biaya_perbulan_tahun($bulan,$tahun){
         $this->db->select("
             ifnull(sum(nominal),0) as total 
@@ -195,6 +195,28 @@ class Laba_rugi_model extends MY_Model
         return $total;
     }
     
+    
+    public function total_pembelian_perbulan_tahun($bulan,$tahun){
+        $this->db->select("
+            ifnull(sum(dso.harga_beli),0) as total 
+        ");
+        $this->db->from('pembayaran_piutang pp');
+        $this->db->join('piutang p','p.kode_piutang=pp.kode_piutang');
+        $this->db->join('sales_order so','so.kode_so=p.kode_referensi');
+        $this->db->join('detail_so dso','dso.kode_so=so.kode_so');
+        $this->db->where(" month(pp.tanggal)='$bulan' and year(pp.tanggal) = '$tahun' ");
+        $query = $this->db->get();
+
+        $totaly2 = $query->num_rows();
+        if ($totaly2 > 0) {
+            foreach ($query->result() as $atributy) {
+
+                $total = $atributy->total ;
+                
+            }
+        }
+        return $total;
+    }
     
     public function total_hutang_perbulan_tahun($bulan,$tahun){
         $this->db->select("

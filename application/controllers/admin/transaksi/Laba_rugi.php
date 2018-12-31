@@ -29,6 +29,10 @@ class Laba_rugi extends Admin_Controller
         $this->load->helper('text');
         $this->load->helper('url');
         $this->load->model('laba_rugi_model');
+        $this->load->model('detail_laba_rugi_model');
+        $this->load->model('pembayaran_piutang_model');
+        $this->load->model('pembayaran_hutang_model');
+        $this->load->model('transaksi_biaya_model');
         
     }
 
@@ -62,19 +66,37 @@ class Laba_rugi extends Admin_Controller
         $this->render('admin/transaksi/Laba_rugi_view');
     }
     
+    public function _insertdetail($bulan, $tahun, $idlabarugi){
+        
+        $this->db->where('id_laba_rugi', $idlabarugi);
+        $this->db->delete('detail_laba_rugi');
+        
+        //hapus dulu
+        $this->detail_laba_rugi_model->delete_by_id_laba_rugi($idlabarugi);
+        
+        //lalu insert
+        $this->pembayaran_piutang_model->select_insert_pendapatan_perbulan_tahun($bulan,$tahun,$idlabarugi);
+        $this->pembayaran_piutang_model->select_insert_pembelian_perbulan_tahun($bulan,$tahun,$idlabarugi);
+        //$this->pembayaran_hutang_model->select_insert_hutang_perbulan_tahun($bulan,$tahun,$idlabarugi);
+        $this->transaksi_biaya_model->select_insert_biaya_perbulan_tahun($bulan,$tahun,$idlabarugi);
+    }
+        
     public function generate(){
         $bulan=$this->input->post('bulan');
         $tahun=$this->input->post('tahun');
+        
         $pendapatan=$this->laba_rugi_model->total_pendapatan_perbulan_tahun($bulan,$tahun); 
         $biaya=$this->laba_rugi_model->total_biaya_perbulan_tahun($bulan,$tahun);
-        $hutang=$this->laba_rugi_model->total_hutang_perbulan_tahun($bulan,$tahun);
+        //$hutang=$this->laba_rugi_model->total_hutang_perbulan_tahun($bulan,$tahun);
+        $pembelian=$this->laba_rugi_model->total_pembelian_perbulan_tahun($bulan,$tahun);
+        
         $id=md5($bulan.'/'.$tahun);
         $data = array(
             'id' => $id,
             'periode' => $bulan.'/'.$tahun,
             'total_pendapatan' => $pendapatan,            
             'total_biaya' => $biaya,          
-            'total_pembelian' => $hutang,
+            'total_pembelian' => $pembelian,
             'tanggal' => date('Y-m-d'),
             'created_at' => date('Y-m-d H:i:s'),
             'updated_at' => ''
@@ -84,8 +106,11 @@ class Laba_rugi extends Admin_Controller
         if($dataexist){
             $this->laba_rugi_model->update_by_id(array('id' => $id), $data);
         }else{
-            $this->laba_rugi_model->save($data);
+            $id=$this->laba_rugi_model->save($data);
         }
+        
+        $this->_insertdetail($bulan, $tahun, $id);
+        
         redirect('admin/transaksi/laba_rugi', 'refresh');
     }
 
@@ -113,9 +138,7 @@ class Laba_rugi extends Admin_Controller
             $row[] = $dt->total_biaya;
             $row[] = $dt->total_pembelian;
             $row[] = $dt->total_pendapatan - $dt->total_biaya - $dt->total_pembelian;
-           /*
-            $row[] = '<a class="btn btn-sm btn-primary" href="javascript:void(0)" title="Edit" onclick="detail_stok('."'".$dt->id."'".')"><i class="glyphicon glyphicon-pencil"></i> Detail</a>'; */
-             
+            $row[] = '<a class="btn btn-sm btn-primary" href="javascript:void(0)" title="Detail" onclick="detail_ll('."'".$dt->id."'".')"><i class="glyphicon glyphicon-pencil"></i> Detail</a>';
             $data[] = $row;
         }
 
@@ -285,5 +308,11 @@ class Laba_rugi extends Admin_Controller
         echo json_encode(array($data));
     }
 
-
+    public function get_detail($id_ll)
+    {
+        $data  = array(
+            'detailSo'=> (array) $this->detail_laba_rugi_model->getDataByIDLabaRugi($id_ll)
+        );
+        echo json_encode(array($data));
+    }
 }
