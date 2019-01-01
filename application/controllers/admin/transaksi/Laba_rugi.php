@@ -138,7 +138,8 @@ class Laba_rugi extends Admin_Controller
             $row[] = $dt->total_biaya;
             $row[] = $dt->total_pembelian;
             $row[] = $dt->total_pendapatan - $dt->total_biaya - $dt->total_pembelian;
-            $row[] = '<a class="btn btn-sm btn-primary" href="javascript:void(0)" title="Detail" onclick="detail_ll('."'".$dt->id."'".')"><i class="glyphicon glyphicon-pencil"></i> Detail</a>';
+            $row[] = '<a class="btn btn-sm btn-primary" href="javascript:void(0)" title="Detail" onclick="detail_ll('."'".$dt->id."'".')"><i class="glyphicon glyphicon-pencil"></i> Detail</a>
+                  <a class="btn btn-sm btn-primary" href="javascript:void(0)" title="Cetak" onclick="cetak_ll('."'".$dt->id."'".')"><i class="glyphicon glyphicon-pencil"></i> Cetak</a>';
             $data[] = $row;
         }
 
@@ -314,5 +315,19 @@ class Laba_rugi extends Admin_Controller
             'detailSo'=> (array) $this->detail_laba_rugi_model->getDataByIDLabaRugi($id_ll)
         );
         echo json_encode(array($data));
+    }
+    
+    
+    public function cetak_detail_ll($id_ll){
+
+        //echo $_GET['id'];
+     //   $id = $this->input->get('id');
+
+        $datax = $this->detail_laba_rugi_model->getDataByIDLabaRugi($id_ll);
+        //print_r($datax);
+       // $datax = $this->detail_so_model->get_by_id();
+        $data['datanya'] = $datax;
+        $this->load->view('admin/transaksi/cetak_detail_ll',$data);
+
     }
 }
