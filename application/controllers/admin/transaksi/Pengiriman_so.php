@@ -73,7 +73,7 @@ class Pengiriman_so extends Admin_Controller {
             $row[] = $dt->nama_kurir;
             $row[] = $dt->qty;
             $row[] = $dt->keterangan;
-            $row[] = '<a class="btn btn-sm btn-success" href="javascript:void(0)" title="Kirim" onclick="kirim_so(' . "'" . $dt->id . "'" . ')"><i class="glyphicon glyphicon-share"></i> Pengiriman</a>'
+            $row[] = '<a class="btn btn-sm btn-success" href="javascript:void(0)" title="Kirim" onclick="terima_barang(' . "'" . $dt->id . "'" . ')"><i class="glyphicon glyphicon-share"></i> Terima</a>'
                     . ' <a class="btn btn-sm btn-success" href="javascript:void(0)" title="Return" onclick="return_so(' . "'" . $dt->id . "'" . ')"><i class="glyphicon glyphicon-repeat"></i> Return</a>';
             $data[] = $row;
         }
@@ -309,7 +309,7 @@ class Pengiriman_so extends Admin_Controller {
                 'tanggal' => $this->tanggaldb($this->input->post('tanggal')),
                 'nominal' => $this->input->post('biaya_kardus'),
                 'id_jenis_biaya' => '62cce0f72ae42c43f71f7c2c74ce65ba',
-                'status' => 'Lunas',
+                'status' => 'Pending',
             );
 
             $this->transaksi_biaya_model->insert($data_biaya_kardus);
@@ -323,7 +323,7 @@ class Pengiriman_so extends Admin_Controller {
                 'tanggal' => $this->tanggaldb($this->input->post('tanggal')),
                 'nominal' => $data_so_bunga->harga * 2.5 / 100,
                 'id_jenis_biaya' => 'e6026106cfb7f0075ec6063cbd82307c',
-                'status' => 'Lunas',
+                'status' => 'Pending',
             );
 
             $this->transaksi_biaya_model->insert($data_bunga_bank);
