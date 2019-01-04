@@ -184,6 +184,44 @@
             }
         });
     }
+
+    function terima_barang(id)
+    {
+
+        //$('#modal_detail_so').modal('hide');
+
+        save_method = 'update';
+        $('#form_kirim')[0].reset(); // reset form on modals
+        $('.form-group').removeClass('has-error'); // clear error class
+        $('.help-block').empty(); // clear error string
+
+        //Ajax Load data from ajax
+        $.ajax({
+            url : "<?php echo site_url('admin/transaksi/sales_order/kirim/')?>" + id,
+            type: "GET",
+            dataType: "JSON",
+            success: function(data)
+            {
+                $('[name="id_so"]').val(data[0]['id_so']);                
+                $('[name="id"]').val(data[0]['id']);
+                $('[name="kode_so"]').val(data[0]['kode_so']);
+                $('[name="kode_barang"]').val(data[0]['kode_barang']);
+                $('[name="nama_barang"]').val(data[0]['nama_barang']);
+                $('[name="harga"]').val(data[0]['harga']);
+                $('[name="qty_order"]').val(data[0]['qty']);
+                $('[name="qty_kirim"]').val(data[0]['kirim']);
+                
+                $('[name="id_detail_barang_masuk"]').val(data[0]['id_detail_barang_masuk']);
+                $('#modal_form_terima').modal('show'); // show bootstrap modal when complete loaded
+                $('.modal-title').text('Konfirmasi Terima'); // Set title to Bootstrap modal title
+
+            },
+            error: function (jqXHR, textStatus, errorThrown)
+            {
+                alert('Error get data from ajax');
+            }
+        });
+    }
     
     function return_so(id)
     {
@@ -481,6 +519,102 @@
     </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 <!-- End Bootstrap modal -->
+
+<div class="modal fade" id="modal_form_terima" role="dialog" style="overflow-y: auto !important;">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h3 class="modal-title">Form Barang Masuk</h3>
+            </div>
+            <div class="modal-body form">
+                <form action="#" id="form_terima" class="form-horizontal">
+                    <input type="hidden" value="" name="id"/>
+                    <input type="hidden" value="" name="id_so"/>
+                    <input type="hidden" value="" name="kode_barang"/>
+                    <input type="hidden" value="" name="harga"/>
+                    <input type="hidden" value="" name="id_detail_barang_masuk"/>
+
+                    <div class="form-group">
+                        <label class="control-label col-md-3">Tanggal Kirim<span class="required">*</span></label>
+                        <div class="col-md-9">
+                            <input placeholder="dd-mm-yyyy" name="tanggal" class="validate[required] form-control datepicker" readonly="true" type="text" required="required">
+                            <span class="help-block"></span>
+                        </div>
+                    </div>
+
+                    <div class="form-body">
+                        <div class="form-group">
+                            <label class="control-label col-md-3">No. So <span class="required">*</span></label>
+                            <div class="col-md-9">
+                                <input name="kode_so" placeholder="Nomor So" class="validate[required,minSize[6]] form-control" type="text" required="required" data-validate-length-range="6" data-validate-words="2" readonly="true">
+                                <span class="help-block"></span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label col-md-3">Nama Barang <span class="required">*</span></label>
+                            <div class="col-md-9">
+                                <input name="nama_barang" placeholder="Nama Barang" class="validate[required,minSize[6]] form-control" type="text" required="required" data-validate-length-range="6" data-validate-words="2" readonly="true">
+                                <span class="help-block"></span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label col-md-3">QTY Order<span class="required">*</span></label>
+                            <div class="col-md-6">
+                                <input name="qty_order" placeholder="Qty order" class="validate[required,custom[number]] form-control" type="text" readonly="true">
+                            <span class="help-block"></span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                        <label class="control-label col-md-3">QTY Kirim<span class="required">*</span></label>
+                        <div class="col-md-6">
+                            <input name="qty_kirim" placeholder="Qty Kirim" class="validate[required,custom[number]] form-control" type="text" readonly="true" required="required">
+                            <span class="help-block"></span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                        <label class="control-label col-md-3">QTY Terima<span class="required">*</span></label>
+                        <div class="col-md-6">
+                            <input name="qty_terima" placeholder="Qty Terima" class="validate[required,custom[number]] form-control" type="text" required="required">
+                            <span class="help-block"></span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                        <label class="control-label col-md-3">QTY Return<span class="required">*</span></label>
+                        <div class="col-md-6">
+                            <input name="qty_return" placeholder="Qty Return" class="validate[required,custom[number]] form-control" type="text" required="required">
+                            <span class="help-block"></span>
+                            </div>
+                        </div>
+
+
+                        <div class="form-group">
+                            <label class="control-label col-md-3">Nama Kurir <span class="required">*</span></label>
+                            <div class="col-md-9">
+                                <input name="nama_barang" placeholder="Nama Barang" class="validate[required,minSize[6]] form-control" type="text" required="required" data-validate-length-range="6" data-validate-words="2" readonly="true">
+                                <span class="help-block"></span>
+                            </div>
+                        </div>
+
+
+                    </div>
+
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btnSave" onclick="simpan_terima()" class="btn btn-primary">Simpan</button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Batal</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+<!-- End Bootstrap modal -->
+
 <!-- Bootstrap modal -->
 <div class="modal fade" id="modal_form_return" role="dialog" style="overflow-y: auto !important;">
     <div class="modal-dialog modal-lg">
@@ -626,6 +760,60 @@
             url : url,
             type: "POST",
             data: $('#form_kirim').serialize(),
+            dataType: "JSON",
+            success: function(data)
+            {
+
+                if(data.status) //if success close modal and reload ajax table
+                {
+                    if(save_method === 'add') {
+                        $('#modal_form_kirim').modal('hide');
+                    }else{
+                        $('#modal_form_kirim').modal('hide');
+                    }
+                    reload_table();
+                }
+
+                $('#btnSave').text('simpan'); //change button text
+                $('#btnSave').attr('disabled',false); //set button enable
+
+                detail_so(id_so);
+
+            },
+            error: function (jqXHR, textStatus, errorThrown)
+            {
+                alert('Error adding / update data');
+                $('#btnSave').text('simpan'); //change button text
+                $('#btnSave').attr('disabled',false); //set button enable
+
+            }
+        });
+    }
+
+    function simpan_terima()
+    {
+
+        var url;
+
+        url = "<?php echo site_url('admin/transaksi/pengiriman_so/add_terima')?>";
+
+        seen = [];
+
+        var id_so = $('#form_terima').find('input[name="id_so"]').val();
+
+        if(!$("#form_terima").validationEngine('validate')){
+            return false;
+        }
+
+
+        $('#btnSave').text('menyimpan...'); //change button text
+        $('#btnSave').attr('disabled',true); //set button disable
+
+        // ajax adding data to database
+        $.ajax({
+            url : url,
+            type: "POST",
+            data: $('#form_terima').serialize(),
             dataType: "JSON",
             success: function(data)
             {

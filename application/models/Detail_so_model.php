@@ -86,6 +86,21 @@ class Detail_so_model extends MY_Model
         return $query->row();
     }
 
+    public function get_by_id_pengiriman($id)
+    {
+        $this->db->select('sales_order.id as id_so, detail_so.id as id, sales_order.kode_so as kode_so, detail_so.kode_barang as kode_barang,
+            detail_so.nama_barang as nama_barang, detail_so.qty as qty, detail_so.harga as harga, id_detail_barang_masuk, detail_so.harga_beli, bottom_retail, bottom_supplier, sum(pengiriman_so.qty) as kirim');
+        $this->db->join('sales_order','sales_order.kode_so = detail_so.kode_so');
+        $this->db->join('detail_barang_masuk','detail_barang_masuk.id = detail_so.id_detail_barang_masuk');
+        $this->db->join('pengiriman_so','pengiriman_so.kode_so = detail_so.kode_so and pengiriman_so.kode_barang = detail_so.kode_barang');
+        $this->db->group_by('detail_so.kode_so');
+        $this->db->from($this->table);
+        $this->db->where('detail_so.id',$id);
+        $query = $this->db->get();
+
+        return $query->row();
+    }
+
         public function get_by_no_so_barang($no_so, $kode_barang)
     {
         $this->db->from($this->table);
