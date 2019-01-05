@@ -18,6 +18,8 @@ class Pengiriman_so_model extends MY_Model
     private function _get_datatables_query()
     {
         //$this->db->group_by('kode');
+        $this->db->select('pengiriman_so.id, pengiriman_so.tanggal, kode_pengiriman, pengiriman_so.kode_so, kode_kurir,'
+                . 'nama_kurir, pengiriman_so.qty, keterangan');
         $this->db->order_by('pengiriman_so.tanggal','desc');
         $this->db->from('pengiriman_so');
         $this->db->join('detail_so','detail_so.kode_so = pengiriman_so.kode_so','left');

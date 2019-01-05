@@ -309,7 +309,19 @@
         });
     }
 
+    function cetak_ll($id)
+    {
 
+//        if(!$("#form").validationEngine('validate')){
+//            return false;
+//        }
+
+        $('.modal-title').text('Cetak'); // Set Title to Bootstrap modal title
+        var src = '<?php echo site_url('admin/transaksi/laba_rugi/cetak_detail_ll/')?>'+$id;
+        $("#attachment").attr('src', src);
+        $('#cetakan_gt').modal('show');
+        return false;
+    }
 
 </script>
 
@@ -460,6 +472,26 @@
                     </table>
             </div>
             
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="cetakan_gt" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Cetakan</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <iframe id='attachment' width='100%' height='400' frameborder='0' allowfullscreen></iframe>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Tutup</button>
+            </div>
         </div>
     </div>
 </div>

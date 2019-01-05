@@ -95,7 +95,8 @@ class Detail_so_model extends MY_Model
         $this->db->join('pengiriman_so','pengiriman_so.kode_so = detail_so.kode_so and pengiriman_so.kode_barang = detail_so.kode_barang');
         $this->db->group_by('detail_so.kode_so');
         $this->db->from($this->table);
-        $this->db->where('detail_so.id',$id);
+        //$this->db->where('detail_so.id',$id);
+        $this->db->where('pengiriman_so.id',$id);
         $query = $this->db->get();
 
         return $query->row();
@@ -150,7 +151,7 @@ class Detail_so_model extends MY_Model
         $totaly2 = $query->num_rows();
         if ($totaly2 > 0) {
             foreach ($query->result() as $atributy) {
-                if($atributy->qty > $atributy->kirim){
+                //if($atributy->qty > $atributy->kirim){
                     $data[] = array(
                     'id' => $atributy->id,
                     'kode_so' => $atributy->kode_so,
@@ -164,19 +165,19 @@ class Detail_so_model extends MY_Model
                         <a class="btn btn-sm btn-success" href="javascript:void(0)" title="Return" onclick="return_so('."'".$atributy->id."'".')"><i class="glyphicon glyphicon-repeat"></i> Return</a>'    
                     
                     );
-                }else{
-                    $data[] = array(
-                    'id' => $atributy->id,
-                    'kode_so' => $atributy->kode_so,
-                    'kode_barang' => $atributy->kode_barang,
-                    'nama_barang' => $atributy->nama_barang,
-                    'qty' => $atributy->qty,
-                    'harga' => $atributy->harga,
-                    'total' => $atributy->harga * $atributy->qty,
-                    'kirim' => $atributy->kirim,
-                    'action' => '<a class="btn btn-sm btn-success" href="javascript:void(0)" title="Return" onclick="return_so('."'".$atributy->id."'".')"><i class="glyphicon glyphicon-repeat"></i>Return</a>'
-                     );
-                }    
+//                }else{
+//                    $data[] = array(
+//                    'id' => $atributy->id,
+//                    'kode_so' => $atributy->kode_so,
+//                    'kode_barang' => $atributy->kode_barang,
+//                    'nama_barang' => $atributy->nama_barang,
+//                    'qty' => $atributy->qty,
+//                    'harga' => $atributy->harga,
+//                    'total' => $atributy->harga * $atributy->qty,
+//                    'kirim' => $atributy->kirim,
+//                    'action' => '<a class="btn btn-sm btn-success" href="javascript:void(0)" title="Return" onclick="return_so('."'".$atributy->id."'".')"><i class="glyphicon glyphicon-repeat"></i>Return</a>'
+//                     );
+//                }    
             }
 
         }

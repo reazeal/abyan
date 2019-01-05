@@ -149,7 +149,6 @@ class Piutang_model extends MY_Model
         $this->db->where("kode_referensi",$kode_kirim);
       //  $this->db->where("tanggal",$tanggal);
         $query = $this->db->get();
-
         return $query->row();
     }
     
