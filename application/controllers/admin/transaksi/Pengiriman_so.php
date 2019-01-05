@@ -39,6 +39,8 @@ class Pengiriman_so extends Admin_Controller {
         $this->load->model('detail_so_model');
         $this->load->model('transaksi_biaya_model');
         $this->load->model('pegawai_model');
+        $this->load->model('return_masuk_model');
+        $this->load->model('barang_masuk_model');
     }
 
     public function index() {
@@ -104,232 +106,342 @@ class Pengiriman_so extends Admin_Controller {
         echo json_encode(array($data));
     }
 
-    public function add($pengiriman = false) {
-        if (!$pengiriman) {
+    public function add() {
 
-            $tanggal_asli = explode("-", $this->tanggaldb($this->input->post('tanggal')));
+        $tanggal_asli = explode("-", $this->tanggaldb($this->input->post('tanggal')));
+        $jumlah_kirim = $this->pengiriman_so_model->total_pengiriman_so_perbulan_tahun($tanggal_asli[1], $tanggal_asli[0]);
+        if ($jumlah_kirim == 0) {
+            $jumlah = 1;
+            $kode_awal = "001";
+        } else {
+            $jumlah = $jumlah_kirim + 1;
 
-            $jumlah_kirim = $this->pengiriman_so_model->total_pengiriman_so_perbulan_tahun($tanggal_asli[1], $tanggal_asli[0]);
+            if (strlen($jumlah_kirim) == 1) {
+                $kode_awal = "00" . $jumlah;
+            } else if (strlen($jumlah_kirim) == 2) {
+                $kode_awal = "0" . $jumlah;
+            } else {
+                $kode_awal = $jumlah;
+            }
+        }
+        $kode_kirim = $kode_awal . "/PN/" . $tanggal_asli[1] . "/" . $tanggal_asli[0];
 
-            if ($jumlah_kirim == 0) {
+        //input pengiriman
+        $this->_inputpengiriman($kode_kirim, $tanggal_asli, $kode_awal);
+
+        //update barang keluar
+        $this->_barang_keluar($kode_kirim, $tanggal_asli, $this->input->post('qty_kirim'));
+
+        //insert biaya kardus
+        $data_biaya_kardus = array(
+            'id' => md5(rand(1, 100) . '62cce0f72ae42c43f71f7c2c74ce65ba' . $this->input->post('tanggal') . $this->input->post('kode_so') . date("YmdHis")),
+            'kode_referensi' => $this->input->post('kode_so'),
+            'tanggal' => $this->tanggaldb($this->input->post('tanggal')),
+            'nominal' => $this->input->post('biaya_kardus'),
+            'id_jenis_biaya' => '62cce0f72ae42c43f71f7c2c74ce65ba',
+            'status' => 'Pending',
+        );
+        $this->transaksi_biaya_model->insert($data_biaya_kardus);
+
+        //insert transaksi biaya
+        $data_so_bunga = $this->detail_so_model->get_by_no_so_barang($this->input->post('kode_so'), $this->input->post('kode_barang'));
+        $data_bunga_bank = array(
+            'id' => md5(rand(1, 100) . 'e6026106cfb7f0075ec6063cbd82307c' . $this->input->post('tanggal') . $this->input->post('kode_so') . date("YmdHis")),
+            'kode_referensi' => $this->input->post('kode_so'),
+            'tanggal' => $this->tanggaldb($this->input->post('tanggal')),
+            'nominal' => $data_so_bunga->harga * 2.5 / 100,
+            'id_jenis_biaya' => 'e6026106cfb7f0075ec6063cbd82307c',
+            'status' => 'Pending',
+        );
+        $this->transaksi_biaya_model->insert($data_bunga_bank);
+
+        echo json_encode(array("status" => TRUE));
+    }
+
+    public function add_terima() {
+
+        $tanggal_asli = explode("-", $this->tanggaldb($this->input->post('tanggal')));
+        $jumlah_kirim = $this->pengiriman_so_model->total_pengiriman_so_perbulan_tahun($tanggal_asli[1], $tanggal_asli[0]);
+        if ($jumlah_kirim == 0) {
+            $jumlah = 1;
+            $kode_awal = "001";
+        } else {
+            $jumlah = $jumlah_kirim + 1;
+
+            if (strlen($jumlah_kirim) == 1) {
+                $kode_awal = "00" . $jumlah;
+            } else if (strlen($jumlah_kirim) == 2) {
+                $kode_awal = "0" . $jumlah;
+            } else {
+                $kode_awal = $jumlah;
+            }
+        }
+        $kode_kirim = $kode_awal . "/PN/" . $tanggal_asli[1] . "/" . $tanggal_asli[0];
+
+        //update piutang
+        $this->_updatepiutang($kode_kirim, $tanggal_asli);
+
+        //update status SO terkirim
+        $data_so = array(
+            'status' => 'Terkirim'
+        );
+        $this->sales_order_model->update_by_no_so($this->input->post('kode_so'), $data_so);
+
+        // barang keluar
+        $this->_barang_keluar($kode_kirim, $tanggal_asli, $this->input->post('qty_terima'));
+
+        //update retur
+        $this->_retur();
+
+        //update biaya lunas
+        $this->transaksi_biaya_model->update_by_id(array('kode_referensi' => $this->input->post('kode_so')), array('status' => 'Lunas'));
+
+        echo json_encode(array("status" => TRUE));
+    }
+
+    public function _inputpengiriman($kode_kirim, $tanggal_asli, $kode_awal) {
+        $pegawai = explode("-", $this->input->post('nama_pegawai'));
+
+        $kode_kirim = $kode_awal . "/PN/" . $tanggal_asli[1] . "/" . $tanggal_asli[0];
+        $id_rand = rand(1, 100);
+        $id = md5($id_rand . $kode_kirim . date("YmdHis"));
+        $data = array(
+            'id' => $id,
+            'kode_pengiriman' => $kode_kirim,
+            'kode_so' => $this->input->post('kode_so'),
+            'tanggal' => $this->tanggaldb($this->input->post('tanggal')),
+            'qty' => $this->input->post('qty_kirim'),
+            'kode_barang' => $this->input->post('kode_barang'),
+            'nama_barang' => $this->input->post('nama_barang'),
+            'kode_kurir' => $pegawai[0],
+            'nama_kurir' => $pegawai[1]
+        );
+        $insert = $this->pengiriman_so_model->save($data);
+
+        $order = $this->detail_so_model->get_total_qty_so($this->input->post('kode_so'));
+
+        $kirim = $this->pengiriman_so_model->get_total_kirim_by_so($this->input->post('kode_so'));
+
+        // die();
+        //echo $order;
+        //echo $kirim;
+        if ($order > $kirim) {
+            $status_order = "Proses";
+            //  echo "satu";
+        } else {
+            $status_order = "Selesai";
+            //echo "dua";
+        }
+
+        //die();
+
+        $data_so = array(
+            'status' => $status_order
+        );
+        $this->sales_order_model->update_by_no_so($this->input->post('kode_so'), $data_so);
+    }
+
+    public function _updatepiutang($kode_kirim, $tanggal_asli) {
+        //input/update piutang
+        $piutang_so = $this->piutang_model->get_piutang_by_kode_kirim($kode_kirim);
+
+        if ($piutang_so == null) {
+            $so = $this->sales_order_model->get_by_noSO($this->input->post('kode_so'));
+            $jumlah_piutang = $this->piutang_model->total_piutang_perbulan_tahun($tanggal_asli[1], $tanggal_asli[0]);
+            if ($jumlah_piutang == 0) {
+                $jumlah_p = 1;
+                $kode_awal = "001";
+            } else {
+                $jumlah_p = $jumlah_piutang + 1;
+
+                if (strlen($jumlah_piutang) == 1) {
+                    $kode_awal = "00" . $jumlah_p;
+                } else if (strlen($jumlah_piutang) == 2) {
+                    $kode_awal = "0" . $jumlah_p;
+                } else {
+                    $kode_awal = $jumlah;
+                }
+            }
+            $kode_piutang = $kode_awal . "/PI/" . $tanggal_asli[1] . "/" . $tanggal_asli[0];
+            $rand_piutang = rand(1, 100);
+            $id_piutang = md5($kode_piutang . $rand_piutang . date("YmdHis") . $jumlah_piutang);
+            $jatuh_tempo = $this->penerimaan_po_model->get_by_jatuh_tempo($this->tanggaldb($this->input->post('tanggal')), $so->top);
+
+            $data_piutang = array(
+                'id' => $id_piutang,
+                'kode_piutang' => $kode_piutang,
+                'kode_referensi' => $so->kode_so,
+                'kode_bantu' => $so->kode_so,
+                'kode_relasi' => $so->kode_customer,
+                'nama_relasi' => $so->nama_customer,
+                'jenis' => 'Penjualan',
+                'nominal' => $this->input->post('qty_terima') * $this->input->post('harga'),
+                'tanggal' => $this->tanggaldb($this->input->post('tanggal')),
+                'tanggal_jatuh_tempo' => $jatuh_tempo,
+                'status' => 'Belum Lunas',
+            );
+            $this->piutang_model->save($data_piutang);
+        } else {
+            $nominal = ( $this->input->post('qty_terima') * $this->input->post('harga') ) + $data_piutang->nominal;
+            $data_piutang_baru = array(
+                'nominal' => $nominal
+            );
+            $this->piutang_model->update_by_kode($data_piutang->kode_piutang, $data_piutang_baru);
+        }
+        //end of piutang
+    }
+
+    public function _barang_keluar($kode_kirim, $tanggal_asli, $qty_keluar) {
+        $kode_keluar = $this->barang_keluar_model->get_kode_by_kode_keluar($kode_kirim, $this->tanggaldb($this->input->post('tanggal')));
+        if ($kode_keluar == null) {
+
+            $jumlah_keluar = $this->barang_keluar_model->total_keluar_perbulan_tahun($tanggal_asli[1], $tanggal_asli[0]);
+
+            if ($jumlah_keluar == 0) {
                 $jumlah = 1;
                 $kode_awal = "001";
             } else {
-                $jumlah = $jumlah_kirim + 1;
+                $jumlah = $jumlah_keluar + 1;
 
-                if (strlen($jumlah_kirim) == 1) {
+                if (strlen($jumlah_keluar) == 1) {
                     $kode_awal = "00" . $jumlah;
-                } else if (strlen($jumlah_kirim) == 2) {
+                } else if (strlen($jumlah_keluar) == 2) {
                     $kode_awal = "0" . $jumlah;
                 } else {
                     $kode_awal = $jumlah;
                 }
             }
 
-            $pegawai = explode("-", $this->input->post('nama_pegawai'));
+            $kode_barang_keluar = $kode_awal . "/BK/" . $tanggal_asli[1] . "/" . $tanggal_asli[0];
 
-            $kode_kirim = $kode_awal . "/PN/" . $tanggal_asli[1] . "/" . $tanggal_asli[0];
-            $id_rand = rand(1, 100);
-            $id = md5($id_rand . $kode_kirim . date("YmdHis"));
-            $data = array(
-                'id' => $id,
-                'kode_pengiriman' => $kode_kirim,
-                'kode_so' => $this->input->post('kode_so'),
-                'tanggal' => $this->tanggaldb($this->input->post('tanggal')),
-                'qty' => $this->input->post('qty_kirim'),
+            $id_barang_keluar = md5(rand(1, 100) . 'barang-keluar' . $this->input->post('kode_so') . $this->input->post('kode_barang') . $this->input->post('qty') . $qty_keluar . date('YmdHis'));
+
+            $data_barang_keluar = array(
+                'id' => $id_barang_keluar,
+                'kode_barang_keluar' => $kode_barang_keluar,
+                'jenis_trans' => 'PENGIRIMAN',
+                'nomor_referensi' => $this->input->post('kode_so'),
+                'tanggal' => $this->tanggaldb($this->input->post('tanggal'))
+            );
+            $insert = $this->barang_keluar_model->save($data_barang_keluar);
+
+            $id_detail_keluar = md5($this->input->post('kode_barang') . rand(1, 100) . $id_barang_keluar . $kode_barang_keluar . 'detail_keluar' . date('YmdHis'));
+
+            $data_detail_barang = array(
+                'kode_barang_keluar' => $kode_barang_keluar,
+                'id' => $id_detail_keluar,
+                'nomor_referensi' => $kode_kirim,
                 'kode_barang' => $this->input->post('kode_barang'),
                 'nama_barang' => $this->input->post('nama_barang'),
-                'kode_kurir' => $pegawai[0],
-                'nama_kurir' => $pegawai[1]
+                'qty' => $qty_keluar,
+                'id_detail_barang_masuk' => $this->input->post('id_detail_barang_masuk'),
             );
-            $insert = $this->pengiriman_so_model->save($data);
 
+            $this->detail_barang_keluar_model->insert($data_detail_barang);
+        } else {
+            $id_detail_keluar = md5($this->input->post('kode_barang') . rand(1, 100) . $kode_keluar . 'detail_keluar' . date('YmdHis'));
 
-            $order = $this->detail_so_model->get_total_qty_so($this->input->post('kode_so'));
+            $data_detail_barang = array(
+                'kode_barang_keluar' => $kode_keluar,
+                'id' => $id_detail_keluar,
+                'nomor_referensi' => $kode_kirim,
+                'kode_barang' => $this->input->post('kode_barang'),
+                'nama_barang' => $this->input->post('nama_barang'),
+                'qty' => $qty_keluar,
+                'id_detail_barang_masuk' => $this->input->post('id_detail_barang_masuk'),
+            );
 
-            $kirim = $this->pengiriman_so_model->get_total_kirim_by_so($this->input->post('kode_so'));
+            $this->detail_barang_keluar_model->insert($data_detail_barang);
+        }
+    }
 
-            // die();
-            //echo $order;
-            //echo $kirim;
-            if ($order > $kirim) {
-                $status_order = "Proses";
-                //  echo "satu";
+    public function _retur() {
+
+        $tanggal_asli = explode("-", $this->tanggaldb($this->input->post('tanggal')));
+
+        $data_return = $this->return_masuk_model->total_return_perbulan_tahun($tanggal_asli[1], $tanggal_asli[0]);
+
+        if ($data_return == 0) {
+            $jumlah = 1;
+            $kode_awal = "001";
+        } else {
+            $jumlah = $data_return + 1;
+
+            if (strlen($jumlah) == 1) {
+                $kode_awal = "00" . $jumlah;
+            } else if (strlen($jumlah) == 2) {
+                $kode_awal = "0" . $jumlah;
             } else {
-                $status_order = "Selesai";
-                //echo "dua";
+                $kode_awal = $jumlah;
             }
-
-            //die();
-
-            $data_so = array(
-                'status' => $status_order
-            );
-            $this->sales_order_model->update_by_no_so($this->input->post('kode_so'), $data_so);
-
-            // update barang masuk
-
-            $barang_masuk_keluar = $this->detail_barang_masuk_model->get_qty_keluar($this->input->post('id_detail_barang_masuk'));
-
-            $data_keluar = array(
-                'keluar' => $barang_masuk_keluar + $this->input->post('qty_kirim')
-            );
-
-            $this->detail_barang_masuk_model->update_by_id($this->input->post('id_detail_barang_masuk'), $data_keluar);
-
-            // tutup barang masuk
-            // barang keluar
-
-            $kode_keluar = $this->barang_keluar_model->get_kode_by_kode_keluar($kode_kirim, $this->tanggaldb($this->input->post('tanggal')));
-            if ($kode_keluar == null) {
-
-                $jumlah_keluar = $this->barang_keluar_model->total_keluar_perbulan_tahun($tanggal_asli[1], $tanggal_asli[0]);
-
-                if ($jumlah_keluar == 0) {
-                    $jumlah = 1;
-                    $kode_awal = "001";
-                } else {
-                    $jumlah = $jumlah_keluar + 1;
-
-                    if (strlen($jumlah_keluar) == 1) {
-                        $kode_awal = "00" . $jumlah;
-                    } else if (strlen($jumlah_keluar) == 2) {
-                        $kode_awal = "0" . $jumlah;
-                    } else {
-                        $kode_awal = $jumlah;
-                    }
-                }
-
-                $kode_barang_keluar = $kode_awal . "/BK/" . $tanggal_asli[1] . "/" . $tanggal_asli[0];
-
-                $id_barang_keluar = md5(rand(1, 100) . 'barang-keluar' . $this->input->post('kode_so') . $this->input->post('kode_barang') . $this->input->post('qty') . $this->input->post('qty_kirim') . date('YmdHis'));
-
-                $data_barang_keluar = array(
-                    'id' => $id_barang_keluar,
-                    'kode_barang_keluar' => $kode_barang_keluar,
-                    'jenis_trans' => 'PENJUALAN',
-                    'nomor_referensi' => $this->input->post('kode_so'),
-                    'tanggal' => $this->tanggaldb($this->input->post('tanggal'))
-                );
-                $insert = $this->barang_keluar_model->save($data_barang_keluar);
-
-                $id_detail_keluar = md5($this->input->post('kode_barang') . rand(1, 100) . $id_barang_keluar . $kode_barang_keluar . 'detail_keluar' . date('YmdHis'));
-
-                $data_detail_barang = array(
-                    'kode_barang_keluar' => $kode_barang_keluar,
-                    'id' => $id_detail_keluar,
-                    'nomor_referensi' => $kode_kirim,
-                    'kode_barang' => $this->input->post('kode_barang'),
-                    'nama_barang' => $this->input->post('nama_barang'),
-                    'qty' => $this->input->post('qty_kirim'),
-                    'id_detail_barang_masuk' => $this->input->post('id_detail_barang_masuk'),
-                );
-
-                $this->detail_barang_keluar_model->insert($data_detail_barang);
-            } else {
-
-
-                $id_detail_keluar = md5($this->input->post('kode_barang') . rand(1, 100) . $kode_keluar . 'detail_keluar' . date('YmdHis'));
-
-                $data_detail_barang = array(
-                    'kode_barang_keluar' => $kode_keluar,
-                    'id' => $id_detail_keluar,
-                    'nomor_referensi' => $kode_kirim,
-                    'kode_barang' => $this->input->post('kode_barang'),
-                    'nama_barang' => $this->input->post('nama_barang'),
-                    'qty' => $this->input->post('qty_kirim'),
-                    'id_detail_barang_masuk' => $this->input->post('id_detail_barang_masuk'),
-                );
-
-                $this->detail_barang_keluar_model->insert($data_detail_barang);
-            }
-
-
-            $piutang_so = $this->piutang_model->get_piutang_by_kode_kirim($kode_kirim);
-
-            if ($piutang_so == null) {
-
-                $so = $this->sales_order_model->get_by_noSO($this->input->post('kode_so'));
-
-                $jumlah_piutang = $this->piutang_model->total_piutang_perbulan_tahun($tanggal_asli[1], $tanggal_asli[0]);
-
-                if ($jumlah_piutang == 0) {
-                    $jumlah_p = 1;
-                    $kode_awal = "001";
-                } else {
-                    $jumlah_p = $jumlah_piutang + 1;
-
-                    if (strlen($jumlah_piutang) == 1) {
-                        $kode_awal = "00" . $jumlah_p;
-                    } else if (strlen($jumlah_piutang) == 2) {
-                        $kode_awal = "0" . $jumlah_p;
-                    } else {
-                        $kode_awal = $jumlah;
-                    }
-                }
-
-                $kode_piutang = $kode_awal . "/PI/" . $tanggal_asli[1] . "/" . $tanggal_asli[0];
-                $rand_piutang = rand(1, 100);
-
-                $id_piutang = md5($kode_piutang . $rand_piutang . date("YmdHis") . $jumlah_piutang);
-
-                $jatuh_tempo = $this->penerimaan_po_model->get_by_jatuh_tempo($this->tanggaldb($this->input->post('tanggal')), $so->top);
-
-                $data_piutang = array(
-                    'id' => $id_piutang,
-                    'kode_piutang' => $kode_piutang,
-                    'kode_referensi' => $so->kode_so,
-                    'kode_bantu' => $so->kode_so,
-                    'kode_relasi' => $so->kode_customer,
-                    'nama_relasi' => $so->nama_customer,
-                    'jenis' => 'Penjualan',
-                    'nominal' => $this->input->post('qty_kirim') * $this->input->post('harga'),
-                    'tanggal' => $this->tanggaldb($this->input->post('tanggal')),
-                    'tanggal_jatuh_tempo' => $jatuh_tempo,
-                    'status' => 'Belum Lunas',
-                );
-
-
-                $this->piutang_model->insert($data_piutang);
-            } else {
-
-                $nominal = ( $this->input->post('qty_kirim') * $this->input->post('harga') ) + $data_piutang->nominal;
-
-                $data_piutang_baru = array(
-                    'nominal' => $nominal
-                );
-
-                $this->piutang_model->update_by_kode($data_piutang->kode_piutang, $data_piutang_baru);
-            }
-        }else{
-            //dipotong disini
-            $data_biaya_kardus = array(
-                'id' => md5(rand(1, 100) . '62cce0f72ae42c43f71f7c2c74ce65ba' . $this->input->post('tanggal') . $this->input->post('kode_so') . date("YmdHis")),
-                'kode_referensi' => $this->input->post('kode_so'),
-                'tanggal' => $this->tanggaldb($this->input->post('tanggal')),
-                'nominal' => $this->input->post('biaya_kardus'),
-                'id_jenis_biaya' => '62cce0f72ae42c43f71f7c2c74ce65ba',
-                'status' => 'Pending',
-            );
-
-            $this->transaksi_biaya_model->insert($data_biaya_kardus);
-
-            $data_so_bunga = $this->detail_so_model->get_by_no_so_barang($this->input->post('kode_so'), $this->input->post('kode_barang'));
-
-
-            $data_bunga_bank = array(
-                'id' => md5(rand(1, 100) . 'e6026106cfb7f0075ec6063cbd82307c' . $this->input->post('tanggal') . $this->input->post('kode_so') . date("YmdHis")),
-                'kode_referensi' => $this->input->post('kode_so'),
-                'tanggal' => $this->tanggaldb($this->input->post('tanggal')),
-                'nominal' => $data_so_bunga->harga * 2.5 / 100,
-                'id_jenis_biaya' => 'e6026106cfb7f0075ec6063cbd82307c',
-                'status' => 'Pending',
-            );
-
-            $this->transaksi_biaya_model->insert($data_bunga_bank);
         }
 
-        echo json_encode(array("status" => TRUE));
+        $kode = $kode_awal . "/RM/" . $tanggal_asli[1] . "/" . $tanggal_asli[0];
+
+        $no = rand(1, 100);
+
+        $id = md5($kode . $no . 'return-so' . $this->input->post('kode_po') . $this->input->post('kode_barang') . date('YmdHis') . $this->input->post('qty'));
+
+
+
+        $data = array(
+            'id' => $id,
+            'kode_return_masuk' => $kode,
+            'tanggal' => $this->tanggaldb($this->input->post('tanggal')),
+            'kode_so' => $this->input->post('kode_so'),
+            'kode_barang' => $this->input->post('kode_barang'),
+            'nama_barang' => $this->input->post('nama_barang'),
+            'qty' => $this->input->post('qty_return'),
+            'alasan_return' => $this->input->post('alasan_return'),
+        );
+        $insert = $this->return_masuk_model->save($data);
+
+        $jumlah_masuk = $this->barang_masuk_model->total_masuk_perbulan_tahun($tanggal_asli[1], $tanggal_asli[0]);
+
+        if ($jumlah_masuk == 0) {
+            $jumlah = 1;
+            $kode_awal = "001";
+        } else {
+            $jumlah = $jumlah_masuk + 1;
+
+            if (strlen($jumlah_masuk) == 1) {
+                $kode_awal = "00" . $jumlah;
+            } else if (strlen($jumlah_masuk) == 2) {
+                $kode_awal = "0" . $jumlah;
+            } else {
+                $kode_awal = $jumlah;
+            }
+        }
+
+        $kode_barang_masuk = $kode_awal . "/BM/" . $tanggal_asli[1] . "/" . $tanggal_asli[0];
+
+        $id_barang_masuk = md5(rand(1, 100) . 'barang-masuk' . $this->input->post('kode_so') . $this->input->post('kode_barang') . $this->input->post('qty') . $this->input->post('qty_terima') . date('YmdHis'));
+
+        $data_barang_masuk = array(
+            'id' => $id_barang_masuk,
+            'kode_barang_masuk' => $kode_barang_masuk,
+            'jenis_trans' => 'RETURN',
+            'nomor_referensi' => $kode,
+            'tanggal' => $this->tanggaldb($this->input->post('tanggal'))
+        );
+        $insert = $this->barang_masuk_model->save($data_barang_masuk);
+
+        $id_detail_masuk = md5($this->input->post('kode_barang') . rand(1, 100) . $id_barang_masuk . $kode_barang_masuk . 'detail_po_masuk' . date('YmdHis'));
+
+        $data_detail_barang = array(
+            'kode_barang_masuk' => $kode_barang_masuk,
+            'id' => $id_detail_masuk,
+            'nomor_referensi' => $kode,
+            'kode_barang' => $this->input->post('kode_barang'),
+            'nama_barang' => $this->input->post('nama_barang'),
+            'qty' => $this->input->post('qty_return'),
+            'harga_beli' => $this->input->post('harga'),
+            'bottom_retail' => $this->input->post('bottom_retail'),
+            'bottom_supplier' => $this->input->post('bottom_supplier'),
+            'keluar' => 0
+        );
+
+        $this->detail_barang_masuk_model->insert($data_detail_barang);
     }
 
     public function update() {
