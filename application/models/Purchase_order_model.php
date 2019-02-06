@@ -6,9 +6,9 @@ class Purchase_order_model extends MY_Model
 {
     public $table = 'purchase_order';
     public $primary_key = 'id';
-    public $column_order = array(null, 'id','tanggal','kode_po','kode_supplier','nama_supplier','kode_barang','nama_barang',null);
-    public $column_search = array('tanggal','purchase_order.kode_po','kode_supplier','nama_supplier','kode_barang','nama_barang');
-    public $order = array('purchase_order.kode_po' => 'desc'); // default order
+    public $column_order = array(null, 'id','tanggal','kode_po','kode_supplier','nama_supplier',null);
+    public $column_search = array('tanggal','purchase_order.kode_po','kode_supplier','nama_supplier');
+    public $order = array('purchase_order.created_at' => 'desc'); // default order
 
     public function __construct()
     {
@@ -24,7 +24,7 @@ class Purchase_order_model extends MY_Model
 
         $this->db->join('detail_po','detail_po.kode_po=purchase_order.kode_po');
         */
-        $this->db->order_by('kode_po','desc');
+      //  $this->db->order_by('tanggal','desc');
        $this->db->from($this->table);
           $i = 0;
         foreach ($this->column_search as $item) // loop column

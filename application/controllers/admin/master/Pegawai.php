@@ -22,9 +22,9 @@ class Pegawai extends Admin_Controller
     function __construct()
     {
         parent::__construct();
-        if (!$this->ion_auth->in_group('admin')) {
-            redirect('auth/session_not_authorized', 'refresh');
-        }
+       // if (!$this->ion_auth->in_group('admin')) {
+       //     redirect('auth/session_not_authorized', 'refresh');
+       // }
         $this->load->library('form_validation');
         $this->load->helper('text');
         $this->load->helper('url');
@@ -52,6 +52,7 @@ class Pegawai extends Admin_Controller
             $row[] = $dt->id;
             $row[] = $dt->kode_pegawai;
             $row[] = $dt->nama_pegawai;
+            $row[] = $dt->jabatan;
             $row[] = '<a class="btn btn-sm btn-primary" href="javascript:void(0)" title="Edit" onclick="edit_pegawai('."'".$dt->id."'".')"><i class="glyphicon glyphicon-pencil"></i> Edit</a>
                   <a class="btn btn-sm btn-danger" href="javascript:void(0)" title="Hapus" onclick="delete_pegawai('."'".$dt->id."'".')"><i class="glyphicon glyphicon-trash"></i> Delete</a>';
             $data[] = $row;
@@ -91,6 +92,7 @@ class Pegawai extends Admin_Controller
         $data  = array(
             'id' => $data->id,
             'nama_pegawai' => $data->nama_pegawai,
+            'jabatan' => $data->jabatan,
         );
         echo json_encode(array($data));
     }
@@ -121,6 +123,7 @@ class Pegawai extends Admin_Controller
             'id' => $id_pegawai,
             'kode_pegawai' => "P".$kode_awal,
             'nama_pegawai' => $this->input->post('nama_pegawai'),
+            'jabatan' => $this->input->post('jabatan'),
             
         );
         $insert = $this->pegawai_model->save($data);
@@ -134,7 +137,8 @@ class Pegawai extends Admin_Controller
 
      
         $data = array(
-            'nama_pegawai' => $this->input->post('nama_pegawai')
+            'nama_pegawai' => $this->input->post('nama_pegawai'),
+            'jabatan' => $this->input->post('jabatan')
             
         );
         $this->pegawai_model->update_by_id(array('id' => $this->input->post('id')), $data);

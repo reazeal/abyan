@@ -30,12 +30,15 @@
                                     <th>Tanggal</th>
                                     <th>Kode Piutang</th>
                                     <th>Kode Referensi</th>
-                                    <th>Kode Relasi</th>
+                                    
                                     <th>Nama Relasi</th>
                                     
                                     <th>Tanggal JT</th>
                                     <th>Nominal</th>
+                                    <th>Bayar</th>
+                                    <th>Sisa</th>
                                     <th>Status</th>
+                                    <th>Kode Relasi</th>
                                     <th>Jenis</th>
                                     <th>Action</th>
                                 </tr>
@@ -247,7 +250,7 @@
                         <div class="form-group">
                             <label class="control-label col-md-3">Kode Piutang <span class="required">*</span></label>
                             <div class="col-md-9">
-                                <input name="kode_piutang" placeholder="Kode Piutang" readonly="true">
+                                <input name="kode_piutang" class="form-control" placeholder="Kode Piutang" readonly="true">
                                 <span class="help-block"></span>
                             </div>
                         </div>                        
@@ -257,7 +260,7 @@
                         <div class="form-group">
                             <label class="control-label col-md-3">Nomor Referensi <span class="required">*</span></label>
                             <div class="col-md-9">
-                                <input name="nomor_referensi" placeholder="Nomor" readonly="true">
+                                <input name="nomor_referensi" class="form-control" placeholder="Nomor" readonly="true">
                                 <span class="help-block"></span>
                             </div>
                         </div>                        
@@ -267,7 +270,7 @@
                         <div class="form-group">
                             <label class="control-label col-md-3">Kode Bantu <span class="required">*</span></label>
                             <div class="col-md-9">
-                                <input name="kode_bantu" placeholder="Kode Bantu" readonly="true">
+                                <input name="kode_bantu" class="form-control" placeholder="Kode Bantu" readonly="true">
                                 <span class="help-block"></span>
                             </div>
                         </div>                        
@@ -277,7 +280,7 @@
                         <div class="form-group">
                             <label class="control-label col-md-3">Nama Relasi <span class="required">*</span></label>
                             <div class="col-md-9">
-                                <input name="nama_relasi" placeholder="Nama Relasi" readonly="true">
+                                <input name="nama_relasi" class="form-control" placeholder="Nama Relasi" readonly="true">
                                 <span class="help-block"></span>
                             </div>
                         </div>                        
@@ -315,7 +318,7 @@
                         <div class="form-group">
                             <label class="control-label col-md-3">Keterangan <span class="required">*</span></label>
                             <div class="col-md-9">
-                                <input name="keterangan" placeholder="Keterangan">
+                                <input name="keterangan" class="validate[required,custom[number]] form-control" placeholder="Keterangan">
                                 <span class="help-block"></span>
                             </div>
                         </div>                        

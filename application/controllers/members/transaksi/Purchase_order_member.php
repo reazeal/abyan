@@ -14,13 +14,13 @@
  * @property  detail_barang_masuk_model $detail_barang_masuk_model
  * @property  barang_masuk_model $barang_masuk_model
  */
-class Purchase_order extends Admin_Controller
+class Purchase_order_member extends Admin_Controller
 {
 
     function __construct()
     {
         parent::__construct();
-        if (!$this->ion_auth->in_group('admin')) {
+        if (!$this->ion_auth->in_group('members')) {
             redirect('auth/session_not_authorized', 'refresh');
         }
         $this->load->library('form_validation');
@@ -38,7 +38,7 @@ class Purchase_order extends Admin_Controller
         $this->data['pilihan_barang'] = $this->barang_model->get_all();
         $this->data['pilihan_supplier'] = $this->supplier_model->get_all();
         //$this->data['pilihan_gudang'] = $this->gudang_model->get_all();
-        $this->render('admin/transaksi/Purchase_order_view');
+        $this->render('members/transaksi/Purchase_order_member_view');
     }
 
     public function get_data_all(){
@@ -57,16 +57,8 @@ class Purchase_order extends Admin_Controller
             $row[] = $dt->nama_supplier;
             $row[] = $dt->top;
             $row[] = $dt->status;
+                 $row[] = ' <a class="btn btn-sm btn-primary" href="javascript:void(0)" title="Detail" onclick="detail_po('."'".$dt->id."'".')"><i class="glyphicon glyphicon-pencil"></i> Detail</a>';
             
-            if($dt->status == 'Selesai'){
-                $row[] = ' <a class="btn btn-sm btn-primary" href="javascript:void(0)" title="Detail" onclick="detail_po('."'".$dt->id."'".')"><i class="glyphicon glyphicon-pencil"></i> Detail</a>
-                 ';
-            }else{
-                $row[] = ' <a class="btn btn-sm btn-primary" href="javascript:void(0)" title="Detail" onclick="detail_po('."'".$dt->id."'".')"><i class="glyphicon glyphicon-pencil"></i> Detail</a>
-                 <a class="btn btn-sm btn-danger" href="javascript:void(0)" title="Hapus" onclick="hapus_po('."'".$dt->id."'".')"><i class="glyphicon glyphicon-trash"></i> Delete</a>';                
-            }
-
-
             $data[] = $row;
         }
 
@@ -109,10 +101,11 @@ class Purchase_order extends Admin_Controller
         echo json_encode(array($data));
     }
 
+
+    
+
     public function add()
     {
-
-        echo $this->input->post('nama_suplier');
 
         $datax  = $this->input->post('dataDetail');
         $json = json_decode($datax);
@@ -137,7 +130,6 @@ class Purchase_order extends Admin_Controller
             }
         }
 
-        
         $kode = $kode_awal."/PO/".$tanggal_asli[1]."/".$tanggal_asli[0];
 
         $supplier = $this->supplier_model->get_by_kode($this->input->post('nama_supplier'));
@@ -186,8 +178,7 @@ class Purchase_order extends Admin_Controller
                 $i++;
             endforeach;
         }
-        
-        
+
         echo json_encode(array("status" => TRUE));
     }
 
@@ -210,8 +201,6 @@ class Purchase_order extends Admin_Controller
         
 
         $this->detail_purchase_order_model->delete_by_id($id);
-        $this->purchase_order_model->delete_by_id($id);
-        
         echo json_encode(array("status" => TRUE));
     }
 

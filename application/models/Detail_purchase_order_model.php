@@ -153,15 +153,18 @@ class Detail_purchase_order_model extends MY_Model
         if ($totaly2 > 0) {
             foreach ($query->result() as $atributy) {
 
+                    $total = $atributy->harga * $atributy->qty;
+
                 if($atributy->terima >= $atributy->qty ){
+                    
                     $data[] = array(
                     'id' => $atributy->id,
                     'kode_po' => $atributy->kode_po,
                     'kode_barang' => $atributy->kode_barang,
                     'nama_barang' => $atributy->nama_barang,
                     'qty' => $atributy->qty,
-                    'harga' => $atributy->harga,
-                    'total' => $atributy->harga * $atributy->qty,
+                    'harga' => number_format((($atributy->harga)?$atributy->harga:'0'),0,",","."),
+                    'total' => number_format((($total)?$total:'0'),0,",","."),
                     'terima' => $atributy->terima,
                     'action' => ''
                     
@@ -173,8 +176,8 @@ class Detail_purchase_order_model extends MY_Model
                     'kode_barang' => $atributy->kode_barang,
                     'nama_barang' => $atributy->nama_barang,
                     'qty' => $atributy->qty,
-                    'harga' => $atributy->harga,
-                    'total' => $atributy->harga * $atributy->qty,
+                    'harga' => number_format((($atributy->harga)?$atributy->harga:'0'),0,",","."),
+                    'total' => number_format((($total)?$total:'0'),0,",","."),
                     'terima' => $atributy->terima,
                     'action' => '<a class="btn btn-sm btn-success terima-detail" href="javascript:void(0)" title="Terima" onclick="terima_po('."'".$atributy->id."'".')"><i class="glyphicon glyphicon-check"></i> Terima</a>'    
                     

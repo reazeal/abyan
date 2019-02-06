@@ -6,8 +6,8 @@ class Penerimaan_po_model extends MY_Model
 {
     public $table = 'penerimaan_po';
     public $primary_key = 'id';
-    public $column_order = array(null, 'id','tanggal','kode_po','kode_penerimaan','kode_supplier','nama_supplier',null);
-    public $column_search = array('id','tanggal','kode_po','kode_supplier','nama_supplier','kode_penerimaan');
+    public $column_order = array(null, 'penerimaan_po.id','tanggal','kode_po','penerimaan_po.kode_penerimaan_po','kode_supplier','nama_supplier','detail_penerimaan_po.nama_barang','detail_penerimaan_po.kode_barang',null);
+    public $column_search = array('penerimaan_po.id','tanggal','kode_po','kode_supplier','nama_supplier','penerimaan_po.kode_penerimaan_po','detail_penerimaan_po.nama_barang','detail_penerimaan_po.kode_barang');
     public $order = array('penerimaan_po.kode_penerimaan_po' => 'desc'); // default order
 
     public function __construct()

@@ -128,6 +128,17 @@ class MY_Controller extends CI_Controller
         }
 
     }
+
+    function pemisah_ribuan($angka){
+        if(!empty($angka)){
+            $ribuan = number_format((($angka)?$angka:'0'),0,",",".");
+            return $ribuan;
+        }else{
+            return "0";
+        }
+
+    }
+    
 }
 
 /**

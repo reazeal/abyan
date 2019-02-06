@@ -20,9 +20,9 @@ class detail_barang_masuk extends Admin_Controller
     function __construct()
     {
         parent::__construct();
-        if (!$this->ion_auth->in_group('admin')) {
-            redirect('auth/session_not_authorized', 'refresh');
-        }
+       // if (!$this->ion_auth->in_group('admin')) {
+       //     redirect('auth/session_not_authorized', 'refresh');
+       // }
         $this->load->library('form_validation');
         $this->load->helper('text');
         $this->load->helper('url');
@@ -36,6 +36,8 @@ class detail_barang_masuk extends Admin_Controller
 
      public function get_by_id($id)
     {
+
+        //echo 'sini';
         $data = $this->detail_barang_masuk_model->get_by_id($id);
         $data  = array(            
             'qty_stok' => $data->qty - $data->keluar,

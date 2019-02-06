@@ -22,13 +22,14 @@ class Piutang extends Admin_Controller
     function __construct()
     {
         parent::__construct();
-        if (!$this->ion_auth->in_group('admin')) {
-            redirect('auth/session_not_authorized', 'refresh');
-        }
+//        if (!$this->ion_auth->in_group('admin')) {
+  //          redirect('auth/session_not_authorized', 'refresh');
+    //    }
         $this->load->library('form_validation');
         $this->load->helper('text');
         $this->load->helper('url');
         $this->load->model('piutang_model');
+        $this->load->model('pembayaran_piutang_model');
         
     }
 
@@ -54,6 +55,11 @@ class Piutang extends Admin_Controller
         $data = array();
         $no = $this->input->post('start');
         foreach ($list as $dt) {
+            $nominal_bayar = $this->pembayaran_piutang_model->get_total_bayar_by_kode($dt->kode_piutang);
+           // print_r($nominal_bayar);
+           // die();
+            $nominal_sisa = $dt->nominal - $nominal_bayar;
+
             $no++;
             $row = array();
             $row[] = $no;
@@ -61,12 +67,17 @@ class Piutang extends Admin_Controller
             $row[] = $this->tanggal($dt->tanggal);
             $row[] = $dt->kode_piutang;
             $row[] = $dt->kode_referensi;
-            $row[] = $dt->kode_relasi;
+            
             $row[] = $dt->nama_relasi;
            
             $row[] = $this->tanggal($dt->tanggal_jatuh_tempo);
-            $row[] = $dt->nominal;
+            $row[] = number_format((($dt->nominal)?$dt->nominal:'0'),0,",",".");
+            $row[] = number_format((($nominal_bayar)?$nominal_bayar:'0'),0,",",".");
+            //$row[] = number_format((($dt->nominal_sisa)?$dt->nominal_sisa:'0'),0,",",".");
+            $row[] = number_format((($nominal_sisa)?$nominal_sisa:'0'),0,",",".");
             $row[] = $dt->status;
+
+            $row[] = $dt->kode_relasi;
              $row[] = $dt->jenis;
              if($dt->status != "Lunas"){
                 $row[] = '<a class="btn btn-sm btn-success" href="javascript:void(0)" title="Edit" onclick="bayar_piutang('."'".$dt->id."'".')"><i class="glyphicon glyphicon-check"></i> Bayar</a>';

@@ -141,8 +141,9 @@ class Pembayaran_piutang_model extends MY_Model
 
     public function get_total_bayar_by_kode($kode){
         $nominal = array();
+
         $this->db->select("
-            sum(nominal) as nominal
+            ifnull(sum(nominal),0) as nominal
         ");
         $this->db->where("kode_piutang",$kode);
         //$this->db->where("tanggal",$tanggal);
@@ -155,9 +156,12 @@ class Pembayaran_piutang_model extends MY_Model
                 $nominal = $atributy->nominal ;
                 
             }
-
+            return $nominal;
+        }else{
+            $nominal = 0;
+            return $nominal;
         }
-        return $nominal;
+        
     }
 
     

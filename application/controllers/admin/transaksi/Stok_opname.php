@@ -22,9 +22,9 @@ class Stok_opname extends Admin_Controller
     function __construct()
     {
         parent::__construct();
-        if (!$this->ion_auth->in_group('admin')) {
-            redirect('auth/session_not_authorized', 'refresh');
-        }
+    //    if (!$this->ion_auth->in_group('admin')) {
+    //        redirect('auth/session_not_authorized', 'refresh');
+    //    }
         $this->load->library('form_validation');
         $this->load->helper('text');
         $this->load->helper('url');
@@ -130,6 +130,7 @@ class Stok_opname extends Admin_Controller
             'kode_barang' => $barang[0],
             'qty' => $this->input->post('qty'),
             'tanggal' => $this->tanggaldb($this->input->post('tanggal')),
+            'created_at' => date("Y-m-d H:i:s"),
             //'rak_id' => $this->input->post('rak_id'),
             
         );

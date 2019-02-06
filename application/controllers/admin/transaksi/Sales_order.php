@@ -20,9 +20,9 @@ class Sales_order extends Admin_Controller
     function __construct()
     {
         parent::__construct();
-        if (!$this->ion_auth->in_group('admin')) {
-            redirect('auth/session_not_authorized', 'refresh');
-        }
+        //if (!$this->ion_auth->in_group('admin')) {
+        //    redirect('auth/session_not_authorized', 'refresh');
+       // }
         $this->load->library('form_validation');
         $this->load->helper('text');
         $this->load->helper('url');
@@ -34,6 +34,7 @@ class Sales_order extends Admin_Controller
         $this->load->model('piutang_model');
         $this->load->model('pegawai_model');
         $this->load->model('detail_so_model');
+        $this->load->model('transaksi_biaya_model');
          $this->load->model('detail_barang_masuk_model');
     }
 
@@ -71,17 +72,24 @@ class Sales_order extends Admin_Controller
             $row[] = $dt->satuan;
             */
             $row[] = $this->tanggal($dt->tanggal_kirim);
+            $row[] = $dt->kode_sales;
             $row[] = $dt->status;
-            /*
-                $row[] = '<a class="btn btn-sm btn-primary" href="javascript:void(0)" title="Edit" onclick="edit_so('."'".$dt->id."'".')"><i class="glyphicon glyphicon-pencil"></i> Edit</a>
-                  <a class="btn btn-sm btn-danger" href="javascript:void(0)" title="Hapus" onclick="delete_so('."'".$dt->id_detail."'".')"><i class="glyphicon glyphicon-trash"></i> Delete</a>
-                  <a class="btn btn-sm btn-primary" href="javascript:void(0)" title="Detail" onclick="detail_so('."'".$dt->id."'".')"><i class="glyphicon glyphicon-pencil"></i> Detail</a>
-                  <a class="btn btn-sm btn-success" href="javascript:void(0)" title="Edit" onclick="kirim_so('."'".$dt->id_detail."'".')"><i class="glyphicon glyphicon-check"></i> Kirim</a>';
-           */
-                     $row[] = '
+
+            if($dt->status == 'Proses'){
+                $row[] = '
                   <a class="btn btn-sm btn-primary" href="javascript:void(0)" title="Detail" onclick="detail_so('."'".$dt->id."'".')"><i class="glyphicon glyphicon-pencil"></i> Detail</a>
                   <a class="btn btn-sm btn-primary" href="javascript:void(0)" title="Cetak" onclick="cetak_so('."'".$dt->id."'".')"><i class="glyphicon glyphicon-pencil"></i> Cetak</a>
+                  <a class="btn btn-sm btn-danger" href="javascript:void(0)" title="Hapus" onclick="hapus_so('."'".$dt->id."'".')"><i class="glyphicon glyphicon-trash"></i> Delete</a>
                 ';
+            }else{
+                        $row[] = '
+                  <a class="btn btn-sm btn-primary" href="javascript:void(0)" title="Detail" onclick="detail_so('."'".$dt->id."'".')"><i class="glyphicon glyphicon-pencil"></i> Detail</a>
+                  <a class="btn btn-sm btn-primary" href="javascript:void(0)" title="Cetak" onclick="cetak_so('."'".$dt->id."'".')"><i class="glyphicon glyphicon-pencil"></i> Cetak</a>
+                  
+                ';
+            }
+
+             
             $data[] = $row;
         }
 
@@ -130,9 +138,9 @@ class Sales_order extends Admin_Controller
         }else{
             $jumlah = $jumlah_so + 1;
 
-            if(strlen($jumlah_so) == 1 ){
+            if(strlen($jumlah) == 1 ){
                 $kode_awal = "00".$jumlah;
-            }else if(strlen($jumlah_so) == 2){
+            }else if(strlen($jumlah) == 2){
                 $kode_awal = "0".$jumlah;
             }else {
                 $kode_awal = $jumlah;
@@ -148,12 +156,22 @@ class Sales_order extends Admin_Controller
             'nama_customer' => $customer[1],
             'status' => 'Proses',
             'tanggal' => $this->tanggaldb($this->input->post('tanggal')),
+            'kode_sales' => $this->input->post('kode_pegawai'),
             'tanggal_kirim' => $this->tanggaldb($this->input->post('tanggal_kirim')),
-            'top' => $this->input->post('top')
+            'top' => $this->input->post('top'),
+            'created_at' => date("Y-m-d H:i:s"),
         );
         $insert = $this->sales_order_model->save($data);
+
+        // get jenis customer
+
+        $data_customer = $this->customer_model->get_by_kode($customer[0]);
+        $jenis_cust = $data_customer->jenis;
+
         // /$id = $this->db->insert_id();
-        $nominal_piutang = 0;
+        $nominal_sales = 0;
+        $nominal_cold_st = 0;
+        $berat_cold_st = 0;
         if($id){
             $i=0;
             foreach ($json as $ax) :
@@ -178,18 +196,53 @@ class Sales_order extends Admin_Controller
                             'harga' => $ax[5],
                             'harga_beli' => $harga->harga_beli
                         );
-
-                        $nominal_piutang = $nominal_piutang + ($ax[4] * $ax[5]);
+                        //echo $ax[2] .'--'. $ax[3].'--'.$ax[5].'ok';
+                        if($jenis_cust == 'Customer Retail'){
+                            // echo $ax[2] .'--'. $ax[5].'sini';
+                            if($ax[7] < $ax[5]){
+                                //bottom_retail
+                                $nominal_sales = $nominal_sales + ($ax[4] * $ax[5]);
+                            }
+                        }else{
+                            // echo $ax[2] .'--'. $ax[5].'sana';
+                            if($ax[8] < $ax[5]){
+                                //bottom_retail
+                                $nominal_sales = $nominal_sales + ($ax[4] * $ax[5]);
+                            }
+                        }
+                        //$nominal_sales = $nominal_sales + ($ax[4] * $ax[5]);
 
                         $this->detail_so_model->insert($data_detail);
 
-                        
+                        $berat_cold_st = $berat_cold_st + $ax[4];
                         
                     }
                 }
                 $i++;
             endforeach;
         }
+
+        //die();
+
+        $data_komisi_sales = array(
+            'id' => md5(rand(1, 100) . '69ea49d4740ef0b03d818f055de99b1f' . $this->input->post('tanggal') . $kode . date("YmdHis")),
+            'kode_referensi' => $kode,
+            'tanggal' => $this->tanggaldb($this->input->post('tanggal')),
+            'nominal' => $nominal_sales * 1.5 / 100,
+            'id_jenis_biaya' => '69ea49d4740ef0b03d818f055de99b1f',
+            'status' => 'Pending',
+        );
+        $this->transaksi_biaya_model->insert($data_komisi_sales);
+
+        $data_cold_st = array(
+            'id' => md5(rand(1, 100) . 'aa083acc31d09e74122a742aae63e4b1' . $this->input->post('tanggal') . $kode . date("YmdHis")),
+            'kode_referensi' => $kode,
+            'tanggal' => $this->tanggaldb($this->input->post('tanggal')),
+            'nominal' => $berat_cold_st * 900,
+            'id_jenis_biaya' => 'aa083acc31d09e74122a742aae63e4b1',
+            'status' => 'Pending',
+        );
+        $this->transaksi_biaya_model->insert($data_cold_st);
 
         
         echo json_encode(array("status" => TRUE));
@@ -210,9 +263,10 @@ class Sales_order extends Admin_Controller
         echo json_encode(array("status" => TRUE));
     }
 
-    public function delete($id)
+    public function hapus_so($id)
     {
-        $this->detail_barang_masuk_model->delete_by_id($id);
+        $this->detail_so_model->delete_by_id($id);
+        $this->sales_order_model->delete_by_id($id);
         echo json_encode(array("status" => TRUE));
     }
 
@@ -274,16 +328,22 @@ class Sales_order extends Admin_Controller
         echo json_encode(array($data));
     }
 
-    public function cetak_so()
+    public function cetak_so($idx)
 
     {
+        //echo $idx;
+      //  echo $this->input->get('id');
 
         //echo $_GET['id'];
-     //   $id = $this->input->get('id');
-
-        $datax = $this->detail_so_model->getDataByNoSoCetak('08b14dcdf1214933894bb6f28596fff7');
-       // $datax = $this->detail_so_model->get_by_id();
+        $datax = $this->detail_so_model->getDataByNoSoCetak($idx);
+        $so = $this->sales_order_model->get_by_idSo($idx);
+        $pegawai = $this->pegawai_model->get_by_kode($so->kode_sales);
+        //print_r($so);
+        $so->tanggal = $this->tanggal($so->tanggal);
+        $tes = 'halo';
         $data['datanya'] = $datax;
+        $data['so'] = $so;
+        $data['pegawai'] = $pegawai;
         $this->load->view('admin/transaksi/cetak_so',$data);
 
     }

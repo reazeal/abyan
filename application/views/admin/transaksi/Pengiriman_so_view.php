@@ -196,6 +196,7 @@
         $('.help-block').empty(); // clear error string
 
         //Ajax Load data from ajax
+        
         $.ajax({
             url : "<?php echo site_url('admin/transaksi/sales_order/kirim/')?>" + id,
             type: "GET",

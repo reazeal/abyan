@@ -56,11 +56,7 @@
     <script src="<?php echo site_url('assets/ajax.combobox/dist/js/jquery.ajax-combobox.min.js');?>"></script>
     <script src="<?php echo site_url('assets/bootstrap-select/bootstrap-select.js');?>"></script>
 
-<!-- Chart.js -->
-<script src="<?php echo site_url('assets/vendors/Chart.js/dist/Chart.min.js');?>"></script>
-<script src="<?php echo site_url('assets/vendors/raphael/raphael.min.js');?>"></script>
-<script src="<?php echo site_url('assets/vendors/morris.js/morris.min.js');?>"></script>
-
+    
 
     <script type="application/javascript">
         var COPYRIGHT           = '<?php echo $copyright; ?>';
@@ -109,8 +105,8 @@
                 {
                     $this->load->view('templates/_parts/admin_menu_view');
                 }elseif($this->ion_auth->in_group('members')){
-                    $this->load->view('templates/_parts/user_menu_view');
+                    $this->load->view('templates/_parts/members_menu_view');
                 }else{
-					redirect('auth/logout', 'refresh');
-				}
+                    redirect('auth/logout', 'refresh');
+                }
                 ?>

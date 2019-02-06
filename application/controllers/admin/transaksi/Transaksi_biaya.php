@@ -19,9 +19,9 @@ class Transaksi_biaya extends Admin_Controller
     function __construct()
     {
         parent::__construct();
-        if (!$this->ion_auth->in_group('admin')) {
-            redirect('auth/session_not_authorized', 'refresh');
-        }
+//        if (!$this->ion_auth->in_group('admin')) {
+  //          redirect('auth/session_not_authorized', 'refresh');
+    //    }
         $this->load->library('form_validation');
         $this->load->helper('text');
         $this->load->helper('url');
@@ -48,7 +48,7 @@ class Transaksi_biaya extends Admin_Controller
             $row[] = $dt->id;
             $row[] = $this->tanggal($dt->tanggal);
             $row[] = $dt->nama_biaya;
-            
+            $row[] = $dt->kode_referensi;
             $row[] = $dt->nominal;
             $row[] = '<a class="btn btn-sm btn-primary" href="javascript:void(0)" title="Edit" onclick="edit_transaksi_biaya('."'".$dt->id."'".')"><i class="glyphicon glyphicon-pencil"></i> Edit</a>
 				  <a class="btn btn-sm btn-danger" href="javascript:void(0)" title="Hapus" onclick="delete_transaksi_biaya('."'".$dt->id."'".')"><i class="glyphicon glyphicon-trash"></i> Delete</a>';

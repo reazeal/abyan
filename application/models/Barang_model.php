@@ -6,8 +6,8 @@ class Barang_model extends MY_Model
 {
     public $table = 'barang';
     public $primary_key = 'id';
-    public $column_order = array(null, 'id','kode','nama','keterangan','kategori','batas_stok','satuan',null);
-    public $column_search = array('id','kode','nama','keterangan','kategori','batas_stok','satuan');
+    public $column_order = array(null, 'id','kode','nama','keterangan','batas_stok','satuan',null);
+    public $column_search = array('id','kode','nama','keterangan','batas_stok','satuan');
     public $order = array('id' => 'desc'); // default order
 
     public function __construct()
@@ -179,6 +179,27 @@ class Barang_model extends MY_Model
 
         }
         return $batas_stok;
+
+    }
+
+    public function get_barang_by_kode($kode){
+        $total_masuk = array();
+        $this->db->select("
+            kode
+        ");
+        $this->db->where("kode",$kode);
+        $query = $this->db->get($this->table);
+
+        $totaly2 = $query->num_rows();
+        if ($totaly2 > 0) {
+            foreach ($query->result() as $atributy) {
+
+                $kode = $atributy->kode ;
+                
+            }
+
+        }
+        return $kode;
 
     }
 

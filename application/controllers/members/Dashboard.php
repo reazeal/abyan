@@ -22,12 +22,29 @@ class Dashboard extends Admin_Controller
         $this->load->library('form_validation');
         $this->load->helper('text');
         $this->load->helper('url');
+        $this->load->model('laporan_mutasi_model');
+        $this->load->model('detail_barang_keluar_model');
+        $this->load->model('detail_barang_masuk_model');
+        $this->load->model('laporan_penjualan_model');
     }
 
     public function index()
-    {
+    {   
+        $this->load->model('piutang_model');
+        $this->load->model('sales_order_model');
+        $this->data['nominal_piutang']= $this->piutang_model->get_piutang_sekarang();
+        $this->data['jml_qty']= $this->sales_order_model->get_penjualan_bulan_sekarang();
+        $this->data['top_customer']= $this->sales_order_model->get_top_customer();
+        $qty_bulan= $this->sales_order_model->get_qty_per_bulan();
+        
+        $this->data['a_qty_bulan']=array();
+        foreach ($qty_bulan as $row){
+            $this->data['a_qty_bulan'][$row->bulan]=$row->jmlqty;
+        }
+        
         $this->data['menu_data'] = array('master' =>false,'transaksi'=>false,'dashboard'=>true,'cetakan'=>false,'class_master'=>'collapse','class_transaksi'=>'collapse');
-        $this->render('members/dashboard_view');
+
+        $this->render('admin/Dashboard_view');
     }
 
 }

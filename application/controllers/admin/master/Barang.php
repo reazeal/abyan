@@ -19,9 +19,9 @@ class Barang extends Admin_Controller
     function __construct()
     {
         parent::__construct();
-        if (!$this->ion_auth->in_group('admin')) {
-            redirect('auth/session_not_authorized', 'refresh');
-        }
+       // if (!$this->ion_auth->in_group('admin')) {
+       //     redirect('auth/session_not_authorized', 'refresh');
+       // }
         $this->load->library('form_validation');
         $this->load->helper('text');
         $this->load->helper('url');
@@ -68,7 +68,7 @@ class Barang extends Admin_Controller
 
     public function edit($id)
     {
-        $data = $this->barang_model->get($id);
+        $data = $this->barang_model->get_by_id($id);
         $data  = array(
             'id' => $data->id,
             'kode' => $data->kode,
@@ -87,19 +87,27 @@ class Barang extends Admin_Controller
         $datax  = $this->input->post('dataDetail');
         $json = json_decode($datax);
 
-        $data = array(
-            'id' => md5('barang'.$this->input->post('nama').$this->input->post('kode').date('YmdHis')),
-            'nama' => $this->input->post('nama'),
-            'keterangan' => $this->input->post('keterangan'),            
-            'kode' => $this->input->post('kode'),
-            'batas_stok' => $this->input->post('batas_stok'),
-            'satuan' => $this->input->post('satuan')
-            //'tgl' => $this->tanggaldb($this->input->post('tgl'))
-        );
-        $insert = $this->barang_model->save($data);
-        $id = $this->db->insert_id();
+        $kodes = $this->barang_model->get_barang_by_kode($this->input->post('kode'));
+        if($kodes['kode'] != ''){
+
+            $data = array(
+                'id' => md5('barang'.$this->input->post('nama').$this->input->post('kode').date('YmdHis')),
+                'nama' => $this->input->post('nama'),
+                'keterangan' => $this->input->post('keterangan'),            
+                'kode' => $this->input->post('kode'),
+                'batas_stok' => $this->input->post('batas_stok'),
+                'satuan' => $this->input->post('satuan')
+                //'tgl' => $this->tanggaldb($this->input->post('tgl'))
+            );
+            $insert = $this->barang_model->save($data);
+            $id = $this->db->insert_id();
+            
+            echo json_encode(array("status" => TRUE));
+        }else{
+            echo json_encode(array("status" => FALSE));    
+        }
         
-        echo json_encode(array("status" => TRUE));
+        
     }
 
     public function update()

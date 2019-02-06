@@ -20,9 +20,9 @@ class Barang_masuk extends Admin_Controller
     function __construct()
     {
         parent::__construct();
-        if (!$this->ion_auth->in_group('admin')) {
-            redirect('auth/session_not_authorized', 'refresh');
-        }
+//        if (!$this->ion_auth->in_group('admin')) {
+  //          redirect('auth/session_not_authorized', 'refresh');
+    //    }
         $this->load->library('form_validation');
         $this->load->helper('text');
         $this->load->helper('url');

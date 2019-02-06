@@ -6,8 +6,8 @@ class Pegawai_model extends MY_Model
 {
     public $table = 'pegawai';
     public $primary_key = 'id';
-    public $column_order = array(null, 'id','kode_pegawai', 'nama_pegawai',null);
-    public $column_search = array('kode_pegawai', 'nama_pegawai');
+    public $column_order = array(null, 'id','kode_pegawai', 'nama_pegawai','jabatan',null);
+    public $column_search = array('kode_pegawai', 'nama_pegawai','jabatan');
     public $order = array('id' => 'desc'); // default order
 
     public function __construct()
@@ -84,6 +84,15 @@ class Pegawai_model extends MY_Model
     {
         $this->db->from($this->table);
         $this->db->where($this->primary_key,$id);
+        $query = $this->db->get();
+
+        return $query->row();
+    }
+
+    public function get_by_kode($kode)
+    {
+        $this->db->from($this->table);
+        $this->db->where('kode_pegawai',$kode);
         $query = $this->db->get();
 
         return $query->row();

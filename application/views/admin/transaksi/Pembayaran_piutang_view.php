@@ -34,7 +34,7 @@
                                     <th>Nama Relasi</th>
                                     <th>Nominal</th>
                                     <th>Status</th>
-                                    <th>Action</th>
+                                    
                                 </tr>
                                 </thead>
 

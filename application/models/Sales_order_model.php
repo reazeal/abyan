@@ -6,9 +6,9 @@ class Sales_order_model extends MY_Model
 {
     public $table = 'sales_order';
     public $primary_key = 'id';
-    public $column_order = array(null, 'id','tanggal','kode_so','kode_customer','nama_customer','tanggal_kirim',null);
-    public $column_search = array('id','tanggal','kode_so','kode_customer','nama_customer','tanggal_kirim');
-    public $order = array('kode_so' => 'desc'); // default order
+    public $column_order = array(null, 'id','tanggal','kode_so','kode_customer','nama_customer','tanggal_kirim','kode_sales',null);
+    public $column_search = array('id','tanggal','kode_so','kode_customer','nama_customer','tanggal_kirim','kode_sales');
+    public $order = array('created_at' => 'desc'); // default order
 
     public function __construct()
     {
@@ -121,6 +121,16 @@ class Sales_order_model extends MY_Model
         return $query->row();
     }
 
+
+    public function get_by_idSO($idSo)
+    {
+
+        $this->db->from($this->table);
+        $this->db->where('id',$idSo);
+        $query = $this->db->get();
+
+        return $query->row();
+    }
 
     public function save($data)
     {

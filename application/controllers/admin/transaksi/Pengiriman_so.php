@@ -21,9 +21,9 @@ class Pengiriman_so extends Admin_Controller {
 
     function __construct() {
         parent::__construct();
-        if (!$this->ion_auth->in_group('admin')) {
-            redirect('auth/session_not_authorized', 'refresh');
-        }
+     //   if (!$this->ion_auth->in_group('admin')) {
+     //       redirect('auth/session_not_authorized', 'refresh');
+     //   }
         $this->load->library('form_validation');
         $this->load->helper('text');
         $this->load->helper('url');
@@ -138,7 +138,7 @@ class Pengiriman_so extends Admin_Controller {
             'kode_referensi' => $this->input->post('kode_so'),
             'tanggal' => $this->tanggaldb($this->input->post('tanggal')),
             'nominal' => $this->input->post('biaya_kardus'),
-            'id_jenis_biaya' => '62cce0f72ae42c43f71f7c2c74ce65ba',
+            'id_jenis_biaya' => '7c413a3bfa29d65702df7c60fb554bf6',
             'status' => 'Pending',
         );
         $this->transaksi_biaya_model->insert($data_biaya_kardus);
@@ -150,7 +150,7 @@ class Pengiriman_so extends Admin_Controller {
             'kode_referensi' => $this->input->post('kode_so'),
             'tanggal' => $this->tanggaldb($this->input->post('tanggal')),
             'nominal' => $data_so_bunga->harga * 2.5 / 100,
-            'id_jenis_biaya' => 'e6026106cfb7f0075ec6063cbd82307c',
+            'id_jenis_biaya' => '5e07f1f86d4fc32542a2df57d8339a2d',
             'status' => 'Pending',
         );
         $this->transaksi_biaya_model->insert($data_bunga_bank);

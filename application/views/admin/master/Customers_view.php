@@ -297,7 +297,6 @@
                             <div class="col-md-9">
                                 <select name="jenis" class="validate[required] form-control" required="required">
                                     <option value="">--Pilih Jenis--</option>
-                                    <option value="Supplier">Supplier</option>
                                     <option value="Customer Retail">Customer Retail</option>
                                     <option value="Customer Supplier">Customer Supplier</option>                                    
                                 </select>

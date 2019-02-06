@@ -29,6 +29,7 @@
                                     <th>id</th>
                                     <th>Kode</th>
                                     <th>Nama</th>
+                                    <th>Jabatan</th>
                                     <th>Action</th>
                                 </tr>
                                 </thead>
@@ -181,7 +182,7 @@
             {
                 $('[name="id"]').val(data[0]['id']);
                 $('[name="nama_pegawai"]').val(data[0]['nama_pegawai']);
-                
+                $('[name="jabatan"]').val(data[0]['jabatan']);
                 $('#modal_form').modal('show'); // show bootstrap modal when complete loaded
                 $('.modal-title').text('Ubah Pegawai'); // Set title to Bootstrap modal title
 
@@ -240,6 +241,20 @@
                             </div>
                         </div>                        
                     </div>
+
+                    <div class="form-group">
+                            <label class="control-label col-md-3">Jabatan <span class="required">*</span></label>
+                            <div class="col-md-9">
+                                <select name="jabatan" class="validate[required] form-control" required="required">
+                                    <option value="">--Pilih Jabatan--</option>
+                                    <option value="Admin">Admin</option>
+                                    <option value="Deliver">Deliver</option>
+                                    <option value="Owner">Owner</option>
+                                    <option value="Sales">Sales</option>
+                                </select>
+                                <span class="help-block"></span>
+                            </div>
+                        </div>
 
                 </form>
             </div>

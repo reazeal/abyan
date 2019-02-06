@@ -255,7 +255,8 @@
             },
             error: function (jqXHR, textStatus, errorThrown)
             {
-                alert('Error adding / update data');
+               // alert(data.status);
+                alert('Error adding / update data / Duplicate Kode');
                 $('#btnSave').text('simpan'); //change button text
                 $('#btnSave').attr('disabled',false); //set button enable
 

@@ -22,9 +22,9 @@ class Stok extends Admin_Controller
     function __construct()
     {
         parent::__construct();
-        if (!$this->ion_auth->in_group('admin')) {
-            redirect('auth/session_not_authorized', 'refresh');
-        }
+    //    if (!$this->ion_auth->in_group('admin')) {
+     //       redirect('auth/session_not_authorized', 'refresh');
+     //   }
         $this->load->library('form_validation');
         $this->load->helper('text');
         $this->load->helper('url');
@@ -80,8 +80,6 @@ class Stok extends Admin_Controller
                 $row[] = '<a class="label label-danger">Limit</a>';
             }
             
-            
-            $row[] = '<a class="btn btn-sm btn-primary" href="javascript:void(0)" title="Edit" onclick="detail_stok('."'".$dt->kode."'".')"><i class="glyphicon glyphicon-pencil"></i> Detail</a>';
             $data[] = $row;
         }
 

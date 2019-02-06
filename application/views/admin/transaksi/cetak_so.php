@@ -18,7 +18,7 @@
 <link rel="stylesheet" href="<?php echo site_url('assets/qtray/css/style.css');?>" />
 
 
-<body id="qz-page" role="document" onload="setPrinter('Epson');">
+<body id="qz-page" role="document" onload="setPrinter('Epson LX-310');">
 
 <div id="qz-alert" style="position: fixed; width: 60%; margin: 0 4% 0 36%; z-index: 900;"></div>
 <div id="qz-pin" style="position: fixed; width: 30%; margin: 0 66% 0 4%; z-index: 900;"></div>
@@ -80,7 +80,7 @@
                     <div class="col-md-12">
                         <span style="float: right;">
                             Set Printer :
-                            <a href="javascript:setPrinter('Epson');">Epson</a>
+                            <a href="javascript:setPrinter('Epson LX-310');">Epson</a>
                         </span>
                     </div>
                 </div>
@@ -346,27 +346,78 @@
         var config = getUpdatedConfig();
 
         var printData = [
-            { type: 'raw', data: '\n', options: { language: 'ESCPOS', dotDensity: 'single' } },
-            { type: 'raw', data: ' ===================================================== \n' },
-            { type: 'raw', data: ' |  No    |      Nama       |       Keterangan       | \n' },
-            { type: 'raw', data: ' ===================================================== \n' },
+            { type: 'raw', data: '\n', options: { language: 'ESCPOS', dotDensity: 'double',  } , },
+            '\x1B' + '\x40',   
+            '\x1B' + '\x45' + '\x0D',
+            
+            /*
+            { type: 'raw', data: '                  INVOICE                      \n' },
+            { type: 'raw', data: 'CV. Abyan Jaya                          Number    :  <?php echo $so->kode_so ?>    \n' },
+            { type: 'raw', data: 'Jl. Balongsari Tama Blok A/3            Tanggal   :  <?php echo $so->tanggal ?>      \n' },
+            { type: 'raw', data: 'Balongsari - Tandes, Surabaya           TOP       : \n' },
+            { type: 'raw', data: 'Phone : (031) 561-3507                  Sales     : \n' },
+            { type: 'raw', data: 'WA :0822-3204-7857 \n' },
+            { type: 'raw', data: ' ====================================================================== \n' },
+            { type: 'raw', data: ' | No | Kode Barang |  Nama Barang  | Jumlah | Harga | Diskon | Total | \n' },
+            { type: 'raw', data: ' ====================================================================== \n' },
+            */
+             '                               INVOICE                      \n',
+             'CV. Abyan Jaya                          Number    :  <?php echo $so->kode_so ?>    \n' ,
+             'Jl. Balongsari Tama Blok A/3            Tanggal   :  <?php echo $so->tanggal ?>      \n' ,
+             'Balongsari - Tandes, Surabaya           TOP       : \n' ,
+             'Phone : (031) 561-3507                  Sales     : <?php echo $pegawai->nama_pegawai ?>\n' ,
+             'WA :0822-3204-7857                      Customer  :  <?php echo $so->nama_customer ?>\n' ,
+             '                                        Po        :  \n',
+             ' ============================================================================= \n' ,
+             ' | No | Kode  |    Nama Barang      | QTY |   Harga  | Diskon |     Total    | \n' ,
+             ' ============================================================================= \n' ,
+            
               <?php 
               $q=1;
+              $total_harga = 0;
+              $diskonx = 0;
               foreach ($datanya as $hasilx) {
+                    $total_harga = $total_harga + ($hasilx['qty'] * $hasilx['harga']);
+                    
+                    $kode_barang = $hasilx['kode_barang'];
+                    $panjang_kode_barang = str_repeat(" ", (6-strlen($kode_barang)));
+                    $nama_barang = $hasilx['nama_barang'];
+                    $panjang_nama_barang = str_repeat(" ", (20-strlen($nama_barang)));
+                    $qty = $hasilx['qty'];
+                    $panjang_qty = str_repeat(" ", (4-strlen($qty)));
+                    $harga = number_format((($hasilx['harga'])?$hasilx['harga']:'0'),0,",",".");
+                    $panjang_harga = str_repeat(" ", (9-strlen($harga)));
+                    $diskon = $diskonx;
+                    $panjang_diskon = str_repeat(" ", (7-strlen($diskon)));
+                    $sub_total = number_format((($hasilx['qty'] * $hasilx['harga'])?$hasilx['qty'] * $hasilx['harga']:'0'),0,",",".");
+                    $panjang_sub_total = str_repeat(" ", (11-strlen($sub_total)));
                 ?>
 
-           { type: 'raw', data:  ' | <?php echo  $q.'     |   '.$hasilx->kode_so.'    |     '.$hasilx->k                    ?> \n' },
+           { type: 'raw', data:  ' |<?php echo      $q.'   | '.$kode_barang.$panjang_kode_barang.'| '.$nama_barang.$panjang_nama_barang.'| '.$qty.$panjang_qty.'| '.$harga.$panjang_harga.'| '.$diskon.$panjang_diskon.'| '.$sub_total.$panjang_sub_total.'|'            ?> \n' },
+
+           
               <?php
               $q++;
               }
+
+              $total_hargax = number_format((($total_harga)?$total_harga:'0'),0,",",".");
+
               ?>
-            { type: 'raw', data: ' |  1     |  Akuh           |  Siap                  | \n' },
-            { type: 'raw', data: ' |  2     |  IKuh           |  Yeye                  | \n' },
-            { type: 'raw', data: ' |        |                 |                        | \n' },
-            { type: 'raw', data: ' |        |                 |                        | \n' },
-            { type: 'raw', data: ' ===================================================== \n' },
-            { type: 'raw', data: ' | Total  |  2                                       | \n' },
-            { type: 'raw', data: ' ===================================================== \n' },
+            { type: 'raw', data: ' ============================================================================= \n' },          
+
+            { type: 'raw', data: ' |                    Total                                 |  <?php echo $total_hargax ?>     | \n' },
+
+            { type: 'raw', data: ' ============================================================================= \n' },
+            
+
+             { type: 'raw', data: ' Transfer Via :  \n' },
+             { type: 'raw', data: ' BCA                 Penerima            Pengirim              Hormat Kami \n' },
+             { type: 'raw', data: ' A/C 790-0954-004 \n' },
+             { type: 'raw', data: ' A/N Zuhair Bobsaid  \n' },
+             { type: 'raw', data: '\n' },
+             { type: 'raw', data: '---------------------------------------------------------------------------  \n' },
+             { type: 'raw', data: ' | Nb: Barang yang dibeli tidak dapat dikembalikan, kecuali ada perjanjian | \n' },
+             { type: 'raw', data: ' ---------------------------------------------------------------------------\n' },
         ];
 
         qz.print(config, printData).catch(displayError);

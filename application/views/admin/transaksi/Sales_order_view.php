@@ -30,6 +30,7 @@
                                     <th>Kode So</th>
                                     <th>Customer</th>
                                     <th>Tgl Kirim</th>
+                                    <th>Sales</th>
                                     <th>Status</th>
                                     <th>Action</th>
                                 </tr>
@@ -137,6 +138,12 @@
                     "visible": false
                 },{
                     "targets": [2],
+                    "visible": false
+                },{
+                    "targets": [7],
+                    "visible": false
+                },{
+                    "targets": [8],
                     "visible": false
                 }
             ]
@@ -445,7 +452,29 @@
         });
     }
 
+    function hapus_so(id)
+    {
+        if(confirm('Anda yakin mau menghapus data ini ?'))
+        {
+            // ajax delete data to database
+            $.ajax({
+                url : "<?php echo site_url('admin/transaksi/sales_order/hapus_so')?>/"+id,
+                type: "POST",
+                dataType: "JSON",
+                success: function(data)
+                {
+                    //if success reload ajax table
+                    $('#modal_form').modal('hide');
+                    reload_table();
+                },
+                error: function (jqXHR, textStatus, errorThrown)
+                {
+                    alert('Error deleting data');
+                }
+            });
 
+        }
+    }
 
     function simpan_kirim()
     {
@@ -617,7 +646,7 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="control-label col-md-3">TOP<span class="required">*</span></label>
+                        <label class="control-label col-md-3">TOP (Hari)<span class="required">*</span></label>
                         <div class="col-md-6">
                             <input name="top" placeholder="TOP" class="validate[required,custom[number]] form-control" type="text" required="required">
                             <span class="help-block"></span>
@@ -639,6 +668,25 @@
                                 <span class="help-block"></span>
                             </div>
                         </div>
+                        <div class="form-group">
+                       
+                        <label class="control-label col-md-3">Sales<span class="required">*</span></label>
+                             <div class="col-md-6">
+                            <select id="kode_pegawai" name="kode_pegawai" data-live-search="true"  class="selectpicker validate[required] form-control" required="required">
+                                <option value="">--Pilih Sales--</option>
+                                <?php
+                                foreach ($pilihan_pegawai as $row3):
+                                    ?>
+                                    <option value="<?php echo $row3->kode_pegawai;?>"><?php echo $row3->kode_pegawai."-".$row3->nama_pegawai; ?></option>
+                                    <?php
+
+                                endforeach;
+                                ?>
+                            </select>
+                            <span class="help-block"></span>
+                        </div>
+                        </div>
+
                     </div>
 
                 <p>
@@ -655,6 +703,8 @@
                         <th>Qty</th>
                         <th>Harga</th>
                         <th>Total</th>
+                        <th>Retail</th>
+                        <th>supplier</th>
                         <th>Action</th>
                     </tr>
                     </thead>
@@ -969,6 +1019,16 @@
                         </div>
                     </div>
 
+                    <div class="form-group">
+                            <label class="control-label col-md-3">Cek Harga <span class="required">*</span></label>
+                            <div class="col-md-9">
+                                <select name="cek_harga" id="cek_harga" class="validate[required] form-control" required="required">
+                                    <option value="Y">Ya</option>
+                                    <option value="T">Tidak</option>
+                                </select>
+                                <span class="help-block"></span>
+                            </div>
+                        </div>
 
                 </form>
             </div>
@@ -1042,13 +1102,54 @@
         var harga = $('#formDetail').find('input[name="harga"]').val();
         var qty_stok = $('#formDetail').find('input[name="qty_stok"]').val();
         var qty = $('#formDetail').find('input[name="qty"]').val();
-        
-        if(parseInt(harga) < parseInt(bottom_retail)){
-            alert('Tidak di perbolehkan dibawah harga minimum');
-        }else if(parseInt(qty_stok) < parseInt(qty)){
-            alert('Jumlah Order Melebihi Stok');
+        var cek_harga = $("#cek_harga :selected").val();
+
+
+        if(cek_harga == 'Y'){
+
+
+            if(parseInt(harga) < parseInt(bottom_retail)){
+                alert('Tidak di perbolehkan dibawah harga minimum');
+            }else if(parseInt(qty_stok) < parseInt(qty)){
+                alert('Jumlah Order Melebihi Stok');
+            }else{
+                
+                if(!$("#formDetail").validationEngine('validate')){
+                    return false;
+                }
+
+                $('#btnSaveDetail').text('menyimpan...'); //change button text
+                $('#btnSaveDetail').attr('disabled',true); //set button disable
+
+                var url;
+
+                if(save_method_detail === 'add') {
+
+                    var dd =  $('#formDetail').serialize();
+                    var barang_id =   $('#modal_formDetail').find('[name="nama_barang_so"]').val();
+                    var nama_barang =    $("#nama_barang_so :selected").text();
+                    var qty =   $('#modal_formDetail').find('[name="qty"]').val();
+                    var harga =   $('#modal_formDetail').find('[name="harga"]').val();
+                    var bottom_supplier =   $('#modal_formDetail').find('[name="bottom_supplier"]').val();
+                    var bottom_retail =   $('#modal_formDetail').find('[name="bottom_supplier"]').val();
+                    var total =   harga * qty;
+                    var aksi = "<a class='btn btn-sm btn-danger hapus-detail' href='javascript:void(0)' title='Hapus' onclick='hapus_dataDetail()'><i class='glyphicon glyphicon-trash'></i> Delete</a>";
+
+                     iterasi++;
+                    table_detail.row.add(['','', barang_id,nama_barang, qty, harga, total, bottom_retail, bottom_supplier, aksi]).draw();
+
+                    $('#modal_formDetail').modal('hide');
+                    $('#btnSaveDetail').text('simpan'); //change button text
+                    $('#btnSaveDetail').attr('disabled',false); //set button enable
+
+                } else {
+
+                }            
+            }
+
         }else{
-            
+
+                
             if(!$("#formDetail").validationEngine('validate')){
                 return false;
             }
@@ -1065,11 +1166,13 @@
                 var nama_barang =    $("#nama_barang_so :selected").text();
                 var qty =   $('#modal_formDetail').find('[name="qty"]').val();
                 var harga =   $('#modal_formDetail').find('[name="harga"]').val();
+                var bottom_supplier =   $('#modal_formDetail').find('[name="bottom_supplier"]').val();
+                var bottom_retail =   $('#modal_formDetail').find('[name="bottom_supplier"]').val();
                 var total =   harga * qty;
                 var aksi = "<a class='btn btn-sm btn-danger hapus-detail' href='javascript:void(0)' title='Hapus' onclick='hapus_dataDetail()'><i class='glyphicon glyphicon-trash'></i> Delete</a>";
 
                  iterasi++;
-                table_detail.row.add(['','', barang_id,nama_barang, qty, harga, total, aksi]).draw();
+                table_detail.row.add(['','', barang_id,nama_barang, qty, harga, total, bottom_retail, bottom_supplier, aksi]).draw();
 
                 $('#modal_formDetail').modal('hide');
                 $('#btnSaveDetail').text('simpan'); //change button text
@@ -1078,7 +1181,10 @@
             } else {
 
             }            
+        
         }
+
+        
 
     }
 

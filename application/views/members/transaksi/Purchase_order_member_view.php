@@ -16,7 +16,6 @@
                         </div>
                         <div class="x_content">
                             <p>
-                                <button class="btn btn-success" onclick="add_po()"><i class="glyphicon glyphicon-plus"></i> Tambah PO</button>
                                 <button class="btn btn-default" onclick="reload_table()"><i class="glyphicon glyphicon-refresh"></i> Reload</button>
                             </p>
 
@@ -68,7 +67,7 @@
             "order": [], //Initial no order.
             // Load data for the table's content from an Ajax source
             "ajax": {
-                "url": "<?php echo site_url('admin/transaksi/purchase_order/get_data_all');?>",
+                "url": "<?php echo site_url('members/transaksi/purchase_order_member/get_data_all');?>",
                 "type": "POST"
             },
             buttons: [
@@ -267,7 +266,7 @@
 
         //Ajax Load data from ajax
         $.ajax({
-            url : "<?php echo site_url('admin/transaksi/purchase_order/edit/')?>/" + id,
+            url : "<?php echo site_url('members/transaksi/purchase_order_member/edit/')?>/" + id,
             type: "GET",
             dataType: "JSON",
             success: function(data)
@@ -308,7 +307,7 @@
         table_detailpo.clear().draw();
 
         $.ajax({
-            url : "<?php echo site_url('admin/transaksi/purchase_order/get_detail')?>/"+ $id,
+            url : "<?php echo site_url('members/transaksi/purchase_order_member/get_detail')?>/"+ $id,
             type: "GET",
             dataType: "JSON",
             success: function(data)
@@ -316,7 +315,7 @@
                 //alert(data[0]['detailStok'].length);
                 for(var i = 0; i < data[0]['detailPo'].length; i++) {
                     var obj = data[0]['detailPo'][i];
-                    table_detailpo.row.add([obj.id, obj.kode_po, obj.kode_barang, obj.nama_barang, obj.qty, obj.harga, obj.total, obj.terima,  obj.action]).draw();
+                    table_detailpo.row.add([obj.id, obj.kode_po, obj.kode_barang, obj.nama_barang, obj.qty, obj.terima,  obj.action]).draw();
                 }
 
                 $('#modal_detail_po').modal('show'); // show bootstrap modal when complete loaded
@@ -359,24 +358,15 @@
 
         seen = [];
 
-        
         json = JSON.stringify(table_detail .rows().data(), function(key, val) {
-            //console.log(val.conte);
-
-           // var JSONObject = JSON.parse(val);
-            //console.log(val.context)
             if (typeof val === "object") {
-                
                 if (seen.indexOf(val) >= 0)
                     return
-                        seen.push(val)
-                    
-                
+                    seen.push(val)
             }
             return val
         });
-        
-        
+
 
         if(!$("#form").validationEngine('validate')){
             return false;
@@ -392,7 +382,6 @@
         $.ajax({
             url : url,
             type: "POST",
-            //data: $('#form').serialize() + "&dataDetail=" + encodeURIComponent(a),
             data: $('#form').serialize() + "&dataDetail=" + json,
             dataType: "JSON",
             success: function(data)
@@ -433,7 +422,6 @@
         seen = [];
 
         json = JSON.stringify(table_detail .rows().data(), function(key, val) {
-
             if (typeof val === "object") {
                 if (seen.indexOf(val) >= 0)
                     return
@@ -583,10 +571,8 @@
             var buttom_retail =   $('#modal_formDetail').find('[name="buttom_retail"]').val();
             var aksi = "<a class='btn btn-sm btn-danger hapus-detail' href='javascript:void(0)' title='Hapus' onclick='hapus_dataDetail()'><i class='glyphicon glyphicon-trash'></i> Delete</a>";
 
-
              iterasi++;
-
-            table_detail.row.add(['','', encodeURIComponent(barang_id), encodeURIComponent(nama_barang), encodeURIComponent(qty), encodeURIComponent(harga), encodeURIComponent(total), encodeURIComponent(buttom_supplier), encodeURIComponent(buttom_retail), encodeURIComponent(aksi)]).draw();
+            table_detail.row.add(['','', barang_id,nama_barang, qty, harga, total, buttom_supplier, buttom_retail, aksi]).draw();
 
             $('#modal_formDetail').modal('hide');
             $('#btnSaveDetail').text('simpan'); //change button text
@@ -615,7 +601,7 @@
 
     }
 
-    function hapus_po(id)
+    function delete_po(id)
     {
         if(confirm('Anda yakin mau menghapus data ini ?'))
         {
@@ -679,7 +665,7 @@
                     <div class="form-group">
                         <label class="control-label col-md-3">Supplier<span class="required">*</span></label>
                         <div class="col-md-6">
-                            <select id="nama_suplier" name="nama_supplier" data-live-search="true"  class="selectpicker validate[required] form-control" required="true">
+                            <select id="nama_suplier" name="nama_supplier" data-live-search="true"  class="selectpicker validate[required] form-control" required="required">
                                 <option value="">--Pilih Supplier--</option>
                                 <?php
                                 foreach ($pilihan_supplier as $row3):
@@ -905,8 +891,6 @@
                             <th>Kode Barang</th>
                             <th>Nama Barang</th>                            
                             <th>Qty</th>
-                            <th>Harga</th>
-                            <th>Total</th>
                             <th>Terima</th>
                             <th>Action</th>
                         </tr>

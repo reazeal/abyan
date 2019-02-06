@@ -8,7 +8,7 @@ class Stok_opname_model extends MY_Model
     public $primary_key = 'id';
     public $column_order = array(null, 'id','kode_stok_opname', 'kode_barang','nama_barang','qty','tanggal',null);
     public $column_search = array('kode_stok_opname','kode_barang','nama_barang','qty','tanggal');
-    public $order = array('tanggal' => 'desc'); // default order
+    public $order = array('created_at' => 'desc'); // default order
 
     public function __construct()
     {
@@ -18,7 +18,7 @@ class Stok_opname_model extends MY_Model
     private function _get_datatables_query()
     {
         //$this->db->group_by('kode');
-        $this->db->order_by('tanggal','desc');
+       // $this->db->order_by('tanggal','desc');
         $this->db->from('stok_opname');
           $i = 0;
         foreach ($this->column_search as $item) // loop column

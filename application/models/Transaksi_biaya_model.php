@@ -6,8 +6,8 @@ class Transaksi_biaya_model extends MY_Model
 {
     public $table = 'transaksi_biaya';
     public $primary_key = 'id';
-    public $column_order = array(null, 'transaksi_biaya.id','nama_biaya','tanggal','nominal','status',null);
-    public $column_search = array('transaksi_biaya.id','nama_biaya','tanggal','nominal','status');
+    public $column_order = array(null, 'transaksi_biaya.id','nama_biaya','tanggal','nominal','status','kode_referensi',null);
+    public $column_search = array('transaksi_biaya.id','nama_biaya','tanggal','nominal','status','kode_referensi');
     public $order = array('tanggal' => 'desc'); // default order
 
     public function __construct()
@@ -17,7 +17,7 @@ class Transaksi_biaya_model extends MY_Model
 
     private function _get_datatables_query()
     {
-        $this->db->select('transaksi_biaya.id, nama_biaya, tanggal, nominal, status');
+        $this->db->select('transaksi_biaya.id, nama_biaya, tanggal, nominal, status, kode_referensi');
         $this->db->join('jenis_biaya','jenis_biaya.id = transaksi_biaya.id_jenis_biaya');
        $this->db->from($this->table);
           $i = 0;

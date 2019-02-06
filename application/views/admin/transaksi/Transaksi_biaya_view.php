@@ -29,6 +29,7 @@
                                     <th>id</th>
                                     <th>Tanggal</th>
                                     <th>Jenis Biaya</th>
+                                    <th>Referensi</th>
                                     <th>Nominal</th>
                                     <th>Action</th>
                                 </tr>
