@@ -208,8 +208,8 @@ class Purchase_order extends Admin_Controller
     public function delete($id)
     {
         
-
-        $this->detail_purchase_order_model->delete_by_id($id);
+        $data = $this->purchase_order_model->get_by_id_po($id);
+        $this->detail_purchase_order_model->delete_by_no_po($data->kode_po);
         $this->purchase_order_model->delete_by_id($id);
         
         echo json_encode(array("status" => TRUE));

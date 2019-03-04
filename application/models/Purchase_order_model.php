@@ -110,6 +110,16 @@ class Purchase_order_model extends MY_Model
         return $this->db->insert_id();
     }
 
+    public function get_by_id_po($idPO)
+    {
+
+        $this->db->from($this->table);
+        $this->db->where('id',$idPO);
+        $query = $this->db->get();
+
+        return $query->row();
+    }
+
     public function update_by_id($where, $data)
     {
         $this->db->update($this->table, $data, $where);

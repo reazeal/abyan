@@ -95,6 +95,12 @@ class Detail_purchase_order_model extends MY_Model
         $this->db->delete($this->table);
     }
 
+    public function delete_by_no_po($id)
+    {
+        $this->db->where('kode_po', $id);
+        $this->db->delete($this->table);
+    }
+
     public function delete_by_no_bukti($no_bukti)
     {
         $this->db->where('no_bukti', $no_bukti);
