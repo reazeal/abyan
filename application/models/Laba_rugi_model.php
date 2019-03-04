@@ -89,6 +89,15 @@ class Laba_rugi_model extends MY_Model
         return $query->row();
     }
 
+    public function get_by_periode($periode)
+    {
+        $this->db->from($this->table);
+        $this->db->where('periode',$periode);
+        $query = $this->db->get();
+
+        return $query->row();
+    }
+
     public function save($data)
     {
         $this->db->insert($this->table, $data);
@@ -177,10 +186,13 @@ class Laba_rugi_model extends MY_Model
     
     public function total_biaya_perbulan_tahun($bulan,$tahun){
         $this->db->select("
-            ifnull(sum(nominal),0) as total 
-            from transaksi_biaya
+            ifnull(sum(c.nominal),0) as total 
+            from pembayaran_piutang a
+            join piutang b on a.kode_piutang = b.kode_piutang
+            join transaksi_biaya c on c.kode_referensi = b.kode_referensi
         ");
-        $this->db->where(" month(tanggal)='$bulan' and year(tanggal) = '$tahun' and status='Lunas' ");
+
+        $this->db->where(" month(c.tanggal)='$bulan' and year(c.tanggal) = '$tahun'  ");
         $query = $this->db->get();
 
         $totaly2 = $query->num_rows();

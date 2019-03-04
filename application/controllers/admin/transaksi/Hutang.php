@@ -66,7 +66,7 @@ class Hutang extends Admin_Controller
             $row[] = $dt->nama_relasi;
             $row[] = $dt->jenis;
             $row[] = $this->tanggal($dt->tanggal_jatuh_tempo);
-            $row[] = $dt->nominal;
+            $row[] = number_format((($dt->nominal)?$dt->nominal:'0'),0,",",".");
             $row[] = $dt->status;
             if($dt->status != 'Lunas'){
 

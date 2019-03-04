@@ -85,15 +85,18 @@ class Laba_rugi extends Admin_Controller
         $bulan=$this->input->post('bulan');
         $tahun=$this->input->post('tahun');
         
+        
         $pendapatan=$this->laba_rugi_model->total_pendapatan_perbulan_tahun($bulan,$tahun); 
+        // mengacu SO
         $biaya=$this->laba_rugi_model->total_biaya_perbulan_tahun($bulan,$tahun);
         //$hutang=$this->laba_rugi_model->total_hutang_perbulan_tahun($bulan,$tahun);
         $pembelian=$this->laba_rugi_model->total_pembelian_perbulan_tahun($bulan,$tahun);
         
         $id=md5($bulan.'/'.$tahun);
+        $periode = $bulan.'/'.$tahun;
         $data = array(
             'id' => $id,
-            'periode' => $bulan.'/'.$tahun,
+            'periode' => $periode,
             'total_pendapatan' => $pendapatan,            
             'total_biaya' => $biaya,          
             'total_pembelian' => $pembelian,
@@ -128,16 +131,17 @@ class Laba_rugi extends Admin_Controller
         $data = array();
         $no = $this->input->post('start');
         foreach ($list as $dt) {
+            $labarugi = $dt->total_pendapatan - $dt->total_biaya - $dt->total_pembelian;
             $no++;
             $row = array();
             $row[] = $no;
             $row[] = $dt->id;
             $row[] = $this->tanggal($dt->tanggal);
             $row[] = $dt->periode;
-            $row[] = $dt->total_pendapatan;
-            $row[] = $dt->total_biaya;
-            $row[] = $dt->total_pembelian;
-            $row[] = $dt->total_pendapatan - $dt->total_biaya - $dt->total_pembelian;
+            $row[] = number_format((($dt->total_pendapatan)?$dt->total_pendapatan:'0'),0,",",".");
+            $row[] = number_format((($dt->total_biaya)?$dt->total_biaya:'0'),0,",",".");
+            $row[] = number_format((($dt->total_pembelian)?$dt->total_pembelian:'0'),0,",",".");
+            $row[] = number_format((($labarugi)?$labarugi:'0'),0,",",".");
             $row[] = '<a class="btn btn-sm btn-primary" href="javascript:void(0)" title="Detail" onclick="detail_ll('."'".$dt->id."'".')"><i class="glyphicon glyphicon-pencil"></i> Detail</a>
                   <a class="btn btn-sm btn-primary" href="javascript:void(0)" title="Cetak" onclick="cetak_ll('."'".$dt->id."'".')"><i class="glyphicon glyphicon-pencil"></i> Cetak</a>';
             $data[] = $row;

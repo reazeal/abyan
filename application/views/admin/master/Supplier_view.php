@@ -30,6 +30,7 @@
                                     <th>Nama</th>
                                     <th>Alamat</th>
                                     <th>No Telp</th>
+                                    <th>Keterangan</th>
                                     <th>Action</th>
                                 </tr>
                                 </thead>
@@ -179,6 +180,7 @@
                 $('[name="nama"]').val(data[0]['nama_supplier']);
                 $('[name="alamat"]').val(data[0]['alamat_supplier']);
                 $('[name="nomor_telp"]').val(data[0]['nomor_telp']);
+                $('[name="keterangan"]').val(data[0]['keterangan']);
 
                 /* table_detail.clear().draw();
                 for(var i = 0; i < data[0]['detailBarang'].length; i++) {
@@ -339,6 +341,13 @@
                             </div>
                         </div>
                         
+                        <div class="form-group">
+                            <label class="control-label col-md-3">Keterangan <span class="required">*</span></label>
+                            <div class="col-md-9">
+                                <input name="keterangan" placeholder="Keterangan" class="form-control" type="text">
+                                <span class="help-block"></span>
+                            </div>
+                        </div>
 
                     </div>
 

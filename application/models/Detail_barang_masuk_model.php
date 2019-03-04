@@ -82,6 +82,22 @@ class Detail_barang_masuk_model extends MY_Model
         return $query->row();
     }
 
+	public function get_by_idx($id)
+    {
+        
+        $query = $this->db->query("
+            SELECT *  FROM detail_barang_masuk a 
+left join (SELECT sum(qty) keluar, id_detail_barang_masuk FROM detail_barang_keluar 
+where id_detail_barang_masuk = '$id' ) b 
+on a.id = b.id_detail_barang_masuk
+where id = '$id'
+");
+                
+        //return $query->result();
+
+        return $query->row();
+    }
+
     public function save($data)
     {
         $this->db->insert($this->table, $data);
@@ -191,6 +207,24 @@ class Detail_barang_masuk_model extends MY_Model
         $query = $this->db->get($this->table);
 
         $totaly2 = $query->num_rows();
+        //return $query->row();
+        return $query->result();
+        
+       
+    }
+
+	  public function get_by_penerimaanx(){
+        
+        $query = $this->db->query("
+            SELECT detail_barang_masuk.kode_barang, detail_barang_masuk.id, detail_barang_masuk.nama_barang, barang_masuk.tanggal, barang_masuk.kode_barang_masuk
+  FROM detail_barang_masuk
+ join barang_masuk on detail_barang_masuk.kode_barang_masuk = barang_masuk.kode_barang_masuk
+left join (SELECT sum(qty) keluar, id_detail_barang_masuk FROM detail_barang_keluar 
+group by id_detail_barang_masuk ) b 
+on detail_barang_masuk.id = b.id_detail_barang_masuk
+ where detail_barang_masuk.qty > ifnull(b.keluar,0)
+");
+
         //return $query->row();
         return $query->result();
         

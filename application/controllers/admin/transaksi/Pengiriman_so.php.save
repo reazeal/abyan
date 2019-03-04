@@ -64,8 +64,6 @@ class Pengiriman_so extends Admin_Controller {
         $data = array();
         $no = $this->input->post('start');
         foreach ($list as $dt) {
-            $status = $this->detail_so_model->get_by_no_so_barang($dt->kode_so,$dt->kode_barang);
-            //print_r($status);
             $no++;
             $row = array();
             $row[] = $no;
@@ -77,13 +75,6 @@ class Pengiriman_so extends Admin_Controller {
             $row[] = $dt->nama_kurir;
             $row[] = $dt->qty;
             $row[] = $dt->keterangan;
-            if($status->status == 'Terkirim'){
-                $row[] = ' <a class="btn btn-sm btn-success" href="javascript:void(0)" title="Return" onclick="return_so(' . "'" . $dt->id . "'" . ')"><i class="glyphicon glyphicon-repeat"></i> Return</a>';
-            }else{
-                $row[] = '<a class="btn btn-sm btn-success" href="javascript:void(0)" title="Kirim" onclick="terima_barang(' . "'" . $dt->id . "'" . ')"><i class="glyphicon glyphicon-share"></i> Terima</a>'
-                    . ' <a class="btn btn-sm btn-success" href="javascript:void(0)" title="Return" onclick="return_so(' . "'" . $dt->id . "'" . ')"><i class="glyphicon glyphicon-repeat"></i> Return</a>';
-            }
-           // $row[] = $status->status;
             $row[] = '<a class="btn btn-sm btn-success" href="javascript:void(0)" title="Kirim" onclick="terima_barang(' . "'" . $dt->id . "'" . ')"><i class="glyphicon glyphicon-share"></i> Terima</a>'
                     . ' <a class="btn btn-sm btn-success" href="javascript:void(0)" title="Return" onclick="return_so(' . "'" . $dt->id . "'" . ')"><i class="glyphicon glyphicon-repeat"></i> Return</a>';
             $data[] = $row;
@@ -125,9 +116,9 @@ class Pengiriman_so extends Admin_Controller {
         } else {
             $jumlah = $jumlah_kirim + 1;
 
-            if (strlen($jumlah) == 1) {
+            if (strlen($jumlah_kirim) == 1) {
                 $kode_awal = "00" . $jumlah;
-            } else if (strlen($jumlah) == 2) {
+            } else if (strlen($jumlah_kirim) == 2) {
                 $kode_awal = "0" . $jumlah;
             } else {
                 $kode_awal = $jumlah;
@@ -136,7 +127,7 @@ class Pengiriman_so extends Admin_Controller {
         $kode_kirim = $kode_awal . "/PN/" . $tanggal_asli[1] . "/" . $tanggal_asli[0];
 
         //input pengiriman
-        $this->_inputpengiriman($kode_kirim, $tanggal_asli, $kode_awal, $this->input->post('id'));
+        $this->_inputpengiriman($kode_kirim, $tanggal_asli, $kode_awal);
 
         //update barang keluar
         $this->_barang_keluar($kode_kirim, $tanggal_asli, $this->input->post('qty_kirim'));
@@ -169,9 +160,6 @@ class Pengiriman_so extends Admin_Controller {
 
     public function add_terima() {
 
-
-//        die();
-
         $tanggal_asli = explode("-", $this->tanggaldb($this->input->post('tanggal')));
         $jumlah_kirim = $this->pengiriman_so_model->total_pengiriman_so_perbulan_tahun($tanggal_asli[1], $tanggal_asli[0]);
         if ($jumlah_kirim == 0) {
@@ -180,9 +168,9 @@ class Pengiriman_so extends Admin_Controller {
         } else {
             $jumlah = $jumlah_kirim + 1;
 
-            if (strlen($jumlah) == 1) {
+            if (strlen($jumlah_kirim) == 1) {
                 $kode_awal = "00" . $jumlah;
-            } else if (strlen($jumlah) == 2) {
+            } else if (strlen($jumlah_kirim) == 2) {
                 $kode_awal = "0" . $jumlah;
             } else {
                 $kode_awal = $jumlah;
@@ -197,8 +185,7 @@ class Pengiriman_so extends Admin_Controller {
         $data_so = array(
             'status' => 'Terkirim'
         );
-        //$this->sales_order_model->update_by_no_so($this->input->post('kode_so'), $data_so);
-        $this->detail_so_model->update_by_no_so_barang($this->input->post('kode_so'), $this->input->post('kode_barang'), $data_so);
+        $this->sales_order_model->update_by_no_so($this->input->post('kode_so'), $data_so);
 
         // barang keluar
         $this->_barang_keluar($kode_kirim, $tanggal_asli, $this->input->post('qty_terima'));
@@ -212,7 +199,7 @@ class Pengiriman_so extends Admin_Controller {
         echo json_encode(array("status" => TRUE));
     }
 
-    public function _inputpengiriman($kode_kirim, $tanggal_asli, $kode_awal, $id_detail_so) {
+    public function _inputpengiriman($kode_kirim, $tanggal_asli, $kode_awal) {
         $pegawai = explode("-", $this->input->post('nama_pegawai'));
 
         $kode_kirim = $kode_awal . "/PN/" . $tanggal_asli[1] . "/" . $tanggal_asli[0];
@@ -220,14 +207,14 @@ class Pengiriman_so extends Admin_Controller {
         $id = md5($id_rand . $kode_kirim . date("YmdHis"));
         $data = array(
             'id' => $id,
-            'id_detail_so' => $id_detail_so,
             'kode_pengiriman' => $kode_kirim,
             'kode_so' => $this->input->post('kode_so'),
             'tanggal' => $this->tanggaldb($this->input->post('tanggal')),
             'qty' => $this->input->post('qty_kirim'),
             'kode_barang' => $this->input->post('kode_barang'),
             'nama_barang' => $this->input->post('nama_barang'),
-            'kode_kurir' => $pegawai[0],
+            'kode_kurir' => $pegawai[0],,
+
             'nama_kurir' => $pegawai[1]
         );
         $insert = $this->pengiriman_so_model->save($data);
@@ -317,9 +304,9 @@ class Pengiriman_so extends Admin_Controller {
             } else {
                 $jumlah = $jumlah_keluar + 1;
 
-                if (strlen($jumlah) == 1) {
+                if (strlen($jumlah_keluar) == 1) {
                     $kode_awal = "00" . $jumlah;
-                } else if (strlen($jumlah) == 2) {
+                } else if (strlen($jumlah_keluar) == 2) {
                     $kode_awal = "0" . $jumlah;
                 } else {
                     $kode_awal = $jumlah;

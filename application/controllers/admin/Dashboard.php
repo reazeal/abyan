@@ -33,7 +33,7 @@ class Dashboard extends Admin_Controller
         $this->load->model('piutang_model');
         $this->load->model('sales_order_model');
         $this->data['nominal_piutang']= $this->piutang_model->get_piutang_sekarang();
-        $this->data['jml_qty']= $this->sales_order_model->get_penjualan_bulan_sekarang();
+        $this->data['jml_qty']= round($this->sales_order_model->get_penjualan_bulan_sekarang(),2);
         $this->data['top_customer']= $this->sales_order_model->get_top_customer();
         $qty_bulan= $this->sales_order_model->get_qty_per_bulan();
         

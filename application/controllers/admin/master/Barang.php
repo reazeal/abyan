@@ -87,8 +87,8 @@ class Barang extends Admin_Controller
         $datax  = $this->input->post('dataDetail');
         $json = json_decode($datax);
 
-        $kodes = $this->barang_model->get_barang_by_kode($this->input->post('kode'));
-        if($kodes['kode'] != ''){
+//        $kodes = $this->barang_model->get_barang_by_kode($this->input->post('kode'));
+//        if($kodes['kode'] != ''){
 
             $data = array(
                 'id' => md5('barang'.$this->input->post('nama').$this->input->post('kode').date('YmdHis')),
@@ -103,9 +103,9 @@ class Barang extends Admin_Controller
             $id = $this->db->insert_id();
             
             echo json_encode(array("status" => TRUE));
-        }else{
-            echo json_encode(array("status" => FALSE));    
-        }
+  //      }else{
+   //         echo json_encode(array("status" => FALSE));    
+   //     }
         
         
     }

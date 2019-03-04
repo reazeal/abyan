@@ -7,8 +7,8 @@ class Pengiriman_so_model extends MY_Model
     public $table = 'pengiriman_so';
     public $primary_key = 'id';
     public $column_order = array(null, 'id','kode_pengiriman', 'kode_so','kode_kurir','nama_kurir','qty','tanggal',null);
-    public $column_search = array('kode_pengiriman', 'kode_so','kode_kurir','nama_kurir','qty','tanggal');
-    public $order = array('tanggal' => 'desc'); // default order
+    public $column_search = array('kode_pengiriman', 'pengiriman_so.kode_so','kode_kurir','nama_kurir','pengiriman_so.qty','tanggal');
+    public $order = array('pengiriman_so.created_at' => 'desc'); // default order
 
     public function __construct()
     {
@@ -18,11 +18,14 @@ class Pengiriman_so_model extends MY_Model
     private function _get_datatables_query()
     {
         //$this->db->group_by('kode');
+        
         $this->db->select('pengiriman_so.id, pengiriman_so.tanggal, kode_pengiriman, pengiriman_so.kode_so, kode_kurir,'
-                . 'nama_kurir, pengiriman_so.qty, keterangan');
-        $this->db->order_by('pengiriman_so.tanggal','desc');
+                . 'nama_kurir, pengiriman_so.qty, keterangan, kode_barang');
+        //$this->db->order_by('pengiriman_so.created_at','desc');
         $this->db->from('pengiriman_so');
-        $this->db->join('detail_so','detail_so.kode_so = pengiriman_so.kode_so','left');
+        // $this->db->join('detail_so','detail_so.kode_so = pengiriman_so.kode_so','left');
+        
+        // $this->db->from($this->table);
           $i = 0;
         foreach ($this->column_search as $item) // loop column
         {
@@ -44,7 +47,7 @@ class Pengiriman_so_model extends MY_Model
             $i++;
         }
 
-        /*
+        
         if(isset($_POST['order'])) // here order processing
         {
             $this->db->order_by($this->column_order[$_POST['order']['0']['column']], $_POST['order']['0']['dir']);
@@ -54,7 +57,7 @@ class Pengiriman_so_model extends MY_Model
             $order = $this->order;
             $this->db->order_by(key($order), $order[key($order)]);
         }
-        */
+        
     }
 
     function get_datatables()
@@ -183,6 +186,28 @@ class Pengiriman_so_model extends MY_Model
 
         }
         return $total_kirim;
+    }
+
+    public function getPengirimanBySoBarang($so, $barang)
+    {
+       $this->db->select('ifnull(sum(qty),0) as kirim');
+        $this->db->where('kode_so',$so);
+        $this->db->where('kode_barang',$barang);
+        $this->db->where('id_detail_so',null);
+        $this->db->from($this->table);
+        $query = $this->db->get();
+
+        return $query->row();
+    }
+
+    public function getPengirimanByIdDetailSO($id)
+    {
+       $this->db->select('ifnull(sum(qty),0) as kirim');
+        $this->db->where('id_detail_so',$id);
+        $this->db->from($this->table);
+        $query = $this->db->get();
+
+        return $query->row();
     }
 
 }

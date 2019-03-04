@@ -207,6 +207,7 @@
                 $('[name="id"]').val(data[0]['id']);
                 $('[name="kode_so"]').val(data[0]['kode_so']);
                 $('[name="kode_barang"]').val(data[0]['kode_barang']);
+$('[name="kurir"]').val(data[0]['kurir']);
                 $('[name="nama_barang"]').val(data[0]['nama_barang']);
                 $('[name="harga"]').val(data[0]['harga']);
                 $('[name="qty_order"]').val(data[0]['qty']);
@@ -556,7 +557,7 @@
                         <div class="form-group">
                             <label class="control-label col-md-3">Nama Barang <span class="required">*</span></label>
                             <div class="col-md-9">
-                                <input name="nama_barang" placeholder="Nama Barang" class="validate[required,minSize[6]] form-control" type="text" required="required" data-validate-length-range="6" data-validate-words="2" readonly="true">
+                                <input name="nama_barang" placeholder="Nama Barang" class="validate[required] form-control" type="text" readonly="true">
                                 <span class="help-block"></span>
                             </div>
                         </div>
@@ -597,7 +598,7 @@
                         <div class="form-group">
                             <label class="control-label col-md-3">Nama Kurir <span class="required">*</span></label>
                             <div class="col-md-9">
-                                <input name="nama_barang" placeholder="Nama Barang" class="validate[required,minSize[6]] form-control" type="text" required="required" data-validate-length-range="6" data-validate-words="2" readonly="true">
+                                <input name="kurir" placeholder="Nama Barang" class=" form-control" type="text" readonly="true">
                                 <span class="help-block"></span>
                             </div>
                         </div>

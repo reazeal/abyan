@@ -92,8 +92,25 @@ class Detail_so_model extends MY_Model
             detail_so.nama_barang as nama_barang, detail_so.qty as qty, detail_so.harga as harga, id_detail_barang_masuk, detail_so.harga_beli, bottom_retail, bottom_supplier, sum(pengiriman_so.qty) as kirim');
         $this->db->join('sales_order','sales_order.kode_so = detail_so.kode_so');
         $this->db->join('detail_barang_masuk','detail_barang_masuk.id = detail_so.id_detail_barang_masuk');
-        $this->db->join('pengiriman_so','pengiriman_so.kode_so = detail_so.kode_so and pengiriman_so.kode_barang = detail_so.kode_barang');
+        $this->db->join('pengiriman_so','pengiriman_so.id_detail_so = detail_so.id');
         $this->db->group_by('detail_so.kode_so');
+        $this->db->from($this->table);
+        //$this->db->where('detail_so.id',$id);
+        $this->db->where('pengiriman_so.id',$id);
+        $query = $this->db->get();
+
+        return $query->row();
+    }
+
+
+    public function get_by_id_pengirimanx($id)
+    {
+        $this->db->select('sales_order.id as id_so, detail_so.id as id, sales_order.kode_so as kode_so, detail_so.kode_barang as kode_barang,
+            detail_so.nama_barang as nama_barang, detail_so.qty as qty, detail_so.harga as harga, id_detail_barang_masuk, detail_so.harga_beli, bottom_retail, bottom_supplier, sum(pengiriman_so.qty) as kirim');
+        $this->db->join('sales_order','sales_order.kode_so = detail_so.kode_so');
+        $this->db->join('detail_barang_masuk','detail_barang_masuk.id = detail_so.id_detail_barang_masuk');
+        $this->db->join('pengiriman_so','pengiriman_so.id_detail_so = detail_so.id');
+        //$this->db->group_by('detail_so.kode_so');
         $this->db->from($this->table);
         //$this->db->where('detail_so.id',$id);
         $this->db->where('pengiriman_so.id',$id);
@@ -131,7 +148,14 @@ class Detail_so_model extends MY_Model
         $this->db->delete($this->table);
     }
 
-   
+    public function update_by_no_so_barang($so, $barang, $data)
+    {   
+
+        $this->db->where('kode_so',$so);
+        $this->db->where('kode_barang',$barang);
+        $this->db->update($this->table, $data);
+        return $this->db->affected_rows();
+    }
 
     public function update_by_id($where, $data)
     {
@@ -142,9 +166,9 @@ class Detail_so_model extends MY_Model
     public function getDataByNoSO($id){
         $data = array();
         $this->db->select('detail_so.id as id, sales_order.kode_so as kode_so, detail_so.kode_barang as kode_barang,
-            detail_so.nama_barang as nama_barang, detail_so.qty as qty, detail_so.harga as harga, ifnull(sum(pengiriman_so.qty),0) as kirim');
+            detail_so.nama_barang as nama_barang, detail_so.qty as qty, detail_so.harga as harga');
         $this->db->join('sales_order','sales_order.kode_so = detail_so.kode_so');
-        $this->db->join('pengiriman_so','pengiriman_so.kode_so = detail_so.kode_so','left');
+        
         $this->db->where('sales_order.id',$id);
         $this->db->group_by('detail_so.kode_so');
         $this->db->group_by('detail_so.kode_barang');
@@ -154,7 +178,26 @@ class Detail_so_model extends MY_Model
         if ($totaly2 > 0) {
             foreach ($query->result() as $atributy) {
                 $total = $atributy->harga * $atributy->qty;
-                if($atributy->qty > $atributy->kirim){
+                
+                $this->db->select('sum(qty) as kirim');
+                $this->db->where('kode_so',$atributy->kode_so);
+                $this->db->where('kode_barang',$atributy->kode_barang);
+                //$this->db->where('id_detail_sox',$atributy->id);
+                $query_kirim = $this->db->get('pengiriman_so');                    
+                $totaly2x = $query_kirim->num_rows();
+
+                if ($totaly2x > 0) {
+                    foreach ($query_kirim->result() as $atributy_kirim) {
+                        $jumlah_kirim = $atributy_kirim->kirim;
+                    }
+                }else{
+                    $jumlah_kirim = 0;
+                }
+
+                if($atributy->qty > $jumlah_kirim){
+
+                    
+
                     $data[] = array(
                     'id' => $atributy->id,
                     'kode_so' => $atributy->kode_so,
@@ -166,7 +209,7 @@ class Detail_so_model extends MY_Model
 
                     //'harga' => $atributy->harga,
                     //'total' => ,
-                    'kirim' => $atributy->kirim,                    
+                    'kirim' => $jumlah_kirim,                    
                     'action' => '<a class="btn btn-sm btn-success" href="javascript:void(0)" title="Kirim" onclick="kirim_so('."'".$atributy->id."'".')"><i class="glyphicon glyphicon-share"></i> Pengiriman</a>
                         <a class="btn btn-sm btn-success" href="javascript:void(0)" title="Return" onclick="return_so('."'".$atributy->id."'".')"><i class="glyphicon glyphicon-repeat"></i> Return</a>'    
                     
@@ -182,7 +225,102 @@ class Detail_so_model extends MY_Model
   //                  'total' => $atributy->harga * $atributy->qty,
                     'harga' => number_format((($atributy->harga)?$atributy->harga:'0'),0,",","."),
                     'total' => number_format((($total)?$total:'0'),0,",","."),
-                    'kirim' => $atributy->kirim,
+                    'kirim' => $jumlah_kirim,
+                    'action' => '<a class="btn btn-sm btn-success" href="javascript:void(0)" title="Return" onclick="return_so('."'".$atributy->id."'".')"><i class="glyphicon glyphicon-repeat"></i>Return</a>'
+                     );
+                }    
+            }
+
+        }
+        return $data;
+
+    }
+
+    public function getDataByNoSOx($id){
+        $data = array();
+        $this->db->select('detail_so.id as id, sales_order.kode_so as kode_so, detail_so.kode_barang as kode_barang,
+            detail_so.nama_barang as nama_barang, detail_so.qty as qty, detail_so.harga as harga');
+        $this->db->join('sales_order','sales_order.kode_so = detail_so.kode_so');
+        
+        $this->db->where('sales_order.id',$id);
+        //$this->db->group_by('detail_so.kode_so');
+        //$this->db->group_by('detail_so.kode_barang');
+        $query = $this->db->get($this->table);
+
+        $totaly2 = $query->num_rows();
+        if ($totaly2 > 0) {
+            foreach ($query->result() as $atributy) {
+                $total = $atributy->harga * $atributy->qty;
+                
+                $this->db->select('ifnull(sum(qty),0) as kirim');
+                //$this->db->where('kode_so',$atributy->kode_so);
+                //$this->db->where('kode_barang',$atributy->kode_barang);
+                $this->db->where('id_detail_so',$atributy->id);
+                $query_kirim = $this->db->get('pengiriman_so');                    
+                $totaly2x = $query_kirim->num_rows();
+
+                if ($totaly2x > 0) {
+                    foreach ($query_kirim->result() as $atributy_kirim) {
+                        
+                        if($atributy_kirim->kirim == 0){
+                            $this->db->select('sum(qty) as kirim');
+                            $this->db->where('kode_so',$atributy->kode_so);
+                            $this->db->where('kode_barang',$atributy->kode_barang);
+                            $this->db->where('id_detail_so',null);
+                            $query_kirim2 = $this->db->get('pengiriman_so');                    
+                            $totaly2x2 = $query_kirim2->num_rows();
+
+                            if ($totaly2x2 > 0) {
+                                foreach ($query_kirim2->result() as $atributy_kirim2) {
+                                    $jumlah_kirim = $atributy_kirim2->kirim;
+                                }
+                            }else{
+                                $jumlah_kirim = 0;
+                            }
+                        }else{
+                            
+                            $jumlah_kirim = $atributy_kirim->kirim;    
+                        }
+                        
+                    }
+                }else{
+                    $jumlah_kirim = 0;
+
+                    
+                }
+
+                if($atributy->qty > $jumlah_kirim){
+
+                    
+
+                    $data[] = array(
+                    'id' => $atributy->id,
+                    'kode_so' => $atributy->kode_so,
+                    'kode_barang' => $atributy->kode_barang,
+                    'nama_barang' => $atributy->nama_barang,
+                    'qty' => $atributy->qty,
+                    'harga' => number_format((($atributy->harga)?$atributy->harga:'0'),0,",","."),
+                    'total' => number_format((($total)?$total:'0'),0,",","."),
+
+                    //'harga' => $atributy->harga,
+                    //'total' => ,
+                    'kirim' => $jumlah_kirim,                    
+                    'action' => '<a class="btn btn-sm btn-success" href="javascript:void(0)" title="Kirim" onclick="kirim_so('."'".$atributy->id."'".')"><i class="glyphicon glyphicon-share"></i> Pengiriman</a>
+                        <a class="btn btn-sm btn-success" href="javascript:void(0)" title="Return" onclick="return_so('."'".$atributy->id."'".')"><i class="glyphicon glyphicon-repeat"></i> Return</a>'    
+                    
+                    );
+                }else{
+                    $data[] = array(
+                    'id' => $atributy->id,
+                    'kode_so' => $atributy->kode_so,
+                    'kode_barang' => $atributy->kode_barang,
+                    'nama_barang' => $atributy->nama_barang,
+                    'qty' => $atributy->qty,
+//                    'harga' => $atributy->harga,
+  //                  'total' => $atributy->harga * $atributy->qty,
+                    'harga' => number_format((($atributy->harga)?$atributy->harga:'0'),0,",","."),
+                    'total' => number_format((($total)?$total:'0'),0,",","."),
+                    'kirim' => $jumlah_kirim,
                     'action' => '<a class="btn btn-sm btn-success" href="javascript:void(0)" title="Return" onclick="return_so('."'".$atributy->id."'".')"><i class="glyphicon glyphicon-repeat"></i>Return</a>'
                      );
                 }    

@@ -6,8 +6,8 @@ class Supplier_model extends MY_Model
 {
     public $table = 'supplier';
     public $primary_key = 'id';
-    public $column_order = array(null, 'id','kode_supplier','nama_supplier','alamat_supplier','nomor_telp',null);
-    public $column_search = array('id','kode_supplier','nama_supplier','alamat_supplier','nomor_telp');
+    public $column_order = array(null, 'id','kode_supplier','nama_supplier','alamat_supplier','nomor_telp','keterangan',null);
+    public $column_search = array('id','kode_supplier','nama_supplier','alamat_supplier','nomor_telp','keterangan');
     public $order = array('id' => 'desc'); // default order
 
     public function __construct()

@@ -35,8 +35,7 @@ class Sales_order extends Admin_Controller
         $this->load->model('pegawai_model');
         $this->load->model('detail_so_model');
         $this->load->model('transaksi_biaya_model');
-        $this->load->model('pengiriman_so_model');
-        $this->load->model('detail_barang_masuk_model');
+         $this->load->model('detail_barang_masuk_model');
     }
 
     public function index()
@@ -44,8 +43,7 @@ class Sales_order extends Admin_Controller
         $this->data['pilihan_barang'] = $this->barang_model->get_all();
         $this->data['pilihan_customer'] = $this->customer_model->get_all();
         $this->data['pilihan_pegawai'] = $this->pegawai_model->get_all();
-        //$this->data['pilihan_barang_masuk'] = $this->detail_barang_masuk_model->get_by_penerimaan();
-        $this->data['pilihan_barang_masuk'] = $this->detail_barang_masuk_model->get_by_penerimaanx();
+        $this->data['pilihan_barang_masuk'] = $this->detail_barang_masuk_model->get_by_penerimaan();
       // /  print_r($this->data['pilihan_barang_masuk']);
      //   print_r($this->data['pilihan_barang']);
         $this->render('admin/transaksi/Sales_order_view');
@@ -109,7 +107,7 @@ class Sales_order extends Admin_Controller
     public function get_detail($id_so)
     {
         $data  = array(
-            'detailSo'=> (array) $this->detail_so_model->getDataByNoSOx($id_so)
+            'detailSo'=> (array) $this->detail_so_model->getDataByNoSO($id_so)
         );
         echo json_encode(array($data));
     }
@@ -293,28 +291,16 @@ class Sales_order extends Admin_Controller
 
     public function kirim($id)
     {
-        $data = $this->detail_so_model->get_by_id_pengirimanx($id);
-       // echo $data->kode_so;
-        $data_kirim = $this->pengiriman_so_model->getPengirimanBySoBarang($data->kode_so, $data->kode_barang);
-
-        $data_kirim_id = $this->pengiriman_so_model->getPengirimanByIdDetailSO($data->id);
-     //   print_r($data_kirim_id);
-       $jumlah_kirim = 0;
-        if($data_kirim_id->kirim != 0){
-                        
-            $jumlah_kirim = $data_kirim_id->kirim;
-        }else{
-            $jumlah_kirim = $data_kirim->kirim;
-        }
-
+        $data = $this->detail_so_model->get_by_id_pengiriman($id);
         $data  = array(
             'id' => $data->id,
             'id_so' => $data->id_so,
             'kode_so' => $data->kode_so,
             'kode_barang' => $data->kode_barang,
             'nama_barang' => $data->nama_barang,
+            'kurir' => '',
             'qty' => $data->qty,
-            'kirim' => $jumlah_kirim,
+            'kirim' => $data->kirim,
             'harga' => $data->harga,
             'harga_beli' => $data->harga_beli,
             'bottom_retail' => $data->bottom_retail,

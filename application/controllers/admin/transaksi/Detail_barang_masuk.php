@@ -38,8 +38,9 @@ class detail_barang_masuk extends Admin_Controller
     {
 
         //echo 'sini';
-        $data = $this->detail_barang_masuk_model->get_by_id($id);
-        $data  = array(            
+//        $data = $this->detail_barang_masuk_model->get_by_id($id);
+$data = $this->detail_barang_masuk_model->get_by_idx($id);       
+ $data  = array(            
             'qty_stok' => $data->qty - $data->keluar,
             'bottom_retail' => $data->bottom_retail,
             'bottom_supplier' => $data->bottom_supplier,

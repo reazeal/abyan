@@ -48,6 +48,7 @@ class Supplier extends Admin_Controller
             $row[] = $dt->nama_supplier;
             $row[] = $dt->alamat_supplier;
             $row[] = $dt->nomor_telp;
+            $row[] = $dt->keterangan;
             $row[] = '<a class="btn btn-sm btn-primary" href="javascript:void(0)" title="Edit" onclick="edit_supplier('."'".$dt->id."'".')"><i class="glyphicon glyphicon-pencil"></i> Edit</a>
 				  <a class="btn btn-sm btn-danger" href="javascript:void(0)" title="Hapus" onclick="delete_supplier('."'".$dt->id."'".')"><i class="glyphicon glyphicon-trash"></i> Delete</a>';
             $data[] = $row;
@@ -72,6 +73,7 @@ class Supplier extends Admin_Controller
             'nama_supplier' => $data->nama_supplier,
             'alamat_supplier' => $data->alamat_supplier,
             'nomor_telp' => $data->nomor_telp,
+            'keterangan' => $data->keterangan,
             
           //  'detailBarang'=> (array) $this->detail_barang_model->getDataByTransaksi($id)
         );
@@ -106,6 +108,7 @@ class Supplier extends Admin_Controller
             'kode_supplier' => "S".$kode_awal,            
             'alamat_supplier' => $this->input->post('alamat'),
             'nomor_telp' => $this->input->post('nomor_telp'),
+            'keterangan' => $this->input->post('keterangan'),
             //'tgl' => $this->tanggaldb($this->input->post('tgl'))
         );
         $insert = $this->supplier_model->save($data);       
@@ -119,6 +122,7 @@ class Supplier extends Admin_Controller
             'nama_supplier' => $this->input->post('nama'),
             'alamat_supplier' => $this->input->post('alamat'),
             'nomor_telp' => $this->input->post('nomor_telp'),
+            'keterangan' => $this->input->post('keterangan'),
         );
         $this->supplier_model->update_by_id(array('id' => $this->input->post('id')), $data);
 

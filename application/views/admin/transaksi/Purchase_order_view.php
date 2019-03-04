@@ -586,7 +586,7 @@
 
              iterasi++;
 
-            table_detail.row.add(['','', encodeURIComponent(barang_id), encodeURIComponent(nama_barang), encodeURIComponent(qty), encodeURIComponent(harga), encodeURIComponent(total), encodeURIComponent(buttom_supplier), encodeURIComponent(buttom_retail), encodeURIComponent(aksi)]).draw();
+            table_detail.row.add(['','', encodeURIComponent(barang_id), encodeURIComponent(nama_barang), encodeURIComponent(qty), encodeURIComponent(harga), encodeURIComponent(total), encodeURIComponent(buttom_supplier), encodeURIComponent(buttom_retail), aksi]).draw();
 
             $('#modal_formDetail').modal('hide');
             $('#btnSaveDetail').text('simpan'); //change button text

@@ -16,7 +16,7 @@
             <div class="animated flipInY col-lg-6 col-md-6 col-sm-6 col-xs-12">
                 <div class="tile-stats">
 <!--                    <div class="icon"><i class="fa fa-level-up"></i></div>-->
-                    <div class="count"><?php echo $jml_qty ?></div>
+                    <div class="count"><?php echo number_format($jml_qty, 2, ',', '.') ?></div>
                     <h3>Total Qty Penjualan</h3>
                     <p>Dalam bulan ini</p>
                 </div>

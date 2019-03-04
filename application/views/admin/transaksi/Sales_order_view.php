@@ -757,7 +757,7 @@
                         <div class="form-group">
                             <label class="control-label col-md-3">Nama Barang <span class="required">*</span></label>
                             <div class="col-md-9">
-                                <input name="nama_barang" placeholder="Nama Barang" class="validate[required,minSize[6]] form-control" type="text" required="required" data-validate-length-range="6" data-validate-words="2" readonly="true">
+                                <input name="nama_barang" placeholder="Nama Barang" class="validate[required] form-control" type="text" required="required" data-validate-length-range="6" data-validate-words="2" readonly="true">
                                 <span class="help-block"></span>
                             </div>
                         </div>

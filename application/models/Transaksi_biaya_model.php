@@ -106,16 +106,29 @@ class Transaksi_biaya_model extends MY_Model
     //untuk detail laba rugi
     public function select_insert_biaya_perbulan_tahun($bulan,$tahun,$idlabarugi){
         
+        /*
         $this->db->select("kode_referensi as kode_so, nominal, tanggal as tgl_trans");
         $this->db->where(" month(tanggal)='$bulan' and year(tanggal) = '$tahun' and status='Lunas' ");
         $query = $this->db->get($this->table);
+        */
+        
+        $this->db->select("
+            b.`kode_referensi` as kode_so, c.`nominal`, c.`tanggal` as `tgl_trans`, d.nama_biaya as jenis_trans
+            
+        ");
+        $this->db->join("piutang b","a.kode_piutang = b.kode_piutang");
+        $this->db->join("transaksi_biaya c","c.kode_referensi = b.kode_referensi");
+        $this->db->join("jenis_biaya d","d.id = c.id_jenis_biaya");
+        $this->db->where(" month(c.tanggal)='$bulan' and year(c.tanggal) = '$tahun'  ");
+        $query = $this->db->get('pembayaran_piutang a');
+        
         $hasil = $query->result_array();
         $i=1;
         foreach($hasil as $row){
             $row['id_detail_laba_rugi']=$id=md5($bulan.'/'.$tahun.'/biaya/'.$i);
             $row['created_at']=date('Y-m-d H:i:s');
             $row['id_laba_rugi']=$idlabarugi;
-            $row['jenis_trans']='biaya';
+            //$row['jenis_trans']='biaya';
             $insert = $this->db->insert('detail_laba_rugi', $row);
             $i++;
         }
