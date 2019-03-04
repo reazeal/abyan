@@ -1132,7 +1132,7 @@
                     var harga =   $('#modal_formDetail').find('[name="harga"]').val();
                     var bottom_supplier =   $('#modal_formDetail').find('[name="bottom_supplier"]').val();
                     var bottom_retail =   $('#modal_formDetail').find('[name="bottom_supplier"]').val();
-                    var total =   harga * qty;
+                    var total =   Math.round(parseFloat(harga) * parseFloat(qty));
                     var aksi = "<a class='btn btn-sm btn-danger hapus-detail' href='javascript:void(0)' title='Hapus' onclick='hapus_dataDetail()'><i class='glyphicon glyphicon-trash'></i> Delete</a>";
 
                      iterasi++;
@@ -1168,7 +1168,7 @@
                 var harga =   $('#modal_formDetail').find('[name="harga"]').val();
                 var bottom_supplier =   $('#modal_formDetail').find('[name="bottom_supplier"]').val();
                 var bottom_retail =   $('#modal_formDetail').find('[name="bottom_supplier"]').val();
-                var total =   harga * qty;
+                var total =   Math.round(parseFloat(harga) * parseFloat(qty));
                 var aksi = "<a class='btn btn-sm btn-danger hapus-detail' href='javascript:void(0)' title='Hapus' onclick='hapus_dataDetail()'><i class='glyphicon glyphicon-trash'></i> Delete</a>";
 
                  iterasi++;
