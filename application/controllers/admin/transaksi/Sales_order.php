@@ -266,8 +266,9 @@ class Sales_order extends Admin_Controller
     }
 
     public function hapus_so($id)
-    {
-        $this->detail_so_model->delete_by_id($id);
+    {   
+        $data = $this->sales_order_model->get_by_idSO($id);
+        $this->detail_so_model->delete_by_no_so($data->kode_so);
         $this->sales_order_model->delete_by_id($id);
         echo json_encode(array("status" => TRUE));
     }
