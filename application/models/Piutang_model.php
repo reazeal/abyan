@@ -18,7 +18,7 @@ class Piutang_model extends MY_Model
     private function _get_datatables_query()
     {
         //$this->db->group_by('kode');
-        $this->db->order_by('kode_piutang','desc');
+        $this->db->order_by('tanggal_jatuh_tempo','asc');
         $this->db->from('piutang');
           $i = 0;
         foreach ($this->column_search as $item) // loop column
@@ -153,10 +153,10 @@ class Piutang_model extends MY_Model
     }
     
     public function get_piutang_sekarang(){
-        $this->db->select("p.nominal-sum(pp.nominal) as nominalpiutang");
+        $this->db->select("ifnull(p.nominal,0)-sum(ifnull(pp.nominal,0)) as nominalpiutang");
         $this->db->from($this->table.' p');
-        $this->db->join('pembayaran_piutang pp','p.kode_piutang=pp.kode_piutang');
-        $this->db->where("p.tanggal_jatuh_tempo <= curdate()");
+        $this->db->join('pembayaran_piutang pp','p.kode_piutang=pp.kode_piutang','left');
+        //$this->db->where("p.tanggal_jatuh_tempo <= curdate()");
         $this->db->group_by("p.kode_piutang");
         $this->db->having("nominalpiutang <> 0");
         $query = $this->db->get();

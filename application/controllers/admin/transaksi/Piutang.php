@@ -59,7 +59,12 @@ class Piutang extends Admin_Controller
            // print_r($nominal_bayar);
            // die();
             $nominal_sisa = $dt->nominal - $nominal_bayar;
+            $tgl=date('Y-m-d');
+            $akhir = new DateTime($tgl);
+            $awal = new DateTime($dt->tanggal_jatuh_tempo);
+            $sisa = $akhir->diff($awal);
 
+    
             $no++;
             $row = array();
             $row[] = $no;
@@ -67,8 +72,14 @@ class Piutang extends Admin_Controller
             $row[] = $this->tanggal($dt->tanggal);
             $row[] = $dt->kode_piutang;
             $row[] = $dt->kode_referensi;
+            if($akhir > $awal ){
+                $row[] = "<a class='label label-danger'>$dt->nama_relasi</a>";
+            }else if($sisa > 0 && $sisa < 5){
+                $row[] = "<a class='label label-warning'>$dt->nama_relasi</a>";
+            }else{
+                $row[] = $dt->nama_relasi;
+            }
             
-            $row[] = $dt->nama_relasi;
            
             $row[] = $this->tanggal($dt->tanggal_jatuh_tempo);
             $row[] = number_format((($dt->nominal)?$dt->nominal:'0'),0,",",".");

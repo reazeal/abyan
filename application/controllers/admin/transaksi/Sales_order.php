@@ -23,6 +23,7 @@ class Sales_order extends Admin_Controller
         //if (!$this->ion_auth->in_group('admin')) {
         //    redirect('auth/session_not_authorized', 'refresh');
        // }
+        $this->load->library(array('ion_auth','form_validation'));
         $this->load->library('form_validation');
         $this->load->helper('text');
         $this->load->helper('url');
@@ -351,6 +352,12 @@ class Sales_order extends Admin_Controller
       //  echo $this->input->get('id');
 
         //echo $_GET['id'];
+        $user = $this->ion_auth->user()->row();
+        //$this->data['user'] = $user;
+        //$this->data['current_user_menu'] = '';
+        //$this->data['username_auth'] = $user->username;
+       // echo $user->username;
+
         $datax = $this->detail_so_model->getDataByNoSoCetak($idx);
         $so = $this->sales_order_model->get_by_idSo($idx);
         $pegawai = $this->pegawai_model->get_by_kode($so->kode_sales);
@@ -360,6 +367,8 @@ class Sales_order extends Admin_Controller
         $data['datanya'] = $datax;
         $data['so'] = $so;
         $data['pegawai'] = $pegawai;
+        $data['user'] = $user->username;
+        $data['tanggal_cetak'] = date('d-m-Y H:i:s');
         $this->load->view('admin/transaksi/cetak_so',$data);
 
     }
