@@ -160,6 +160,7 @@ class Sales_order extends Admin_Controller
             'status' => 'Proses',
             'tanggal' => $this->tanggaldb($this->input->post('tanggal')),
             'kode_sales' => $this->input->post('kode_pegawai'),
+            'no_po' => $this->input->post('no_po'),
             'tanggal_kirim' => $this->tanggaldb($this->input->post('tanggal_kirim')),
             'top' => $this->input->post('top'),
             'created_at' => date("Y-m-d H:i:s"),

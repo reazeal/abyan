@@ -19,6 +19,7 @@ class Piutang_model extends MY_Model
     {
         //$this->db->group_by('kode');
         $this->db->order_by('tanggal_jatuh_tempo','asc');
+        $this->db->where('status','Belum Lunas');
         $this->db->from('piutang');
           $i = 0;
         foreach ($this->column_search as $item) // loop column

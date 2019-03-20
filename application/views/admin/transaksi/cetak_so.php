@@ -367,7 +367,7 @@
              'Balongsari - Tandes, Surabaya           TOP       : \n' ,
              'Phone : (031) 561-3507                  Sales     : <?php echo $pegawai->nama_pegawai ?>\n' ,
              'WA :0822-3204-7857                      Customer  :  <?php echo $so->nama_customer ?>\n' ,
-             '                                        Po        :  \n',
+             '                                        Po        :  <?php echo $so->no_po ?>\n',
              ' Printer By : <?php echo $user ?> <?php echo $tanggal_cetak ?>  \n',
              
              ' ============================================================================= \n' ,

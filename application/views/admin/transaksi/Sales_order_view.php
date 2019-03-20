@@ -645,6 +645,15 @@
                             <span class="help-block"></span>
                         </div>
                     </div>
+
+                    <div class="form-group">
+                        <label class="control-label col-md-3">No. PO <span class="required">*</span></label>
+                        <div class="col-md-9">
+                            <input name="no_po" placeholder="Nomor PO" class="form-control" type="text">
+                            <span class="help-block"></span>
+                        </div>
+                    </div>
+
                     <div class="form-group">
                         <label class="control-label col-md-3">TOP (Hari)<span class="required">*</span></label>
                         <div class="col-md-6">
