@@ -181,7 +181,7 @@ class Sales_order extends Admin_Controller
             foreach ($json as $ax) :
                 if(!is_object($ax)){
                     if(is_string($ax[0])){
-                        $id_detail = md5($ax[2].$ax[4].'detail_so'.date('YmdHis').$kode.$id);
+                        $id_detail = md5($i.$ax[2].$ax[4].'detail_so'.date('YmdHis').$kode.$id);
                         //$no_bukti = $this->stok_fisik_model->get_nobukti();
                         //$kode_barang = substr($ax[3], 0,5);
                         $kode_barang = explode("-", $ax[3]);
