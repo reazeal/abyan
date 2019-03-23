@@ -201,7 +201,7 @@ class Pengiriman_so extends Admin_Controller {
         $this->detail_so_model->update_by_no_so_barang($this->input->post('kode_so'), $this->input->post('kode_barang'), $data_so);
 
         // barang keluar
-        $this->_barang_keluar($kode_kirim, $tanggal_asli, $this->input->post('qty_terima'));
+//        $this->_barang_keluar($kode_kirim, $tanggal_asli, $this->input->post('qty_terima'));
 
         //update retur
         $this->_retur();
