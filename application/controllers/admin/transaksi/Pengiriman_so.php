@@ -204,7 +204,10 @@ class Pengiriman_so extends Admin_Controller {
 //        $this->_barang_keluar($kode_kirim, $tanggal_asli, $this->input->post('qty_terima'));
 
         //update retur
-        $this->_retur();
+        if($this->input->post('qty_return') != 0){
+            $this->_retur();
+        }
+        
 
         //update biaya lunas
         $this->transaksi_biaya_model->update_by_id(array('kode_referensi' => $this->input->post('kode_so')), array('status' => 'Lunas'));
