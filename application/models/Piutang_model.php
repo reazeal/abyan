@@ -8,7 +8,7 @@ class Piutang_model extends MY_Model
     public $primary_key = 'id';
     public $column_order = array(null, 'id','kode_piutang', 'kode_referensi','kode_relasi','nama_relasi','jenis','nominal','tanggal','tanggal_jatuh_tempo',null);
     public $column_search = array('kode_piutang', 'kode_referensi','kode_relasi','nama_relasi','jenis','nominal','tanggal','tanggal_jatuh_tempo');
-    public $order = array('id' => 'desc'); // default order
+    public $order = array('tanggal_jatuh_tempo' => 'asc'); // default order
 
     public function __construct()
     {
@@ -18,7 +18,7 @@ class Piutang_model extends MY_Model
     private function _get_datatables_query()
     {
         //$this->db->group_by('kode');
-        $this->db->order_by('tanggal_jatuh_tempo','asc');
+       // $this->db->order_by('tanggal_jatuh_tempo','asc');
         $this->db->where('status','Belum Lunas');
         $this->db->from('piutang');
           $i = 0;
@@ -42,7 +42,7 @@ class Piutang_model extends MY_Model
             $i++;
         }
 
-        /*
+        
         if(isset($_POST['order'])) // here order processing
         {
             $this->db->order_by($this->column_order[$_POST['order']['0']['column']], $_POST['order']['0']['dir']);
@@ -52,7 +52,7 @@ class Piutang_model extends MY_Model
             $order = $this->order;
             $this->db->order_by(key($order), $order[key($order)]);
         }
-        */
+        
     }
 
     function get_datatables()
