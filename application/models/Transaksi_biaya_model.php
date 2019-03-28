@@ -19,6 +19,7 @@ class Transaksi_biaya_model extends MY_Model
     {
         $this->db->select('transaksi_biaya.id, nama_biaya, tanggal, nominal, status, kode_referensi');
         $this->db->join('jenis_biaya','jenis_biaya.id = transaksi_biaya.id_jenis_biaya');
+        $this->db->where('jenis_biaya.is_harian != ','1');
        $this->db->from($this->table);
           $i = 0;
         foreach ($this->column_search as $item) // loop column

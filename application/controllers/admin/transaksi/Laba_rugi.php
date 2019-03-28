@@ -88,7 +88,8 @@ class Laba_rugi extends Admin_Controller
         
         $pendapatan=$this->laba_rugi_model->total_pendapatan_perbulan_tahun($bulan,$tahun); 
         // mengacu SO
-        $biaya=$this->laba_rugi_model->total_biaya_perbulan_tahun($bulan,$tahun);
+        $biaya_bulanan=$this->laba_rugi_model->total_biaya_perbulan_tahun($bulan,$tahun);
+        //$biaya_bulanan=$this->laba_rugi_model->total_biaya_perbulan_tahun_bulanan($bulan,$tahun);
         //$hutang=$this->laba_rugi_model->total_hutang_perbulan_tahun($bulan,$tahun);
         $pembelian=$this->laba_rugi_model->total_pembelian_perbulan_tahun($bulan,$tahun);
         

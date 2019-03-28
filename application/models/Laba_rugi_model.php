@@ -190,9 +190,10 @@ class Laba_rugi_model extends MY_Model
             from pembayaran_piutang a
             join piutang b on a.kode_piutang = b.kode_piutang
             join transaksi_biaya c on c.kode_referensi = b.kode_referensi
+            join jenis_biaya on jenis_biaya.id = c.id_jenis_biaya
         ");
 
-        $this->db->where(" month(c.tanggal)='$bulan' and year(c.tanggal) = '$tahun'  ");
+        $this->db->where(" month(c.tanggal)='$bulan' and year(c.tanggal) = '$tahun' jenis_biaya.is_harian != 1 ");
         $query = $this->db->get();
 
         $totaly2 = $query->num_rows();

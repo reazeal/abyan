@@ -276,7 +276,7 @@ class Pengiriman_so extends Admin_Controller {
                 } else if (strlen($jumlah_piutang) == 2) {
                     $kode_awal = "0" . $jumlah_p;
                 } else {
-                    $kode_awal = $jumlah;
+                    $kode_awal = $jumlah_p;
                 }
             }
             $kode_piutang = $kode_awal . "/PI/" . $tanggal_asli[1] . "/" . $tanggal_asli[0];

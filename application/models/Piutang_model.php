@@ -6,8 +6,8 @@ class Piutang_model extends MY_Model
 {
     public $table = 'piutang';
     public $primary_key = 'id';
-    public $column_order = array(null, 'id','kode_piutang', 'kode_referensi','kode_relasi','nama_relasi','jenis','nominal','tanggal','tanggal_jatuh_tempo',null);
-    public $column_search = array('kode_piutang', 'kode_referensi','kode_relasi','nama_relasi','jenis','nominal','tanggal','tanggal_jatuh_tempo');
+    public $column_order = array(null, 'id','tanggal','kode_piutang', 'kode_referensi','nama_relasi','tanggal_jatuh_tempo','nominal',null);
+    public $column_search = array('tanggal','kode_piutang', 'kode_referensi','nama_relasi','tanggal_jatuh_tempo','nominal');
     public $order = array('tanggal_jatuh_tempo' => 'asc'); // default order
 
     public function __construct()
@@ -20,7 +20,8 @@ class Piutang_model extends MY_Model
         //$this->db->group_by('kode');
        // $this->db->order_by('tanggal_jatuh_tempo','asc');
         $this->db->where('status','Belum Lunas');
-        $this->db->from('piutang');
+       // $this->db->from('piutang');
+        $this->db->from($this->table);
           $i = 0;
         foreach ($this->column_search as $item) // loop column
         {
