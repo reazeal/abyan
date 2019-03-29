@@ -128,7 +128,8 @@ class Pembayaran_piutang extends Admin_Controller
         $data = array(
             'id' => $id,
             'kode_pembayaran_piutang' => $kode,
-            'kode_piutang' => $this->input->post('kode_piutang'),
+            //'kode_piutang' => $this->input->post('kode_piutang'),
+            'kode_piutang' => $this->input->post('nomor_referensi'),
             'kode_relasi' => $this->input->post('kode_relasi'),
             'nama_relasi' => $this->input->post('nama_relasi'),
             'tanggal' => $this->tanggaldb($this->input->post('tanggal')),
@@ -138,7 +139,7 @@ class Pembayaran_piutang extends Admin_Controller
         );
         $insert = $this->pembayaran_piutang_model->save($data);
 
-        $total_bayar = $this->pembayaran_piutang_model->get_total_bayar_by_kode($this->input->post('kode_piutang'));
+        $total_bayar = $this->pembayaran_piutang_model->get_total_bayar_by_kode($this->input->post('nomor_referensi'));
        // echo $total_bayar;
 
         if($total_bayar >= $this->input->post('nominal')){
@@ -151,7 +152,7 @@ class Pembayaran_piutang extends Admin_Controller
                 'status' => $status_piutang
             );
 
-        $this->piutang_model->update_by_kode($this->input->post('kode_piutang'), $data_piutang_baru);
+        $this->piutang_model->update_by_kode($this->input->post('nomor_referensi'), $data_piutang_baru);
 
 
         echo json_encode(array("status" => TRUE));

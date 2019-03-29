@@ -17,7 +17,8 @@ class Piutang_model extends MY_Model
 
     private function _get_datatables_query()
     {
-        //$this->db->group_by('kode');
+        $this->db->group_by('kode_referensi');
+        $this->db->select("id,tanggal,kode_piutang,kode_referensi,nama_relasi,tanggal_jatuh_tempo,sum(nominal) as nominal");
        // $this->db->order_by('tanggal_jatuh_tempo','asc');
         $this->db->where('status','Belum Lunas');
        // $this->db->from('piutang');
@@ -112,7 +113,7 @@ class Piutang_model extends MY_Model
 
     public function update_by_kode($kode, $data)
     {
-        $this->db->where('kode_piutang',$kode);
+        $this->db->where('nomor_referensi',$kode);
         $this->db->update($this->table, $data);
         return $this->db->affected_rows();
         //$this->db->update($this->table,array("upload_rate"=>0,"download_rate"=>0));
