@@ -135,6 +135,7 @@ class Pembayaran_piutang extends Admin_Controller
             'tanggal' => $this->tanggaldb($this->input->post('tanggal')),
             'nominal' => $this->input->post('nominal_bayar'),
             'keterangan' => $this->input->post('keterangan'),
+            'created_at' => date('Y-m-d H:i:s')
             
         );
         $insert = $this->pembayaran_piutang_model->save($data);

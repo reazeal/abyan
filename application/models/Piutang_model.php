@@ -113,7 +113,7 @@ class Piutang_model extends MY_Model
 
     public function update_by_kode($kode, $data)
     {
-        $this->db->where('nomor_referensi',$kode);
+        $this->db->where('kode_referensi',$kode);
         $this->db->update($this->table, $data);
         return $this->db->affected_rows();
         //$this->db->update($this->table,array("upload_rate"=>0,"download_rate"=>0));
