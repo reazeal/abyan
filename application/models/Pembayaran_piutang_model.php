@@ -145,7 +145,7 @@ class Pembayaran_piutang_model extends MY_Model
         $this->db->select("
             ifnull(sum(nominal),0) as nominal
         ");
-        $this->db->where("nomor_referensi",$kode);
+        $this->db->where("kode_piutang",$kode);
         //$this->db->where("tanggal",$tanggal);
         $query = $this->db->get($this->table);
 

@@ -55,7 +55,7 @@ class Piutang extends Admin_Controller
         $data = array();
         $no = $this->input->post('start');
         foreach ($list as $dt) {
-            $nominal_bayar = $this->pembayaran_piutang_model->get_total_bayar_by_kode($dt->kode_piutang);
+            $nominal_bayar = $this->pembayaran_piutang_model->get_total_bayar_by_kode($dt->kode_referensi);
            // print_r($nominal_bayar);
            // die();
             $nominal_sisa = $dt->nominal - $nominal_bayar;
