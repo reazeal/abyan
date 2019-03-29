@@ -139,7 +139,7 @@
         });
 
         //datepicker
-        /*
+        
         $('.datepicker').datepicker({
             autoclose: true,
             dateFormat: 'dd-mm-yy',
@@ -148,7 +148,6 @@
             todayBtn: true
         });
 
-        */
         
     });
 
