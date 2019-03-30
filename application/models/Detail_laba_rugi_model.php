@@ -29,7 +29,6 @@ class Detail_laba_rugi_model extends MY_Model
             foreach ($query->result() as $atributy) {
                 $data[] = array(
                 'no' => $i,
-                'kode_so' => $atributy->kode_so,
                 'jenis_trans' => $atributy->jenis_trans,
                 'nominal' => number_format((($atributy->nominal)?$atributy->nominal:'0'),0,",","."),
                 'tgl_trans' => $atributy->tgl_trans,

@@ -77,10 +77,10 @@ class Laba_rugi extends Admin_Controller
         $this->komisi_model->delete_by_id_laba_rugi($idlabarugi);
         
         //lalu insert
-        //$this->pembayaran_piutang_model->select_insert_pendapatan_perbulan_tahun($bulan,$tahun,$idlabarugi);
-        //$this->pembayaran_piutang_model->select_insert_pembelian_perbulan_tahun($bulan,$tahun,$idlabarugi);
+        $this->pembayaran_piutang_model->select_insert_pendapatan_perbulan_tahun($bulan,$tahun,$idlabarugi);
+        $this->pembayaran_piutang_model->select_insert_pembelian_perbulan_tahun($bulan,$tahun,$idlabarugi);
         //$this->pembayaran_hutang_model->select_insert_hutang_perbulan_tahun($bulan,$tahun,$idlabarugi);
-        //$this->transaksi_biaya_model->select_insert_biaya_perbulan_tahun($bulan,$tahun,$idlabarugi);
+        $this->transaksi_biaya_model->select_insert_biaya_perbulan_tahun($bulan,$tahun,$idlabarugi);
         $this->transaksi_biaya_model->select_insert_biaya_perbulan_tahun_komisi_sales($bulan,$tahun,$idlabarugi);
         $this->transaksi_biaya_model->select_insert_biaya_perbulan_tahun_komisi_pengiriman($bulan,$tahun,$idlabarugi);
     }

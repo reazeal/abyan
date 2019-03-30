@@ -114,13 +114,15 @@ class Transaksi_biaya_model extends MY_Model
         */
         
         $this->db->select("
-            b.`kode_referensi` as kode_so, c.`nominal`, c.`tanggal` as `tgl_trans`, d.nama_biaya as jenis_trans
+            sum(c.`nominal`) as nominal, now() as `tgl_trans`, d.nama_biaya as jenis_trans
             
         ");
-        $this->db->join("piutang b","a.kode_piutang = b.kode_piutang");
+        $this->db->join("piutang b","b.kode_referensi = a.kode_piutang");
         $this->db->join("transaksi_biaya c","c.kode_referensi = b.kode_referensi");
         $this->db->join("jenis_biaya d","d.id = c.id_jenis_biaya");
         $this->db->where(" month(c.tanggal)='$bulan' and year(c.tanggal) = '$tahun'  ");
+        $this->db->where("d.id not in ('f09925751b7988434bdfa883b370bd44', '69ea49d4740ef0b03d818f055de99b1f')");
+        $this->db->group_by('d.nama_biaya');
         $query = $this->db->get('pembayaran_piutang a');
         
         $hasil = $query->result_array();
