@@ -188,7 +188,7 @@ class Return_masuk extends Admin_Controller
 
             $this->detail_barang_masuk_model->insert($data_detail_barang);
 
-
+        
         echo json_encode(array("status" => TRUE));
 
     }

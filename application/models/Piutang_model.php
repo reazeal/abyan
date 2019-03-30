@@ -154,6 +154,19 @@ class Piutang_model extends MY_Model
         $query = $this->db->get();
         return $query->row();
     }
+
+    public function get_piutang_by_so_barang($kode_kirim){
+
+         $this->db->select("
+            kode_piutang, nominal, kode_bantu
+        ");
+
+        $this->db->from($this->table);
+        $this->db->where("kode_referensi",$kode_kirim);
+      //  $this->db->where("tanggal",$tanggal);
+        $query = $this->db->get();
+        return $query->row();
+    }
     
     public function get_piutang_sekarang(){
         //$this->db->select("ifnull(sum(p.nominal),0)-sum(ifnull(pp.nominal,0)) as nominalpiutang");
