@@ -167,7 +167,7 @@ class Laba_rugi_model extends MY_Model
         $this->db->select("
             ifnull(sum(pp.nominal),0) as total 
             from piutang p
-            join pembayaran_piutang pp using (kode_piutang)
+            join pembayaran_piutang pp on p.kode_referensi = pp.kode_piutang
         ");
         $this->db->where(" month(pp.tanggal)='$bulan' and year(pp.tanggal) = '$tahun' ");
         $query = $this->db->get();
@@ -188,12 +188,12 @@ class Laba_rugi_model extends MY_Model
         $this->db->select("
             ifnull(sum(c.nominal),0) as total 
             from pembayaran_piutang a
-            join piutang b on a.kode_piutang = b.kode_piutang
+            join piutang b on b.kode_referensi = a.kode_piutang
             join transaksi_biaya c on c.kode_referensi = b.kode_referensi
             join jenis_biaya on jenis_biaya.id = c.id_jenis_biaya
         ");
 
-        $this->db->where(" month(c.tanggal)='$bulan' and year(c.tanggal) = '$tahun' jenis_biaya.is_harian != 1 ");
+        $this->db->where(" month(c.tanggal)='$bulan' and year(c.tanggal) = '$tahun' and jenis_biaya.id not in ('f09925751b7988434bdfa883b370bd44', '69ea49d4740ef0b03d818f055de99b1f') ");
         $query = $this->db->get();
 
         $totaly2 = $query->num_rows();
@@ -214,7 +214,7 @@ class Laba_rugi_model extends MY_Model
             ifnull(sum(dso.harga_beli),0) as total 
         ");
         $this->db->from('pembayaran_piutang pp');
-        $this->db->join('piutang p','p.kode_piutang=pp.kode_piutang');
+        $this->db->join('piutang p','p.kode_referensi=pp.kode_piutang');
         $this->db->join('sales_order so','so.kode_so=p.kode_referensi');
         $this->db->join('detail_so dso','dso.kode_so=so.kode_so');
         $this->db->where(" month(pp.tanggal)='$bulan' and year(pp.tanggal) = '$tahun' ");
