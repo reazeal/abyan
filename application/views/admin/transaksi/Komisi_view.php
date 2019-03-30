@@ -7,7 +7,7 @@
                 <div class="col-md-12 col-sm-12 col-xs-12">
                     <div class="x_panel">
                         <div class="x_title">
-                            <h2>Data Laba Rugi</h2>
+                            <h2>Data Komisi</h2>
                             <ul class="nav navbar-right panel_toolbox">
                                 <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
                                 </li>
@@ -15,47 +15,8 @@
                             <div class="clearfix"></div>
                         </div>
                         <div class="x_content">
-                            <!-- Modal -->
-                            <div id="modalGenerate" class="modal fade" role="dialog">
-                              <div class="modal-dialog">
-
-                                <!-- Modal content-->
-                                <div class="modal-content">
-                                    <form action="<?= site_url('admin/transaksi/laba_rugi/generate')?>" method="POST">
-                                  <div class="modal-header">
-                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                    <h4 class="modal-title">Generate Laba Rugi</h4>
-                                  </div>
-                                  <div class="modal-body" style="min-height: 100px;">
-                                    <div class="form-group">
-                                      <label class="control-label col-md-3">Bulan Awal:</label>
-                                      <div class="col-md-4">
-                                        <select name="bulan" class="form-control">
-                                          <?php foreach($a_bulan as $key => $value){
-                                              echo '<option value="'.$key.'">'.$value.'</option>';
-                                          }?>
-                                        </select>
-                                      </div>
-                                      <div class="col-md-4">
-                                        <select name="tahun" class="form-control">
-                                          <?php foreach($a_tahun as $key => $value){
-                                              echo '<option value="'.$key.'">'.$value.'</option>';
-                                          }?>
-                                        </select>
-                                      </div>
-                                    </div>
-                                  </div>
-                                  <div class="modal-footer">
-                                    <button type="submit" class="btn btn-primary">Generate</button>
-                                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-                                  </div>
-                                      </form> 
-                                </div>
-
-                              </div>
-                            </div>
+                        
                             <p> 
-                                <button class="btn btn-success" data-toggle="modal" data-target="#modalGenerate"><i class="glyphicon glyphicon-usd"></i> Generate laba rugi</button>
                                 <button class="btn btn-default" onclick="reload_table()"><i class="glyphicon glyphicon-refresh"></i> Reload</button>
                             </p>
 
@@ -65,12 +26,10 @@
                                 <tr>
                                     <th>No</th>
                                     <th>id</th>
-                                    <th>Tanggal</th>
                                     <th>Periode</th>
-                                    <th>Total Pendapatan</th>
-                                    <th>Total Biaya</th>
-                                    <th>Total Pembelian</th>
-                                    <th>Laba Rugi</th>   
+                                    <th>Jenis Komisi</th>
+                                    <th>Pegawai</th>
+                                    <th>Nominal</th>
                                     <th>Action</th>
                                 </tr>
                                 </thead>
@@ -107,7 +66,7 @@
             "order": [], //Initial no order.
             // Load data for the table's content from an Ajax source
             "ajax": {
-                "url": "<?php echo site_url('admin/transaksi/laba_rugi/get_data_all');?>",
+                "url": "<?php echo site_url('admin/transaksi/komisi/get_data_all');?>",
                 "type": "POST"
             },
             buttons: [
