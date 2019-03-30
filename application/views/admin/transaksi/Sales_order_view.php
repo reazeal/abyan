@@ -856,7 +856,7 @@
                         <div class="form-group">
                             <label class="control-label col-md-3">No. So <span class="required">*</span></label>
                             <div class="col-md-9">
-                                <input name="kode_so" placeholder="Nomor So" class="validate[required,minSize[3]] form-control" type="text" required="required" data-validate-length-range="2" data-validate-words="2" readonly="true">
+                                <input name="kode_so" placeholder="Nomor So" class="validate[required] form-control" type="text" required="required" data-validate-length-range="2" data-validate-words="2" readonly="true">
                                 <span class="help-block"></span>
                             </div>
                         </div>
