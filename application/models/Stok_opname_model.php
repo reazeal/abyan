@@ -6,9 +6,9 @@ class Stok_opname_model extends MY_Model
 {
     public $table = 'stok_opname';
     public $primary_key = 'id';
-    public $column_order = array(null, 'id','kode_stok_opname', 'kode_barang','nama_barang','qty','tanggal',null);
-    public $column_search = array('kode_stok_opname','kode_barang','nama_barang','qty','tanggal');
-    public $order = array('created_at' => 'desc'); // default order
+    public $column_order = array(null, 'id','tanggal','kode_stok_opname', 'kode_barang','nama_barang','qty','tanggal',null);
+    public $column_search = array('tanggal','kode_stok_opname','kode_barang','nama_barang','qty','tanggal');
+    public $order = array('tanggal' => 'desc'); // default order
 
     public function __construct()
     {
@@ -39,6 +39,16 @@ class Stok_opname_model extends MY_Model
                     $this->db->group_end(); //close bracket
             }
             $i++;
+        }
+
+        if(isset($_POST['order'])) // here order processing
+        {
+            $this->db->order_by($this->column_order[$_POST['order']['0']['column']], $_POST['order']['0']['dir']);
+        }
+        else if(isset($this->order))
+        {
+            $order = $this->order;
+            $this->db->order_by(key($order), $order[key($order)]);
         }
 
     }
