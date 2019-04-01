@@ -120,7 +120,7 @@ class Transaksi_biaya_model extends MY_Model
         $this->db->join("piutang b","b.kode_referensi = a.kode_piutang");
         $this->db->join("transaksi_biaya c","c.kode_referensi = b.kode_referensi");
         $this->db->join("jenis_biaya d","d.id = c.id_jenis_biaya");
-        $this->db->where(" month(c.tanggal)='$bulan' and year(c.tanggal) = '$tahun'  ");
+        $this->db->where(" month(a.tanggal)='$bulan' and year(a.tanggal) = '$tahun'  ");
         $this->db->where("d.id not in ('f09925751b7988434bdfa883b370bd44', '69ea49d4740ef0b03d818f055de99b1f')");
         $this->db->group_by('d.nama_biaya');
         $query = $this->db->get('pembayaran_piutang a');
@@ -152,7 +152,7 @@ class Transaksi_biaya_model extends MY_Model
         $this->db->join("detail_so c","c.kode_so = b.kode_referensi");
         $this->db->join("sales_order d","d.kode_so = c.kode_so");
         $this->db->join("pegawai e","e.kode_pegawai = d.kode_sales");
-        $this->db->where(" month(d.tanggal)='$bulan' and year(d.tanggal) = '$tahun' and e.jabatan != 'owner' ");
+        $this->db->where(" month(a.tanggal)='$bulan' and year(a.tanggal) = '$tahun' and e.jabatan != 'owner' ");
         $this->db->group_by("kode_sales");
         $query = $this->db->get('pembayaran_piutang a');
         
@@ -186,7 +186,7 @@ class Transaksi_biaya_model extends MY_Model
         
         $this->db->join("pengiriman_so f","f.kode_so = d.kode_so");
         $this->db->join("pegawai e","e.kode_pegawai = f.kode_kurir");
-        $this->db->where(" month(d.tanggal)='$bulan' and year(d.tanggal) = '$tahun' and e.jabatan != 'owner' ");
+        $this->db->where(" month(a.tanggal)='$bulan' and year(a.tanggal) = '$tahun' and e.jabatan != 'owner' ");
         $this->db->group_by("kode_kurir");
         $query = $this->db->get('pembayaran_piutang a');
         
