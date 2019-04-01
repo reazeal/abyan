@@ -178,7 +178,7 @@ class Transaksi_biaya_model extends MY_Model
         $query = $this->db->get($this->table);
         */
         
-        $this->db->select(" kode_pegawai, sum(c.qty * 200 ) as nominal
+        $this->db->select(" kode_kurir as kode_pegawai, sum(c.qty * 200 ) as nominal
         ");
         $this->db->join("piutang b","a.kode_piutang = b.kode_referensi");
         $this->db->join("detail_so c","c.kode_so = b.kode_referensi");
@@ -187,7 +187,7 @@ class Transaksi_biaya_model extends MY_Model
         $this->db->join("pengiriman_so f","f.kode_so = d.kode_so");
         $this->db->join("pegawai e","e.kode_pegawai = f.kode_kurir");
         $this->db->where(" month(d.tanggal)='$bulan' and year(d.tanggal) = '$tahun' and e.jabatan != 'owner' ");
-        $this->db->group_by("kode_sales");
+        $this->db->group_by("kode_kurir");
         $query = $this->db->get('pembayaran_piutang a');
         
         $hasil = $query->result_array();
