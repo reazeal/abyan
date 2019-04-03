@@ -125,7 +125,7 @@
 //            ]
         });
 
-        table_detailpiutang = $('#datatable-detailpiutang').DataTable({
+        table_detailKomisi = $('#datatable-detailpiutang').DataTable({
             "processing": true, //Feature control the processing indicator.
             "serverSide": false, //Feature control DataTables' server-side processing mode.
             "order": [], //Initial no order.
@@ -190,7 +190,7 @@
         //$('#modal_detail_po').modal('show'); // show bootstrap modal
     }
 
-    function detail_piutang($barang)
+    function detail_komisi($barang)
     {
         
         table_detailpiutang.clear().draw();
@@ -202,13 +202,13 @@
             success: function(data)
             {
                 //alert(data[0]['detailpiutang'].length);
-                for(var i = 0; i < data[0]['detailpiutang'].length; i++) {
+                for(var i = 0; i < data[0]['detailkomisi'].length; i++) {
                     var obj = data[0]['detailpiutang'][i];
-                    table_detailpiutang.row.add([obj.no_bukti, obj.nama_barang, obj.nama_gudang, obj.expired, obj.qty, obj.action]).draw();
+                    table_detailKomisi.row.add([obj.no_bukti, obj.nama_barang, obj.nama_gudang, obj.expired, obj.qty, obj.action]).draw();
                 }
 
                 $('#modal_detail_piutang').modal('show'); // show bootstrap modal when complete loaded
-                $('.modal-title').text('piutang Barang'); // Set title to Bootstrap modal title
+                $('.modal-title').text('Piutang Barang'); // Set title to Bootstrap modal title
 
             },
             error: function (jqXHR, textStatus, errorThrown)

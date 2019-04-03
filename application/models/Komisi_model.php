@@ -6,7 +6,7 @@ class Komisi_model extends MY_Model
 {
     public $table = 'komisi';
     public $primary_key = 'id';
-    public $column_order = array(null, 'id', 'periode','jenis_komisi','nama_pegawai','nominal',null);
+    public $column_order = array(null, 'k.id', 'periode','jenis_komisi','nama_pegawai','nominal',null);
     public $column_search = array('periode','jenis_komisi','nama_pegawai','nominal');
     public $order = array('tanggal' => 'desc'); // default order
 
@@ -19,9 +19,11 @@ class Komisi_model extends MY_Model
     {
         //$this->db->group_by('kode');
         //$this->db->order_by('tanggal','desc');
-        $this->db->join('laba_rugi a','a.id = komisi.id_laba_rugi');
-        $this->db->join('pegawai b','b.kode_pegawai = komisi.kode_pegawai');
-        $this->db->from('komisi');
+        $this->db->select("k.id, periode, jenis_komisi, nama_pegawai, sum(nominal) as nominal");
+        $this->db->join('laba_rugi a','a.id = k.id_laba_rugi');
+        $this->db->join('pegawai b','b.kode_pegawai = k.kode_pegawai');
+        $this->db->group_by('id_laba_rugi,jenis_komisi,k.kode_pegawai');
+        $this->db->from('komisi k');
           $i = 0;
         foreach ($this->column_search as $item) // loop column
         {
