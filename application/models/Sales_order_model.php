@@ -187,6 +187,7 @@ class Sales_order_model extends MY_Model
         $this->db->join('barang','barang.kode = detail_so.kode_barang');
         $this->db->where('sales_order.tanggal >= ',$awal);
         $this->db->where('sales_order.tanggal <= ',$akhir);
+        $this->db->group_by('sales_order.kode_so');
         if($order == 'tanggal'){
             $this->db->order_by('sales_order.tanggal','asc');
         }else if($order == 'customer'){

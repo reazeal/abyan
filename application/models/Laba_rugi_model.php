@@ -193,7 +193,7 @@ class Laba_rugi_model extends MY_Model
             join jenis_biaya on jenis_biaya.id = c.id_jenis_biaya
         ");
 
-        $this->db->where(" month(c.tanggal)='$bulan' and year(c.tanggal) = '$tahun' and jenis_biaya.id not in ('f09925751b7988434bdfa883b370bd44', '69ea49d4740ef0b03d818f055de99b1f') ");
+        $this->db->where(" month(a.tanggal)='$bulan' and year(a.tanggal) = '$tahun' and jenis_biaya.id not in ('f09925751b7988434bdfa883b370bd44', '69ea49d4740ef0b03d818f055de99b1f') ");
         $query = $this->db->get();
 
         $totaly2 = $query->num_rows();
