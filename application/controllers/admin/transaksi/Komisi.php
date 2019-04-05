@@ -61,7 +61,7 @@ class Komisi extends Admin_Controller
             $row[] = $dt->jenis_komisi;
             $row[] = $dt->nama_pegawai;
             $row[] = number_format((($dt->nominal)?$dt->nominal:'0'),0,",",".");
-            $row[] = '<a class="btn btn-sm btn-primary" href="javascript:void(0)" title="Detail" onclick="detail_ll('."'".$dt->id."'".')"><i class="glyphicon glyphicon-pencil"></i> Detail</a>
+            $row[] = '<a class="btn btn-sm btn-primary" href="javascript:void(0)" title="Detail" onclick="detail_komisi_x('."'".$dt->id."'".')"><i class="glyphicon glyphicon-pencil"></i> Detail</a>
                   <a class="btn btn-sm btn-primary" href="javascript:void(0)" title="Cetak" onclick="cetak_ll('."'".$dt->id."'".')"><i class="glyphicon glyphicon-pencil"></i> Cetak</a>';
             $data[] = $row;
         }
@@ -232,10 +232,13 @@ class Komisi extends Admin_Controller
         echo json_encode(array($data));
     }
 
-    public function get_detail($id_ll)
+    public function get_detail($id)
     {
+
+        $data_sumber = $this->komisi_model->get_by_id($id);
+        //echo $data_sumber->id_laba_rugi;
         $data  = array(
-            'detailSo'=> (array) $this->detail_laba_rugi_model->getDataByIDLabaRugi($id_ll)
+            'detailKomisi'=> (array) $this->komisi_model->getDataByIDLabaRugiByJenis($data_sumber->id_laba_rugi, $data_sumber->jenis_komisi, $data_sumber->kode_pegawai)
         );
         echo json_encode(array($data));
     }

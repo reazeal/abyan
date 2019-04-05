@@ -160,21 +160,21 @@
 
     });
 
-    function detail_ll($id)
+    function detail_komisi_x($id)
     {
         
         table_detailll.clear().draw();
 
         $.ajax({
-            url : "<?php echo site_url('admin/transaksi/laba_rugi/get_detail')?>/"+ $id,
+            url : "<?php echo site_url('admin/transaksi/komisi/get_detail')?>/"+ $id,
             type: "GET",
             dataType: "JSON",
             success: function(data)
             {
                 //alert(data[0]['detailStok'].length);
-                for(var i = 0; i < data[0]['detailSo'].length; i++) {
-                    var obj = data[0]['detailSo'][i];
-                    table_detailll.row.add([obj.no,obj.jenis_trans, obj.tgl_trans, obj.nominal]).draw();
+                for(var i = 0; i < data[0]['detailKomisi'].length; i++) {
+                    var obj = data[0]['detailKomisi'][i];
+                    table_detailll.row.add([obj.no,obj.jenis_komisi, obj.kode_pegawai, obj.kode_so, obj.nama_barang, obj.qty, obj.nominal]).draw();
                 }
 
                 $('#modal_detail_ll').modal('show'); // show bootstrap modal when complete loaded
@@ -193,10 +193,10 @@
     function detail_komisi($barang)
     {
         
-        table_detailpiutang.clear().draw();
+        table_detailKomisi.clear().draw();
 
         $.ajax({
-            url : "<?php echo site_url('admin/transaksi/piutang/piutang')?>/"+ $barang,
+            url : "<?php echo site_url('admin/transaksi/komisi/get_detail')?>/"+ $barang,
             type: "GET",
             dataType: "JSON",
             success: function(data)
@@ -415,15 +415,18 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h3>Form Detail Laba Rugi</h3>
+                <h3>Detail Komisi</h3>
             </div>
             <div class="panel-body">
                 <table id="datatable-detailll" class="table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
                         <thead>
                         <tr>
                             <th>No</th>
-                            <th>Jenis Transaksi</th>
-                            <th>Tgl. Transaksi</th>
+                            <th>Jenis Komisi</th>
+                            <th>Nama Pegawai</th>
+                            <th>SO</th>
+                            <th>Barang</th>
+                            <th>QTY</th>
                             <th>Nominal</th>     
                         </tr>
                         </thead>

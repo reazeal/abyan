@@ -146,14 +146,14 @@ class Transaksi_biaya_model extends MY_Model
         $query = $this->db->get($this->table);
         */
         
-        $this->db->select(" kode_pegawai, sum(c.harga * 1.5 / 100) as nominal, d.kode_so
+        $this->db->select(" kode_pegawai, (c.harga * 1.5 / 100) as nominal, d.kode_so, c.nama_barang, c.qty
         ");
         $this->db->join("piutang b","a.kode_piutang = b.kode_referensi");
         $this->db->join("detail_so c","c.kode_so = b.kode_referensi");
         $this->db->join("sales_order d","d.kode_so = c.kode_so");
         $this->db->join("pegawai e","e.kode_pegawai = d.kode_sales");
         $this->db->where(" month(d.tanggal)='$bulan' and year(d.tanggal) = '$tahun' and e.jabatan != 'owner' ");
-        $this->db->group_by("d.kode_so");
+        //$this->db->group_by("d.kode_so");
         $query = $this->db->get('pembayaran_piutang a');
         
         $hasil = $query->result_array();
@@ -178,7 +178,7 @@ class Transaksi_biaya_model extends MY_Model
         $query = $this->db->get($this->table);
         */
         
-        $this->db->select(" kode_pegawai, sum(c.qty * 200 ) as nominal, d.kode_so
+        $this->db->select(" kode_pegawai, (f.qty * 200)  as nominal, d.kode_so, f.nama_barang, f.qty
         ");
         //$this->db->join("piutang b","a.kode_piutang = b.kode_referensi");
         $this->db->join("detail_so c","c.kode_so = d.kode_so");
@@ -187,7 +187,7 @@ class Transaksi_biaya_model extends MY_Model
         $this->db->join("pegawai e","e.kode_pegawai = f.kode_kurir");
         
         $this->db->where(" month(d.tanggal)='$bulan' and year(d.tanggal) = '$tahun' and e.jabatan != 'owner' ");
-        $this->db->group_by("d.kode_so");
+        //$this->db->group_by("d.kode_so");
         $query = $this->db->get('sales_order d');
         
         $hasil = $query->result_array();

@@ -45,7 +45,7 @@ class Komisi_model extends MY_Model
             $i++;
         }
 
-        /*
+        
         if(isset($_POST['order'])) // here order processing
         {
             $this->db->order_by($this->column_order[$_POST['order']['0']['column']], $_POST['order']['0']['dir']);
@@ -55,7 +55,7 @@ class Komisi_model extends MY_Model
             $order = $this->order;
             $this->db->order_by(key($order), $order[key($order)]);
         }
-        */
+        
     }
 
     function get_datatables()
@@ -84,6 +84,16 @@ class Komisi_model extends MY_Model
 
     }
 
+    public function get_by_id($id)
+    {
+
+        $this->db->from($this->table);
+        $this->db->where('id',$id);
+        $query = $this->db->get();
+
+        return $query->row();
+    }
+
     public function delete_by_id_laba_rugi($id)
     {
         $this->db->where('id_laba_rugi', $id);
@@ -109,6 +119,42 @@ class Komisi_model extends MY_Model
             return '0';    
         }
         
+
+    }
+
+    public function getDataByIDLabaRugiByJenis($id_laba_rugi, $jenis, $kode_pegawai){
+        $data = array();
+        $this->db->select('jenis_komisi, nama_pegawai, komisi.kode_so, nominal, sales_order.tanggal, komisi.nama_barang, komisi.qty');
+        $this->db->where('jenis_komisi',$jenis);
+        $this->db->where('id_laba_rugi',$id_laba_rugi);
+        $this->db->where('pegawai.kode_pegawai',$kode_pegawai);
+        $this->db->join('pegawai','pegawai.kode_pegawai = komisi.kode_pegawai');
+        $this->db->join('sales_order','sales_order.kode_so = komisi.kode_so');
+        $this->db->join('detail_so','sales_order.kode_so = detail_so.kode_so');
+        //$this->db->limit(2);
+        //$this->db->order_by('sales_order.tanggal','asc');
+        $this->db->order_by('sales_order.tanggal','asc');
+        $query = $this->db->get($this->table);
+
+        $totaly2 = $query->num_rows();
+        if ($totaly2 > 0) {
+            $i=1;
+            foreach ($query->result() as $atributy) {
+                $data[] = array(
+                'no' => $i,
+                'jenis_komisi' => $atributy->jenis_komisi,
+                'nominal' => number_format((($atributy->nominal)?$atributy->nominal:'0'),0,",","."),
+                'kode_so' => $atributy->kode_so,
+                'kode_pegawai' => $atributy->nama_pegawai,
+                'tanggal' => $atributy->tanggal,
+                'nama_barang' => $atributy->nama_barang,
+                'qty' => $atributy->qty,
+                );
+                $i++;
+            }
+
+        }
+        return $data;
 
     }
 
