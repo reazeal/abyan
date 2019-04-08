@@ -130,7 +130,7 @@ class Komisi_model extends MY_Model
         $this->db->where('pegawai.kode_pegawai',$kode_pegawai);
         $this->db->join('pegawai','pegawai.kode_pegawai = komisi.kode_pegawai');
         $this->db->join('sales_order','sales_order.kode_so = komisi.kode_so');
-        $this->db->join('detail_so','sales_order.kode_so = detail_so.kode_so');
+        $this->db->join('detail_so','sales_order.kode_so = detail_so.kode_so and and detail_so.nama_barang = komisi.nama_barang');
         //$this->db->limit(2);
         //$this->db->order_by('sales_order.tanggal','asc');
         $this->db->order_by('sales_order.tanggal','asc');
