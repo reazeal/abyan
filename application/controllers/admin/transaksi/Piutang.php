@@ -72,9 +72,9 @@ class Piutang extends Admin_Controller
             $row[] = $this->tanggal($dt->tanggal);
             $row[] = $dt->kode_piutang;
             $row[] = $dt->kode_referensi;
-            if($akhir > $awal ){
+            if( ( $akhir > $awal ) && ($dt->status != "Lunas") ){
                 $row[] = "<a class='label label-danger'>$dt->nama_relasi</a>";
-            }else if($sisa > 0 && $sisa < 5){
+            }else if( ( $sisa > 0 && $sisa < 5 ) && ($dt->status != "Lunas") ){
                 $row[] = "<a class='label label-warning'>$dt->nama_relasi</a>";
             }else{
                 $row[] = $dt->nama_relasi;

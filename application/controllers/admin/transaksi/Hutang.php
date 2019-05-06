@@ -55,6 +55,12 @@ class Hutang extends Admin_Controller
         $no = $this->input->post('start');
         foreach ($list as $dt) {
             $no++;
+
+            $tgl=date('Y-m-d');
+            $akhir = new DateTime($tgl);
+            $awal = new DateTime($dt->tanggal_jatuh_tempo);
+            $sisa = $akhir->diff($awal);
+
             $row = array();
             $row[] = $no;
             $row[] = $dt->id;
@@ -63,7 +69,15 @@ class Hutang extends Admin_Controller
             $row[] = $dt->nomor_referensi;
             $row[] = $dt->kode_bantu;
             $row[] = $dt->kode_relasi;
-            $row[] = $dt->nama_relasi;
+            if( ($akhir > $awal ) && ($dt->status != 'Lunas')  ){
+                
+                $row[] = "<a class='label label-danger'>$dt->nama_relasi</a>";    
+            }else if( ( $sisa > 0 && $sisa < 5 ) && ($dt->status != "Lunas") ){
+                $row[] = "<a class='label label-warning'>$dt->nama_relasi</a>";
+            }else{
+                $row[] = $dt->nama_relasi;
+            }
+            
             $row[] = $dt->jenis;
             $row[] = $this->tanggal($dt->tanggal_jatuh_tempo);
             $row[] = number_format((($dt->nominal)?$dt->nominal:'0'),0,",",".");
