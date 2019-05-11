@@ -452,8 +452,8 @@
         var id_po = $('#form_terima').find('input[name="id_po"]').val();
        // alert(id_po);        
 
-        $('#btnSave').text('menyimpan...'); //change button text
-        $('#btnSave').attr('disabled',true); //set button disable
+        $('#btnSaveTerimaPo').text('menyimpan...'); //change button text
+        $('#btnSaveTerimaPo').attr('disabled',true); //set button disable
 
         // ajax adding data to database
         $.ajax({
@@ -474,8 +474,8 @@
                     reload_table();
                 }
 
-                $('#btnSave').text('simpan'); //change button text
-                $('#btnSave').attr('disabled',false); //set button enable
+                $('#btnSaveTerimaPo').text('simpan'); //change button text
+                $('#btnSaveTerimaPo').attr('disabled',false); //set button enable
 
                 detail_po(id_po);
 
@@ -483,8 +483,8 @@
             error: function (jqXHR, textStatus, errorThrown)
             {
                 alert('Error adding / update data');
-                $('#btnSave').text('simpan'); //change button text
-                $('#btnSave').attr('disabled',false); //set button enable
+                $('#btnSaveTerimaPo').text('simpan'); //change button text
+                $('#btnSaveTerimaPo').attr('disabled',false); //set button enable
 
             }
         });
@@ -880,7 +880,7 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" id="btnSave" onclick="simpan_terima_po()" class="btn btn-primary">Simpan</button>
+                <button type="button" id="btnSaveTerimaPo" onclick="simpan_terima_po()" class="btn btn-primary">Simpan</button>
                 <button type="button" class="btn btn-danger" data-dismiss="modal">Batal</button>
             </div>
         </div><!-- /.modal-content -->
