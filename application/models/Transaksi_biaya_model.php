@@ -145,8 +145,7 @@ JOIN `detail_so` `c` ON `c`.`kode_so` = `d`.`kode_so`
 -- JOIN `pengiriman_so` `f` ON `f`.`kode_so` = `d`.`kode_so` and c.kode_barang = f.kode_barang
 JOIN `pegawai` `e` ON `e`.`kode_pegawai` = `d`.`kode_sales` 
 JOIN `barang` `g` ON `g`.`kode` = `c`.`kode_barang` 
-join (select * from pembayaran_piutang group by kode_piutang) b on b.kode_piutang = c.kode_so WHERE month(d.tanggal) = '$bulan' 
-and year(d.tanggal) = '$tahun' and `e`.`jabatan` != 'owner' ");
+join (select * from pembayaran_piutang where month(tanggal) = '$bulan' and year(tanggal) = '$tahun' group by kode_piutang) b on b.kode_piutang = c.kode_so WHERE  `e`.`jabatan` != 'owner' ");
        /* 
         $this->db->select(" kode_pegawai, (c.harga * 1.5 / 100) as nominal, d.kode_so, c.nama_barang, c.qty
         ");
