@@ -140,7 +140,7 @@ class Transaksi_biaya_model extends MY_Model
 
     public function select_insert_biaya_perbulan_tahun_komisi_sales($bulan,$tahun,$idlabarugi){
         
-        $query = $this->db->query("SELECT kode_pegawai, (c.harga * 1.5 / 100) as nominal, d.kode_so, c.nama_barang, c.qty FROM `sales_order` `d` 
+        $query = $this->db->query("SELECT kode_pegawai, (c.harga * 1.5 / 100 * c.qty) as nominal, d.kode_so, c.nama_barang, c.qty FROM `sales_order` `d` 
 JOIN `detail_so` `c` ON `c`.`kode_so` = `d`.`kode_so` 
 -- JOIN `pengiriman_so` `f` ON `f`.`kode_so` = `d`.`kode_so` and c.kode_barang = f.kode_barang
 JOIN `pegawai` `e` ON `e`.`kode_pegawai` = `d`.`kode_sales` 
