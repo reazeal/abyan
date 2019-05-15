@@ -93,6 +93,7 @@ class Laba_rugi extends Admin_Controller
         $pendapatan=$this->laba_rugi_model->total_pendapatan_perbulan_tahun($bulan,$tahun); 
         // mengacu SO
         $biaya_bulanan=$this->laba_rugi_model->total_biaya_perbulan_tahun($bulan,$tahun);
+        $biaya_bulanan_kardus_cold=$this->laba_rugi_model->total_biaya_kardus_cold_perbulan_tahun($bulan,$tahun);
 
         //$biaya_bulanan=$this->laba_rugi_model->total_biaya_perbulan_tahun_bulanan($bulan,$tahun);
         //$hutang=$this->laba_rugi_model->total_hutang_perbulan_tahun($bulan,$tahun);
@@ -104,7 +105,7 @@ class Laba_rugi extends Admin_Controller
             'id' => $id,
             'periode' => $periode,
             'total_pendapatan' => $pendapatan,            
-            'total_biaya' => $biaya_bulanan,          
+            'total_biaya' => $biaya_bulanan + $biaya_bulanan_kardus_cold,          
             'total_pembelian' => $pembelian,
             'tanggal' => date('Y-m-d'),
             'created_at' => date('Y-m-d H:i:s'),
