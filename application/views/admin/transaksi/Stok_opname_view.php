@@ -30,6 +30,7 @@
                                     <th>Tanggal</th>
                                     <th>Kode Barang</th>
                                     <th>Nama Barang</th>
+                                    <th>Tanggal</th>
                                     <th>QTY</th>
                                     <th>Action</th>
                                 </tr>
@@ -234,6 +235,14 @@
                                 endforeach;
                                 ?>
                             </select>
+                            <span class="help-block"></span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label col-md-3">Tanggal Kedatangan<span class="required">*</span></label>
+                        <div class="col-md-9">
+                            <input placeholder="dd-mm-yyyy" name="tanggal_kedatangan" class="validate[required] form-control datepicker" type="text" required="required">
                             <span class="help-block"></span>
                         </div>
                     </div>

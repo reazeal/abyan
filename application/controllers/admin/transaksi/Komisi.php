@@ -235,11 +235,16 @@ class Komisi extends Admin_Controller
     public function get_detail($id)
     {
 
-        $data_sumber = $this->komisi_model->get_by_id($id);
-        //echo $data_sumber->id_laba_rugi;
+        //$data_sumber = $this->komisi_model->get_by_id($id);
+        
         $data  = array(
-            'detailKomisi'=> (array) $this->komisi_model->getDataByIDLabaRugiByJenis($data_sumber->id_laba_rugi, $data_sumber->jenis_komisi, $data_sumber->kode_pegawai)
+            'detailKomisi'=> (array) $this->komisi_model->get_by_id($id)
         );
+
+        //echo $data_sumber->id_laba_rugi;
+        //$data  = array(
+          //  'detailKomisi'=> (array) $this->komisi_model->getDataByIDLabaRugiByJenis($data_sumber->id_laba_rugi, $data_sumber->jenis_komisi, $data_sumber->kode_pegawai)
+        //);
         echo json_encode(array($data));
     }
     

@@ -130,6 +130,7 @@ class Stok_opname extends Admin_Controller
             'kode_barang' => $barang[0],
             'qty' => $this->input->post('qty'),
             'tanggal' => $this->tanggaldb($this->input->post('tanggal')),
+            'tanggal_kedatangan' => $this->tanggaldb($this->input->post('tanggal_kedatangan')),
             'created_at' => date("Y-m-d H:i:s"),
             //'rak_id' => $this->input->post('rak_id'),
             

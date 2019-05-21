@@ -86,12 +86,51 @@ class Komisi_model extends MY_Model
 
     public function get_by_id($id)
     {
-
-        $this->db->from($this->table);
+        $this->db->select("id_laba_rugi, jenis_komisi, kode_pegawai");
         $this->db->where('id',$id);
+        $query2 = $this->db->get($this->table);
+
+        $totaly3 = $query2->num_rows();
+        foreach ($query2->result() as $atributy) {
+            $id_laba_rugi = $atributy->id_laba_rugi;
+            $jenis_komisi = $atributy->jenis_komisi;
+            $kode_pegawai = $atributy->kode_pegawai;
+        }
+        $this->db->select("komisi.id, komisi.jenis_komisi,komisi.kode_pegawai,komisi.kode_so,komisi.nama_barang, komisi.qty, komisi.nominal, sales_order.nama_customer");
+        $this->db->join('sales_order','sales_order.kode_so = komisi.kode_so');
+        $this->db->from($this->table);
+        //$this->db->where('komisi.id',$id);
+        $this->db->where('komisi.id_laba_rugi',$id_laba_rugi);
+        $this->db->where('komisi.jenis_komisi',$jenis_komisi);
+        $this->db->where('komisi.kode_pegawai',$kode_pegawai);
         $query = $this->db->get();
 
-        return $query->row();
+        //return $query->row();
+
+        $data = array();
+        //$this->db->where('id_laba_rugi',$id);
+        //$query = $this->db->get($this->table);
+
+        $totaly2 = $query->num_rows();
+        if ($totaly2 > 0) {
+            $i=1;
+            foreach ($query->result() as $atributy) {
+                $data[] = array(
+                'no' => $i,
+                'jenis_komisi' => $atributy->jenis_komisi,
+                'nominal' => number_format((($atributy->nominal)?$atributy->nominal:'0'),0,",","."),
+                'kode_pegawai' => $atributy->kode_pegawai,
+                'kode_so' => $atributy->kode_so,
+                'nama_barang' => $atributy->nama_barang,
+                'kode_pegawai' => $atributy->kode_pegawai,
+                'qty' => $atributy->qty,
+                'nama_customer' => $atributy->nama_customer,
+                );
+                $i++;
+            }
+
+        }
+        return $data;
     }
 
     public function delete_by_id_laba_rugi($id)

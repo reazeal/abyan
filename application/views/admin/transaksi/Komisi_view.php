@@ -174,7 +174,7 @@
                 //alert(data[0]['detailStok'].length);
                 for(var i = 0; i < data[0]['detailKomisi'].length; i++) {
                     var obj = data[0]['detailKomisi'][i];
-                    table_detailll.row.add([obj.no,obj.jenis_komisi, obj.kode_pegawai, obj.kode_so, obj.nama_barang, obj.qty, obj.nominal]).draw();
+                    table_detailll.row.add([obj.no,obj.jenis_komisi, obj.kode_pegawai, obj.kode_so, obj.nama_customer, obj.nama_barang, obj.qty, obj.nominal]).draw();
                 }
 
                 $('#modal_detail_ll').modal('show'); // show bootstrap modal when complete loaded
@@ -425,6 +425,7 @@
                             <th>Jenis Komisi</th>
                             <th>Nama Pegawai</th>
                             <th>SO</th>
+                            <th>Customer</th>
                             <th>Barang</th>
                             <th>QTY</th>
                             <th>Nominal</th>     

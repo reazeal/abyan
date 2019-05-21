@@ -6,8 +6,8 @@ class Stok_opname_model extends MY_Model
 {
     public $table = 'stok_opname';
     public $primary_key = 'id';
-    public $column_order = array(null, 'id','tanggal','kode_stok_opname', 'kode_barang','nama_barang','qty','tanggal',null);
-    public $column_search = array('tanggal','kode_stok_opname','kode_barang','nama_barang','qty','tanggal');
+    public $column_order = array(null, 'id','tanggal','kode_stok_opname', 'kode_barang','nama_barang','qty','tanggal','tanggal_kedatangan',null);
+    public $column_search = array('tanggal','kode_stok_opname','kode_barang','nama_barang','qty','tanggal','tanggal_kedatangan');
     public $order = array('tanggal' => 'desc'); // default order
 
     public function __construct()
