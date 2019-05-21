@@ -186,14 +186,39 @@ class Laba_rugi_model extends MY_Model
     
     public function total_biaya_perbulan_tahun($bulan,$tahun){
         $this->db->select("
-            ifnull(sum(c.nominal),0) as total 
+            ifnull(sum(c.nominal * detail_so.qty ),0) as total 
+            from pembayaran_piutang a
+            join piutang b on b.kode_referensi = a.kode_piutang
+            join transaksi_biaya c on c.kode_referensi = b.kode_referensi
+            join jenis_biaya on jenis_biaya.id = c.id_jenis_biaya
+            join detail_so on detail_so.kode_so = a.kode_piutang
+        ");
+
+        $this->db->where(" month(a.tanggal)='$bulan' and year(a.tanggal) = '$tahun' and jenis_biaya.id not in ('f09925751b7988434bdfa883b370bd44', '69ea49d4740ef0b03d818f055de99b1f','7c413a3bfa29d65702df7c60fb554bf6','aa083acc31d09e74122a742aae63e4b1') ");
+        $query = $this->db->get();
+
+        $totaly2 = $query->num_rows();
+        if ($totaly2 > 0) {
+            foreach ($query->result() as $atributy) {
+
+                $total = $atributy->total ;
+                
+            }
+
+        }
+        return $total;
+    }
+
+    public function total_biaya_kardus_cold_perbulan_tahun($bulan,$tahun){
+        $this->db->select("
+            ifnull(sum(c.nominal ),0) as total 
             from pembayaran_piutang a
             join piutang b on b.kode_referensi = a.kode_piutang
             join transaksi_biaya c on c.kode_referensi = b.kode_referensi
             join jenis_biaya on jenis_biaya.id = c.id_jenis_biaya
         ");
 
-        $this->db->where(" month(a.tanggal)='$bulan' and year(a.tanggal) = '$tahun' and jenis_biaya.id not in ('f09925751b7988434bdfa883b370bd44', '69ea49d4740ef0b03d818f055de99b1f') ");
+        $this->db->where(" month(a.tanggal)='$bulan' and year(a.tanggal) = '$tahun' and jenis_biaya.id in ('7c413a3bfa29d65702df7c60fb554bf6','aa083acc31d09e74122a742aae63e4b1') ");
         $query = $this->db->get();
 
         $totaly2 = $query->num_rows();
@@ -211,7 +236,7 @@ class Laba_rugi_model extends MY_Model
     
     public function total_pembelian_perbulan_tahun($bulan,$tahun){
         $this->db->select("
-            ifnull(sum(dso.harga_beli),0) as total 
+            ifnull(sum(dso.harga_beli * dso.qty),0) as total 
         ");
         $this->db->from('pembayaran_piutang pp');
         $this->db->join('piutang p','p.kode_referensi=pp.kode_piutang');
