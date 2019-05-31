@@ -31,6 +31,7 @@ class Return_masuk extends Admin_Controller
         $this->load->model('return_masuk_model');
         $this->load->model('barang_masuk_model');
         $this->load->model('detail_barang_masuk_model');
+        $this->load->model('piutang_model');
         
     }
 
@@ -187,6 +188,23 @@ class Return_masuk extends Admin_Controller
                                         );
 
             $this->detail_barang_masuk_model->insert($data_detail_barang);
+
+            $nominal_piutang = $this->piutang_model->get_piutang_by_so($this->input->post('kode_so')); 
+
+            if($nominal_piutang != 0){
+                
+                $nominal_return = $this->input->post('qty_return') * $this->input->post('harga');
+
+                
+            $data_piutang_baru = array(
+                'nominal' => $nominal_piutang - $nominal_return,
+                'piutang_awal' => $nominal_piutang,
+                'nominal_return' => $nominal_return
+            );
+
+            $this->piutang_model->update_by_kode($this->input->post('kode_so'), $data_piutang_baru);
+
+            }
 
         
         echo json_encode(array("status" => TRUE));

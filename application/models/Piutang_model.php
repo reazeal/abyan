@@ -158,7 +158,7 @@ class Piutang_model extends MY_Model
     public function get_piutang_by_so_barang($kode_kirim){
 
          $this->db->select("
-            kode_piutang, nominal, kode_bantu
+            kode_piutang, nominal, kode_bantu, id
         ");
 
         $this->db->from($this->table);
@@ -176,6 +176,29 @@ class Piutang_model extends MY_Model
         $this->db->where("status = 'Belum Lunas'");
         //$this->db->group_by("p.kode_piutang");
         $this->db->having("nominalpiutang <> 0");
+        $query = $this->db->get();
+        
+        $totaly2 = $query->num_rows();
+        if ($totaly2 > 0) {
+            
+            return $query->row()->nominalpiutang;
+
+        }else{
+            return '0';
+        }
+
+//        return $query->row()->nominalpiutang;
+        //return '0';
+    }
+
+    public function get_piutang_by_so($kode_so){
+        //$this->db->select("ifnull(sum(p.nominal),0)-sum(ifnull(pp.nominal,0)) as nominalpiutang");
+        $this->db->select("ifnull(sum(p.nominal),0) as nominalpiutang");
+        $this->db->from($this->table.' p');
+        //$this->db->join('pembayaran_piutang pp','p.kode_piutang=pp.kode_piutang','left');
+        $this->db->where("kode_referensi",$kode_so);
+        //$this->db->group_by("p.kode_piutang");
+        //$this->db->having("nominalpiutang <> 0");
         $query = $this->db->get();
         
         $totaly2 = $query->num_rows();
