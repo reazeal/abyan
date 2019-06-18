@@ -83,6 +83,11 @@ class Laba_rugi extends Admin_Controller
         $this->transaksi_biaya_model->select_insert_biaya_perbulan_tahun($bulan,$tahun,$idlabarugi);
         $this->transaksi_biaya_model->select_insert_biaya_perbulan_tahun_komisi_sales($bulan,$tahun,$idlabarugi);
         $this->transaksi_biaya_model->select_insert_biaya_perbulan_tahun_komisi_pengiriman($bulan,$tahun,$idlabarugi);
+
+        $this->transaksi_biaya_model->insert_biaya_perbulan_tahun_komisi_sales($idlabarugi);
+
+        $this->transaksi_biaya_model->insert_biaya_perbulan_tahun_komisi_pengiriman($idlabarugi);
+
     }
         
     public function generate(){
@@ -93,7 +98,11 @@ class Laba_rugi extends Admin_Controller
         $pendapatan=$this->laba_rugi_model->total_pendapatan_perbulan_tahun($bulan,$tahun); 
         // mengacu SO
         $biaya_bulanan=$this->laba_rugi_model->total_biaya_perbulan_tahun($bulan,$tahun);
-        $biaya_bulanan_kardus_cold=$this->laba_rugi_model->total_biaya_kardus_cold_perbulan_tahun($bulan,$tahun);
+        $biaya_bulanan_kardus_cold=$this->laba_rugi_model->total_biaya_kardus_cold_bank_perbulan_tahun($bulan,$tahun);
+
+        $biaya_komisi_sales = $this->transaksi_biaya_model->total_biaya_perbulan_tahun_komisi_sales($bulan,$tahun);
+
+        $biaya_pengiriman = $this->transaksi_biaya_model->total_biaya_perbulan_tahun_komisi_pengiriman($bulan,$tahun);
 
         //$biaya_bulanan=$this->laba_rugi_model->total_biaya_perbulan_tahun_bulanan($bulan,$tahun);
         //$hutang=$this->laba_rugi_model->total_hutang_perbulan_tahun($bulan,$tahun);
@@ -106,6 +115,7 @@ class Laba_rugi extends Admin_Controller
             'periode' => $periode,
             'total_pendapatan' => $pendapatan,            
             'total_biaya' => $biaya_bulanan + $biaya_bulanan_kardus_cold,          
+            ///'total_biaya' => 0,
             'total_pembelian' => $pembelian,
             'tanggal' => date('Y-m-d'),
             'created_at' => date('Y-m-d H:i:s'),

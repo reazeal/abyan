@@ -390,9 +390,9 @@ class Detail_so_model extends MY_Model
     public function getDataByNoSoCetak($id){
         $data = array();
         $this->db->select('detail_so.id as id, sales_order.kode_so as kode_so, detail_so.kode_barang as kode_barang,
-            barang.nama as nama_barang, detail_so.qty as qty, detail_so.harga as harga');
+            detail_so.nama_barang as nama_barang, detail_so.qty as qty, detail_so.harga as harga');
         $this->db->join('sales_order','sales_order.kode_so = detail_so.kode_so');
-        $this->db->join('barang','barang.kode = detail_so.kode_barang');
+        $this->db->join('barang','barang.kode = detail_so.kode_barang','left');
         //$this->db->join('pengiriman_so','pengiriman_so.kode_so = detail_so.kode_so','left');
         $this->db->where('sales_order.id',$id);
         $query = $this->db->get($this->table);

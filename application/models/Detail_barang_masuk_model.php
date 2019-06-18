@@ -84,7 +84,7 @@ class Detail_barang_masuk_model extends MY_Model
 
 	public function get_by_idx($id)
     {
-        
+        /*
         $query = $this->db->query("
             SELECT *  FROM detail_barang_masuk a 
 left join (SELECT sum(qty) keluar, id_detail_barang_masuk FROM detail_barang_keluar 
@@ -92,7 +92,23 @@ where id_detail_barang_masuk = '$id' ) b
 on a.id = b.id_detail_barang_masuk
 where id = '$id'
 ");
-                
+
+*/
+$query = $this->db->query(
+"select a.*, b.qty, ifnull(c.keluar,0) k, (b.qty - ifnull(c.keluar,0)) as qty_stok from 
+(SELECT detail_barang_masuk.kode_barang, detail_barang_masuk.id, detail_barang_masuk.nama_barang, 
+barang_masuk.tanggal, barang_masuk.kode_barang_masuk, bottom_retail, bottom_supplier
+  FROM detail_barang_masuk
+ join barang_masuk on detail_barang_masuk.kode_barang_masuk = barang_masuk.kode_barang_masuk ) a
+ join (SELECT * FROM abyan_jaya.stok_opname where tanggal = '2019-05-31') b 
+ on a.kode_barang = b.kode_barang and a.tanggal = b.tanggal_kedatangan
+ left join (SELECT  sum(qty) keluar, id_detail_barang_masuk 
+FROM detail_barang_keluar a 
+join barang_keluar b on a.kode_barang_keluar = b.kode_barang_keluar
+where b.tanggal >= '2019-06-01'
+ group by id_detail_barang_masuk) c on a.id = c.id_detail_barang_masuk
+ where b.qty > ifnull(c.keluar,0) and a.id = '$id'"
+);
         //return $query->result();
 
         return $query->row();
@@ -214,7 +230,7 @@ where id = '$id'
     }
 
 	  public function get_by_penerimaanx(){
-        
+        /*
         $query = $this->db->query("
             SELECT detail_barang_masuk.kode_barang, detail_barang_masuk.id, detail_barang_masuk.nama_barang, barang_masuk.tanggal, barang_masuk.kode_barang_masuk
   FROM detail_barang_masuk
@@ -224,6 +240,21 @@ group by id_detail_barang_masuk ) b
 on detail_barang_masuk.id = b.id_detail_barang_masuk
  where detail_barang_masuk.qty > ifnull(b.keluar,0)
 ");
+    */
+        $query = $this->db->query("select a.*, b.qty, ifnull(c.keluar,0) k, (b.qty - ifnull(c.keluar,0)) as jumlah from 
+(SELECT detail_barang_masuk.kode_barang, detail_barang_masuk.id, detail_barang_masuk.nama_barang, 
+barang_masuk.tanggal, barang_masuk.kode_barang_masuk
+  FROM detail_barang_masuk
+ join barang_masuk on detail_barang_masuk.kode_barang_masuk = barang_masuk.kode_barang_masuk ) a
+ join (SELECT * FROM abyan_jaya.stok_opname where tanggal = '2019-05-31') b 
+ on a.kode_barang = b.kode_barang and a.tanggal = b.tanggal_kedatangan
+ left join (SELECT  sum(qty) keluar, id_detail_barang_masuk 
+FROM detail_barang_keluar a 
+join barang_keluar b on a.kode_barang_keluar = b.kode_barang_keluar
+where b.tanggal >= '2019-06-01'
+ group by id_detail_barang_masuk) c on a.id = c.id_detail_barang_masuk
+ where b.qty > ifnull(c.keluar,0)");
+
 
         //return $query->row();
         return $query->result();

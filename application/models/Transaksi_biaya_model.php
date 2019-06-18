@@ -173,6 +173,40 @@ join (select * from pembayaran_piutang where month(tanggal) = '$bulan' and year(
         return $insert;
     }
 
+    public function total_biaya_perbulan_tahun_komisi_sales($bulan,$tahun){
+        
+        $query = $this->db->query("SELECT kode_pegawai, (c.harga * 1.5 / 100 * c.qty) as nominal, d.kode_so, c.nama_barang, c.qty FROM `sales_order` `d` 
+JOIN `detail_so` `c` ON `c`.`kode_so` = `d`.`kode_so` 
+-- JOIN `pengiriman_so` `f` ON `f`.`kode_so` = `d`.`kode_so` and c.kode_barang = f.kode_barang
+JOIN `pegawai` `e` ON `e`.`kode_pegawai` = `d`.`kode_sales` 
+JOIN `barang` `g` ON `g`.`kode` = `c`.`kode_barang` 
+join (select * from pembayaran_piutang where month(tanggal) = '$bulan' and year(tanggal) = '$tahun' group by kode_piutang) b on b.kode_piutang = c.kode_so WHERE  `e`.`jabatan` != 'owner' ");
+       /* 
+        $this->db->select(" kode_pegawai, (c.harga * 1.5 / 100) as nominal, d.kode_so, c.nama_barang, c.qty
+        ");
+        $this->db->join("piutang b","a.kode_piutang = b.kode_referensi");
+        $this->db->join("detail_so c","c.kode_so = b.kode_referensi");
+        $this->db->join("sales_order d","d.kode_so = c.kode_so");
+        $this->db->join("pegawai e","e.kode_pegawai = d.kode_sales");
+
+        $this->db->where(" month(d.tanggal)='$bulan' and year(d.tanggal) = '$tahun' and e.jabatan != 'owner' ");
+        //$this->db->group_by("d.kode_so");
+        $query = $this->db->get('pembayaran_piutangx a');
+        */
+        
+        $totaly2 = $query->num_rows();
+        if ($totaly2 > 0) {
+            foreach ($query->result() as $atributy) {
+
+                $total = $atributy->total ;
+                
+            }
+
+        }
+        return $total;
+
+    }
+
     public function select_insert_biaya_perbulan_tahun_komisi_pengiriman($bulan,$tahun,$idlabarugi){
         
         /*
@@ -219,4 +253,93 @@ and year(d.tanggal) = '$tahun' and `e`.`jabatan` != 'owner' ");
         return $insert;
     }
 
+    public function total_biaya_perbulan_tahun_komisi_pengiriman($bulan,$tahun){
+        
+        /*
+        $this->db->select("kode_referensi as kode_so, nominal, tanggal as tgl_trans");
+        $this->db->where(" month(tanggal)='$bulan' and year(tanggal) = '$tahun' and status='Lunas' ");
+        $query = $this->db->get($this->table);
+        */
+        //$this->db->_protect_identifiers=false;
+
+        $query = $this->db->query("SELECT `kode_pegawai`, if(g.satuan = 'pcs', if(g.kode = 'ayj',f.qty * 200 *  0.6, f.qty * 200 *  0.25), if(g.kode = 'ff',f.qty * 200 *  2.5, f.qty * 200)) as nominal, 
+`d`.`kode_so`, `f`.`nama_barang`, `f`.`qty` FROM `sales_order` `d` 
+JOIN `detail_so` `c` ON `c`.`kode_so` = `d`.`kode_so` 
+JOIN `pengiriman_so` `f` ON `f`.`kode_so` = `d`.`kode_so` and c.kode_barang = f.kode_barang
+JOIN `pegawai` `e` ON `e`.`kode_pegawai` = `f`.`kode_kurir` 
+JOIN `barang` `g` ON `g`.`kode` = `c`.`kode_barang` WHERE month(d.tanggal) = '$bulan' 
+and year(d.tanggal) = '$tahun' and `e`.`jabatan` != 'owner' ");
+        /*
+        $this->db->select(" kode_pegawai, if(g.satuan = 'pcs',f.qty*200*25/100,f.qty*200)   as nominal, d.kode_so, f.nama_barang, f.qty
+        ");
+        //$this->db->join("piutang b","a.kode_piutang = b.kode_referensi");
+        $this->db->join("detail_so c","c.kode_so = d.kode_so");
+        //$this->db->join("sales_order d","d.kode_so = c.kode_so");
+        $this->db->join("pengiriman_so f","f.kode_so = d.kode_so");
+        $this->db->join("pegawai e","e.kode_pegawai = f.kode_kurir");
+        $this->db->join("barang g","g.kode = c.kode_barang");
+        $this->db->where(" month(d.tanggal)='$bulan' and year(d.tanggal) = '$tahun' and e.jabatan != 'owner' ");
+        //$this->db->group_by("d.kode_so");
+        $query = $this->db->get('sales_order d');
+        */
+
+        //$query = $this->db->get();
+
+
+        $totaly2 = $query->num_rows();
+        if ($totaly2 > 0) {
+            foreach ($query->result() as $atributy) {
+
+                $total = $atributy->total ;
+                
+            }
+
+        }
+        return $total;
+
+    }
+
+    public function insert_biaya_perbulan_tahun_komisi_sales($idlabarugi){
+        
+        $this->db->select("sum(pp.nominal) as nominal");
+        $this->db->where("id_laba_rugi = '$idlabarugi'");
+        $this->db->where("jenis_komisi = 'Sales'");
+        $this->db->from('komisi'.' pp');
+
+        $query = $this->db->get();
+        $hasil = $query->result_array();
+        $i=1;
+        foreach($hasil as $row){
+            $row['id_detail_laba_rugi']=$id=md5($bulan.'/'.$tahun.'/sales/'.$i);
+            $row['created_at']=date('Y-m-d H:i:s');
+            $row['tgl_trans']=date('Y-m-d H:i:s');
+            $row['id_laba_rugi']=$idlabarugi;
+            $row['jenis_trans']='Sales';
+            $insert = $this->db->insert('detail_laba_rugi', $row);
+            $i++;
+        }
+        return $insert;
+    }
+
+    public function insert_biaya_perbulan_tahun_komisi_pengiriman($idlabarugi){
+        
+        $this->db->select("sum(pp.nominal) as nominal");
+        $this->db->where("id_laba_rugi = '$idlabarugi'");
+        $this->db->where("jenis_komisi = 'Pengiriman'");
+        $this->db->from('komisi'.' pp');
+
+        $query = $this->db->get();
+        $hasil = $query->result_array();
+        $i=1;
+        foreach($hasil as $row){
+            $row['id_detail_laba_rugi']=$id=md5($bulan.'/'.$tahun.'/Pengiriman/'.$i);
+            $row['created_at']=date('Y-m-d H:i:s');
+            $row['tgl_trans']=date('Y-m-d H:i:s');
+            $row['id_laba_rugi']=$idlabarugi;
+            $row['jenis_trans']='Pengiriman';
+            $insert = $this->db->insert('detail_laba_rugi', $row);
+            $i++;
+        }
+        return $insert;
+    }
 }

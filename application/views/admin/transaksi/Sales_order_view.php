@@ -976,7 +976,7 @@
                                 <?php
                                 foreach ($pilihan_barang_masuk as $row3):
                                     ?>
-                                    <option value="<?php echo $row3->id; ?>"><?php echo $row3->kode_barang."-".$row3->nama_barang."-".$row3->kode_barang_masuk; ?></option>
+                                    <option value="<?php echo $row3->id; ?>"><?php echo $row3->kode_barang." - ".$row3->nama_barang." - ".$row3->kode_barang_masuk." - ".$row3->jumlah; ?></option>
                                     <?php
 
                                 endforeach;
