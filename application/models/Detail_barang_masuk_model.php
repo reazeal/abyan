@@ -84,7 +84,7 @@ class Detail_barang_masuk_model extends MY_Model
 
 	public function get_by_idx($id)
     {
-        /*
+        
         $query = $this->db->query("
             SELECT *  FROM detail_barang_masuk a 
 left join (SELECT sum(qty) keluar, id_detail_barang_masuk FROM detail_barang_keluar 
@@ -93,7 +93,7 @@ on a.id = b.id_detail_barang_masuk
 where id = '$id'
 ");
 
-*/
+/*
 $query = $this->db->query(
 "select a.*, b.qty, ifnull(c.keluar,0) k, (b.qty - ifnull(c.keluar,0)) as qty_stok from 
 (SELECT detail_barang_masuk.kode_barang, detail_barang_masuk.id, detail_barang_masuk.nama_barang, 
@@ -109,7 +109,8 @@ where b.tanggal >= '2019-06-01'
  group by id_detail_barang_masuk) c on a.id = c.id_detail_barang_masuk
  where b.qty > ifnull(c.keluar,0) and a.id = '$id'"
 );
-        //return $query->result();
+*/
+  //      return $query->result();
 
         return $query->row();
     }
@@ -230,7 +231,7 @@ where b.tanggal >= '2019-06-01'
     }
 
 	  public function get_by_penerimaanx(){
-        /*
+        
         $query = $this->db->query("
             SELECT detail_barang_masuk.kode_barang, detail_barang_masuk.id, detail_barang_masuk.nama_barang, barang_masuk.tanggal, barang_masuk.kode_barang_masuk
   FROM detail_barang_masuk
@@ -240,7 +241,7 @@ group by id_detail_barang_masuk ) b
 on detail_barang_masuk.id = b.id_detail_barang_masuk
  where detail_barang_masuk.qty > ifnull(b.keluar,0)
 ");
-    */
+    /*
         $query = $this->db->query("select a.*, b.qty, ifnull(c.keluar,0) k, (b.qty - ifnull(c.keluar,0)) as jumlah from 
 (SELECT detail_barang_masuk.kode_barang, detail_barang_masuk.id, detail_barang_masuk.nama_barang, 
 barang_masuk.tanggal, barang_masuk.kode_barang_masuk
@@ -255,7 +256,7 @@ where b.tanggal >= '2019-06-01'
  group by id_detail_barang_masuk) c on a.id = c.id_detail_barang_masuk
  where b.qty > ifnull(c.keluar,0)");
 
-
+*/
         //return $query->row();
         return $query->result();
         
