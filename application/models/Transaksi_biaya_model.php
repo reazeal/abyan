@@ -117,11 +117,11 @@ class Transaksi_biaya_model extends MY_Model
             sum(c.`nominal`) as nominal, now() as `tgl_trans`, d.nama_biaya as jenis_trans
             
         ");
-        $this->db->join("piutang b","b.kode_referensi = a.kode_piutang");
-        $this->db->join("transaksi_biaya c","c.kode_referensi = b.kode_referensi");
+        //$this->db->join("piutang b","b.kode_referensi = a.kode_piutang");
+        $this->db->join("transaksi_biaya c","c.kode_referensi = a.kode_piutang");
         $this->db->join("jenis_biaya d","d.id = c.id_jenis_biaya");
         $this->db->where(" month(a.tanggal)='$bulan' and year(a.tanggal) = '$tahun'  ");
-        $this->db->where("d.id not in ('f09925751b7988434bdfa883b370bd44', '69ea49d4740ef0b03d818f055de99b1f')");
+        $this->db->where("d.id not in ('f09925751b7988434bdfa883b370bd44', '69ea49d4740ef0b03d818f055de99b1f','5e07f1f86d4fc32542a2df57d8339a2d','aa083acc31d09e74122a742aae63e4b1')");
         $this->db->group_by('d.nama_biaya');
         $query = $this->db->get('pembayaran_piutang a');
         
@@ -132,6 +132,54 @@ class Transaksi_biaya_model extends MY_Model
             $row['created_at']=date('Y-m-d H:i:s');
             $row['id_laba_rugi']=$idlabarugi;
             //$row['jenis_trans']='biaya';
+            $insert = $this->db->insert('detail_laba_rugi', $row);
+            $i++;
+        }
+        return $insert;
+    }
+
+    public function select_insert_biaya_bank_perbulan_tahun($bulan,$tahun,$idlabarugi){
+        
+        $this->db->select("
+            ifnull(sum(2.5 / 100 * harga * qty ),0) as nominal , now() as `tgl_trans`
+            from pembayaran_piutang a
+            join detail_so b on b.kode_so = a.kode_piutang
+        ");
+        $this->db->where(" month(a.tanggal)='$bulan' and year(a.tanggal) = '$tahun'");
+
+        $query = $this->db->get();
+        
+        $hasil = $query->result_array();
+        $i=1;
+        foreach($hasil as $row){
+            $row['id_detail_laba_rugi']=$id=md5($bulan.'/'.$tahun.'/biayaBank/'.$i);
+            $row['created_at']=date('Y-m-d H:i:s');
+            $row['id_laba_rugi']=$idlabarugi;
+            $row['jenis_trans']='Bunga Bank';
+            $insert = $this->db->insert('detail_laba_rugi', $row);
+            $i++;
+        }
+        return $insert;
+    }
+
+    public function select_insert_biaya_cold_perbulan_tahun($bulan,$tahun,$idlabarugi){
+        
+        $this->db->select("
+            ifnull(sum(900 * qty ),0) as nominal , now() as `tgl_trans`
+            from pembayaran_piutang a
+            join detail_so b on b.kode_so = a.kode_piutang
+        ");
+        $this->db->where(" month(a.tanggal)='$bulan' and year(a.tanggal) = '$tahun'");
+
+        $query = $this->db->get();
+        
+        $hasil = $query->result_array();
+        $i=1;
+        foreach($hasil as $row){
+            $row['id_detail_laba_rugi']=$id=md5($bulan.'/'.$tahun.'/codStorage/'.$i);
+            $row['created_at']=date('Y-m-d H:i:s');
+            $row['id_laba_rugi']=$idlabarugi;
+            $row['jenis_trans']='Cold Storage';
             $insert = $this->db->insert('detail_laba_rugi', $row);
             $i++;
         }

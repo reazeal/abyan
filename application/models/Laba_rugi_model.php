@@ -166,8 +166,7 @@ class Laba_rugi_model extends MY_Model
     public function total_pendapatan_perbulan_tahun($bulan,$tahun){
         $this->db->select("
             ifnull(sum(pp.nominal),0) as total 
-            from piutang p
-            join pembayaran_piutang pp on p.kode_referensi = pp.kode_piutang
+            from pembayaran_piutang pp 
         ");
         $this->db->where(" month(pp.tanggal)='$bulan' and year(pp.tanggal) = '$tahun' ");
         $query = $this->db->get();
@@ -189,8 +188,8 @@ class Laba_rugi_model extends MY_Model
         $this->db->select("
             ifnull(sum(c.nominal * detail_so.qty ),0) as total 
             from pembayaran_piutang a
-            join piutang b on b.kode_referensi = a.kode_piutang
-            join transaksi_biaya c on c.kode_referensi = b.kode_referensi
+            -- join piutang b on b.kode_referensi = a.kode_piutang
+            join transaksi_biaya c on c.kode_referensi = a.kode_piutang
             join jenis_biaya on jenis_biaya.id = c.id_jenis_biaya
             join detail_so on detail_so.kode_so = a.kode_piutang
         ");
@@ -214,12 +213,62 @@ class Laba_rugi_model extends MY_Model
         $this->db->select("
             ifnull(sum(c.nominal ),0) as total 
             from pembayaran_piutang a
-            join piutang b on b.kode_referensi = a.kode_piutang
-            join transaksi_biaya c on c.kode_referensi = b.kode_referensi
+            -- join piutang b on b.kode_referensi = a.kode_piutang
+            join transaksi_biaya c on c.kode_referensi = a.kode_piutang
             join jenis_biaya on jenis_biaya.id = c.id_jenis_biaya
         ");
 
-        $this->db->where(" month(a.tanggal)='$bulan' and year(a.tanggal) = '$tahun' and jenis_biaya.id in ('7c413a3bfa29d65702df7c60fb554bf6','aa083acc31d09e74122a742aae63e4b1','5e07f1f86d4fc32542a2df57d8339a2d') ");
+        $this->db->where(" month(a.tanggal)='$bulan' and year(a.tanggal) = '$tahun' and jenis_biaya.id in ('7c413a3bfa29d65702df7c60fb554bf6') ");
+        $query = $this->db->get();
+
+        $totaly2 = $query->num_rows();
+        if ($totaly2 > 0) {
+            foreach ($query->result() as $atributy) {
+
+                $total = $atributy->total ;
+                
+            }
+
+        }
+        return $total;
+    }
+
+    public function total_biaya_bank_perbulan_tahun($bulan,$tahun){
+        $this->db->select("
+            ifnull(sum(2.5 / 100 * harga * qty ),0) as total 
+            from pembayaran_piutang a
+            join detail_so b on b.kode_so = a.kode_piutang
+            -- join piutang b on b.kode_referensi = a.kode_piutang
+            -- join transaksi_biaya c on c.kode_referensi = a.kode_piutang
+            -- join jenis_biaya on jenis_biaya.id = c.id_jenis_biaya
+        ");
+
+        $this->db->where(" month(a.tanggal)='$bulan' and year(a.tanggal) = '$tahun' ");
+        $query = $this->db->get();
+
+        $totaly2 = $query->num_rows();
+        if ($totaly2 > 0) {
+            foreach ($query->result() as $atributy) {
+
+                $total = $atributy->total ;
+                
+            }
+
+        }
+        return $total;
+    }
+
+    public function total_biaya_cold_perbulan_tahun($bulan,$tahun){
+        $this->db->select("
+            ifnull(sum(900 * qty ),0) as total 
+            from pembayaran_piutang a
+            join detail_so b on b.kode_so = a.kode_piutang
+            -- join piutang b on b.kode_referensi = a.kode_piutang
+            -- join transaksi_biaya c on c.kode_referensi = a.kode_piutang
+            -- join jenis_biaya on jenis_biaya.id = c.id_jenis_biaya
+        ");
+
+        $this->db->where(" month(a.tanggal)='$bulan' and year(a.tanggal) = '$tahun' ");
         $query = $this->db->get();
 
         $totaly2 = $query->num_rows();
@@ -240,8 +289,8 @@ class Laba_rugi_model extends MY_Model
             ifnull(sum(dso.harga_beli * dso.qty),0) as total 
         ");
         $this->db->from('pembayaran_piutang pp');
-        $this->db->join('piutang p','p.kode_referensi=pp.kode_piutang');
-        $this->db->join('sales_order so','so.kode_so=p.kode_referensi');
+        //$this->db->join('piutang p','p.kode_referensi=pp.kode_piutang');
+        $this->db->join('sales_order so','so.kode_so=pp.kode_piutang');
         $this->db->join('detail_so dso','dso.kode_so=so.kode_so');
         $this->db->where(" month(pp.tanggal)='$bulan' and year(pp.tanggal) = '$tahun' ");
         $query = $this->db->get();
