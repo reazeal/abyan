@@ -171,7 +171,7 @@ class Pembayaran_piutang_model extends MY_Model
         $this->db->select("sum(pp.nominal) as nominal, now() as tgl_trans");
         $this->db->where("month(pp.tanggal)='$bulan' and year(pp.tanggal) = '$tahun'");
         $this->db->from($this->table.' pp');
-        $this->db->join('piutang p','p.kode_referensi=pp.kode_piutang');
+        //$this->db->join('piutang p','p.kode_referensi=pp.kode_piutang');
 
         $query = $this->db->get();
         $hasil = $query->result_array();
@@ -192,8 +192,8 @@ class Pembayaran_piutang_model extends MY_Model
         $this->db->select("sum(dso.harga_beli) as nominal, pp.tanggal as tgl_trans");
         $this->db->where("month(pp.tanggal)='$bulan' and year(pp.tanggal) = '$tahun'");
         $this->db->from($this->table.' pp');
-        $this->db->join('piutang p','p.kode_referensi=pp.kode_piutang');
-        $this->db->join('sales_order so','so.kode_so=p.kode_referensi');
+        //$this->db->join('piutang p','p.kode_referensi=pp.kode_piutang');
+        $this->db->join('sales_order so','so.kode_so=pp.kode_piutang');
         $this->db->join('detail_so dso','dso.kode_so=so.kode_so');
         $query = $this->db->get();
         $hasil = $query->result_array();
