@@ -210,7 +210,7 @@ join (select * from pembayaran_piutang where month(tanggal) = '$bulan' and year(
         $hasil = $query->result_array();
         $i=1;
         foreach($hasil as $row){
-            $row['id']=$id=md5($bulan.'/'.$tahun.'/penjualan/'.$i);
+            $row['id']=$id=md5($bulan.'/'.$tahun.'/penjualan/'.$i.date('Y-m-d H:i:s'));
             $row['created_at']=date('Y-m-d H:i:s');
             $row['id_laba_rugi']=$idlabarugi;
             $row['jenis_komisi']= 'Sales';
@@ -290,7 +290,7 @@ and year(d.tanggal) = '$tahun' and `e`.`jabatan` != 'owner' ");
         $hasil = $query->result_array();
         $i=1;
         foreach($hasil as $row){
-            $row['id']=$id=md5($bulan.'/'.$tahun.'/pengiriman/'.$i);
+            $row['id']=$id=md5($bulan.'/'.$tahun.'/pengiriman/'.$i.$idlabarugi);
             $row['created_at']=date('Y-m-d H:i:s');
             $row['id_laba_rugi']=$idlabarugi;
             $row['jenis_komisi']= 'Pengiriman';
@@ -358,7 +358,7 @@ and year(d.tanggal) = '$tahun' and `e`.`jabatan` != 'owner' ");
         $hasil = $query->result_array();
         $i=1;
         foreach($hasil as $row){
-            $row['id_detail_laba_rugi']=$id=md5($bulan.'/'.$tahun.'/sales/'.$i);
+            $row['id_detail_laba_rugi']=$id=md5($bulan.'/'.$tahun.'/sales/'.$i.$idlabarugi);
             $row['created_at']=date('Y-m-d H:i:s');
             $row['tgl_trans']=date('Y-m-d H:i:s');
             $row['id_laba_rugi']=$idlabarugi;
@@ -380,7 +380,7 @@ and year(d.tanggal) = '$tahun' and `e`.`jabatan` != 'owner' ");
         $hasil = $query->result_array();
         $i=1;
         foreach($hasil as $row){
-            $row['id_detail_laba_rugi']=$id=md5($bulan.'/'.$tahun.'/Pengiriman/'.$i);
+            $row['id_detail_laba_rugi']=$id=md5($bulan.'/'.$tahun.'/Pengiriman/'.$i.$idlabarugi);
             $row['created_at']=date('Y-m-d H:i:s');
             $row['tgl_trans']=date('Y-m-d H:i:s');
             $row['id_laba_rugi']=$idlabarugi;

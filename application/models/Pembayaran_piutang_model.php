@@ -189,7 +189,7 @@ class Pembayaran_piutang_model extends MY_Model
     
     public function select_insert_pembelian_perbulan_tahun($bulan,$tahun,$idlabarugi){
         
-        $this->db->select("sum(dso.harga_beli) as nominal, pp.tanggal as tgl_trans");
+        $this->db->select("sum(dso.harga_beli * dso.qty ) as nominal, pp.tanggal as tgl_trans");
         $this->db->where("month(pp.tanggal)='$bulan' and year(pp.tanggal) = '$tahun'");
         $this->db->from($this->table.' pp');
         //$this->db->join('piutang p','p.kode_referensi=pp.kode_piutang');
@@ -202,7 +202,8 @@ class Pembayaran_piutang_model extends MY_Model
             $row['id_detail_laba_rugi']=$id=md5($bulan.'/'.$tahun.'/hutang/'.$i);
             $row['created_at']=date('Y-m-d H:i:s');
             $row['id_laba_rugi']=$idlabarugi;
-            $row['jenis_trans']='Hutang';
+            //$row['jenis_trans']='Hutang';
+            $row['jenis_trans']='Harga Dasar';
             $insert = $this->db->insert('detail_laba_rugi', $row);
             $i++;
         }
