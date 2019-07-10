@@ -77,20 +77,21 @@ class Laba_rugi extends Admin_Controller
         $this->komisi_model->delete_by_id_laba_rugi($idlabarugi);
         
         //lalu insert
-        $this->pembayaran_piutang_model->select_insert_pendapatan_perbulan_tahun($bulan,$tahun,$idlabarugi);
-        $this->pembayaran_piutang_model->select_insert_pembelian_perbulan_tahun($bulan,$tahun,$idlabarugi);
+       // $this->pembayaran_piutang_model->select_insert_pendapatan_perbulan_tahun($bulan,$tahun,$idlabarugi);
+        //$this->pembayaran_piutang_model->select_insert_pembelian_perbulan_tahun($bulan,$tahun,$idlabarugi);
         //$this->pembayaran_hutang_model->select_insert_hutang_perbulan_tahun($bulan,$tahun,$idlabarugi);
         $this->transaksi_biaya_model->select_insert_biaya_perbulan_tahun($bulan,$tahun,$idlabarugi);
-
+    //  2.5 % dari harga jual * qty 
         $this->transaksi_biaya_model->select_insert_biaya_bank_perbulan_tahun($bulan,$tahun,$idlabarugi);
 
-        $this->transaksi_biaya_model->select_insert_biaya_cold_perbulan_tahun($bulan,$tahun,$idlabarugi);
+        //$this->transaksi_biaya_model->select_insert_biaya_cold_perbulan_tahun($bulan,$tahun,$idlabarugi);
 
+        // 1.5% 
         $this->transaksi_biaya_model->select_insert_biaya_perbulan_tahun_komisi_sales($bulan,$tahun,$idlabarugi);
         $this->transaksi_biaya_model->select_insert_biaya_perbulan_tahun_komisi_pengiriman($bulan,$tahun,$idlabarugi);
 
         $this->transaksi_biaya_model->insert_biaya_perbulan_tahun_komisi_sales($idlabarugi);
-
+        // 200 Per kilo
         $this->transaksi_biaya_model->insert_biaya_perbulan_tahun_komisi_pengiriman($idlabarugi);
 
     }
@@ -107,7 +108,7 @@ class Laba_rugi extends Admin_Controller
 
         $biaya_bulanan_bank=$this->laba_rugi_model->total_biaya_bank_perbulan_tahun($bulan,$tahun);
 
-        $biaya_bulanan_cold=$this->laba_rugi_model->total_biaya_cold_perbulan_tahun($bulan,$tahun);
+//        $biaya_bulanan_cold=$this->laba_rugi_model->total_biaya_cold_perbulan_tahun($bulan,$tahun);
 
         $biaya_komisi_sales = $this->transaksi_biaya_model->total_biaya_perbulan_tahun_komisi_sales($bulan,$tahun);
 
@@ -123,7 +124,7 @@ class Laba_rugi extends Admin_Controller
             'id' => $id,
             'periode' => $periode,
             'total_pendapatan' => $pendapatan,            
-            'total_biaya' => $biaya_bulanan + $biaya_bulanan_bank + $biaya_bulanan_cold + $biaya_bulanan_kardus_cold,          
+            'total_biaya' => $biaya_bulanan + $biaya_bulanan_bank + $biaya_bulanan_kardus_cold,          
             ///'total_biaya' => 0,
             'total_pembelian' => $pembelian,
             'tanggal' => date('Y-m-d'),
