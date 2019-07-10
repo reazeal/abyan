@@ -119,8 +119,7 @@ class Piutang_model extends MY_Model
         //$this->db->update($this->table,array("upload_rate"=>0,"download_rate"=>0));
     }
 
-
-    public function total_piutang_perbulan_tahun($bulan,$tahun){
+   public function total_piutang_perbulan_tahun($bulan,$tahun){
         $total_piutang = array();
         $filter = "$bulan"."/".$tahun;
         $this->db->select("

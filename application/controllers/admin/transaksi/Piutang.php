@@ -156,13 +156,15 @@ class Piutang extends Admin_Controller
        // echo $id;
        // die();
         $data = $this->piutang_model->get_by_id($id);
+	$nominal = $this->piutang_model->get_piutang_by_so($data->kode_referensi);
+
         $data  = array(
             'id' => $data->id,
             'kode_piutang' => $data->kode_piutang,
             'nomor_referensi' => $data->kode_referensi,
             'kode_relasi' => $data->kode_relasi,
             'nama_relasi' => $data->nama_relasi,
-            'nominal' => $data->nominal,
+            'nominal' => $nominal,
             'kode_bantu' => $data->kode_bantu,
           //  'detailBarang'=> (array) $this->detail_barang_model->getDataByTransaksi($id)
         );
