@@ -233,7 +233,7 @@ where b.tanggal >= '2019-06-01'
 	  public function get_by_penerimaanx(){
         
         $query = $this->db->query("
-            SELECT detail_barang_masuk.kode_barang, detail_barang_masuk.id, detail_barang_masuk.nama_barang, barang_masuk.tanggal, barang_masuk.kode_barang_masuk
+            SELECT detail_barang_masuk.kode_barang, detail_barang_masuk.id, detail_barang_masuk.nama_barang, barang_masuk.tanggal, barang_masuk.kode_barang_masuk, detail_barang_masuk.qty - ifnull(b.keluar,0)  as jumlah 
   FROM detail_barang_masuk
  join barang_masuk on detail_barang_masuk.kode_barang_masuk = barang_masuk.kode_barang_masuk
 left join (SELECT sum(qty) keluar, id_detail_barang_masuk FROM detail_barang_keluar 
