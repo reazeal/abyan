@@ -64,7 +64,7 @@ class Stok_opname extends Admin_Controller
             $row[] = $dt->nama_barang;
             $row[] = $this->tanggal($dt->tanggal_kedatangan);
             $row[] = $dt->qty;
-            $row[] = '<a class="btn btn-sm btn-primary" href="javascript:void(0)" title="Edit" onclick="detail_stok('."'".$dt->id."'".')"><i class="glyphicon glyphicon-pencil"></i> Detail</a>';
+            $row[] = '<a class="btn btn-sm btn-primary" href="javascript:void(0)" title="Edit" onclick="edit_stok_opname('."'".$dt->id."'".')"><i class="glyphicon glyphicon-pencil"></i> Edit</a>';
             $data[] = $row;
         }
 
@@ -78,18 +78,16 @@ class Stok_opname extends Admin_Controller
         echo json_encode($output);
     }
 
-    public function edit($id)
+    public function get($id)
     {
-        $data = $this->stok_fisik_model->get($id);
+        $data = $this->stok_opname_model->get_by_id($id);
         $data  = array(
             'id' => $data->id,
-            'barang_id' => $data->barang_id,
-            'keterangan' => $data->keterangan,
+            'barang_id' => $data->kode_barang,
             'nama_barang' => $data->nama_barang,
+            'tanggal' => $this->tanggal($data->tanggal),
+            'tanggal_kedatangan' => $this->tanggal($data->tanggal_kedatangan),
             'qty' => $data->qty,
-            'gudang_id' => $data->gudang_id,
-            'detailBarang'=> null
-          //  'detailBarang'=> (array) $this->detail_barang_model->getDataByTransaksi($id)
         );
         echo json_encode(array($data));
     }
@@ -143,45 +141,16 @@ class Stok_opname extends Admin_Controller
         echo json_encode(array("status" => TRUE));
     }
 
-    public function update()
+    public function update_stok()
     {
-        $datax  = $this->input->post('dataDetail');
-        $json = json_decode($datax);
-
-        $gudang = $this->gudang_model->get($this->input->post('gudang_id'));
-
+        
         $data = array(
-            'barang_id' => $this->input->post('barang_id'),
-            'keterangan' => $this->input->post('keterangan'),
-            'nama_barang' => $this->input->post('nama_barang'),
             'qty' => $this->input->post('qty'),
-            'gudang_id' => $this->input->post('gudang_id'),
-            'nama_gudang' => $gudang->kode.'-'.$gudang->nama
-            
+            'tanggal' => $this->tanggaldb($this->input->post('tanggal')),
+            'tanggal_kedatangan' => $this->tanggaldb($this->input->post('tanggal_kedatangan')),
+            'updated_at' => date("Y-m-d H:i:s"),
         );
-        $this->stok_model->update_by_id(array('id' => $this->input->post('id')), $data);
-
-
-        /*$datay = $this->detail_barang_model->getDataByTransaksi($this->input->post('id'));
-
-        foreach ($datay as $rw) :
-            $this->detail_barang_model->delete($rw['id']);
-        endforeach;
-
-        $i=0;
-        foreach ($json as $ax) :
-            if(!is_object($ax)){
-                if(is_string($ax[0])){
-                        $data_detail = array(
-                            'id_barang' => $this->input->post('id'),
-                            'jenis_barang' => $ax[1],
-                            'barang' => $ax[2]
-                        );
-                        $this->detail_barang_model->insert($data_detail);
-                }
-            }
-            $i++;
-        endforeach;*/
+        $this->stok_opname_model->update_by_id(array('id' => $this->input->post('id')), $data);
 
         echo json_encode(array("status" => TRUE));
     }

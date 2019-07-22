@@ -30,7 +30,7 @@
                                     <th>Tanggal</th>
                                     <th>Kode Barang</th>
                                     <th>Nama Barang</th>
-                                    <th>Tanggal</th>
+                                    <th>Tanggal Kedatangan</th>
                                     <th>QTY</th>
                                     <th>Action</th>
                                 </tr>
@@ -144,36 +144,6 @@
     });
 
 
-    function detail_piutang($barang)
-    {
-        
-        table_detailpiutang.clear().draw();
-
-        $.ajax({
-            url : "<?php echo site_url('admin/transaksi/piutang/piutang')?>/"+ $barang,
-            type: "GET",
-            dataType: "JSON",
-            success: function(data)
-            {
-                //alert(data[0]['detailpiutang'].length);
-                for(var i = 0; i < data[0]['detailpiutang'].length; i++) {
-                    var obj = data[0]['detailpiutang'][i];
-                    table_detailpiutang.row.add([obj.no_bukti, obj.nama_barang, obj.nama_gudang, obj.expired, obj.qty, obj.action]).draw();
-                }
-
-                $('#modal_detail_piutang').modal('show'); // show bootstrap modal when complete loaded
-                $('.modal-title').text('piutang Barang'); // Set title to Bootstrap modal title
-
-            },
-            error: function (jqXHR, textStatus, errorThrown)
-            {
-                alert('Error get data from ajax');
-            }
-        });
-
-        $('#modal_detail_piutang').modal('show'); // show bootstrap modal
-    }
-
     function cekData() {
         var data = table_detail .rows().data();
     }
@@ -196,6 +166,37 @@
         $('.help-block').empty(); // clear error string
         $('#modal_form').modal('show'); // show bootstrap modal
         $('.modal-title').text('Tambah Barang SO'); // Set Title to Bootstrap modal title
+    }
+
+    function edit_stok_opname(id)
+    {
+        save_method = 'update';
+        $('#form')[0].reset(); // reset form on modals
+        $('.form-group').removeClass('has-error'); // clear error class
+        $('.help-block').empty(); // clear error string
+
+        //Ajax Load data from ajax
+        $.ajax({
+            url : "<?php echo site_url('admin/transaksi/stok_opname/get/')?>/" + id,
+            type: "GET",
+            dataType: "JSON",
+            success: function(data)
+            {
+                $('[name="id"]').val(data[0]['id']);
+                $('[name="tanggal"]').val(data[0]['tanggal']);
+                $('[name="nama_barang"]').val(data[0]['nama_barang']);
+                $('[name="tanggal_kedatangan"]').val(data[0]['tanggal_kedatangan']);
+                $('[name="qty"]').val(data[0]['qty']);
+                
+                $('#modal_form_edit').modal('show'); // show bootstrap modal when complete loaded
+                $('.modal-title').text('Ubah Stok Opname'); // Set title to Bootstrap modal title
+
+            },
+            error: function (jqXHR, textStatus, errorThrown)
+            {
+                alert('Error get data from ajax');
+            }
+        });
     }
 
 </script>
@@ -267,6 +268,61 @@
 </div><!-- /.modal -->
 <!-- End Bootstrap modal Terima -->
 
+<div class="modal fade" id="modal_form_edit" role="dialog" style="overflow-y: auto !important;">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h3 class="modal-title">Form Stok</h3>
+            </div>
+            <div class="modal-body form">
+                <form action="#" id="form_edit" class="form-horizontal">
+                    <input type="hidden" value="" name="id"/>
+                    
+                    <div class="form-group">
+                        <label class="control-label col-md-3">Tanggal <span class="required">*</span></label>
+                        <div class="col-md-9">
+                            <input placeholder="dd-mm-yyyy" name="tanggal" class="validate[required] form-control datepicker" type="text" required="required">
+                            <span class="help-block"></span>
+                        </div>
+                    </div>
+
+
+                    <div class="form-group">
+                         <label class="control-label col-md-3">Nama Barang<span class="required">*</span></label>
+                        <div class="col-md-6">
+                            <input name="nama_barang" placeholder="Barang" class="validate[required] form-control" type="text" required="required" disabled="true">
+                        <span class="help-block"></span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label col-md-3">Tanggal Kedatangan<span class="required">*</span></label>
+                        <div class="col-md-9">
+                            <input placeholder="dd-mm-yyyy" name="tanggal_kedatangan" class="validate[required] form-control datepicker" type="text" required="required">
+                            <span class="help-block"></span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                         <label class="control-label col-md-3">QTY<span class="required">*</span></label>
+                        <div class="col-md-6">
+                            <input name="qty" placeholder="QTY" class="validate[required,custom[number]] form-control" type="text" required="required">
+                        <span class="help-block"></span>
+                        </div>
+                    </div>
+
+
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btnSave" onclick="update_stok()" class="btn btn-primary">Simpan</button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Batal</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
 
 <script>
     $(function() {
@@ -336,7 +392,58 @@
         });
     }
 
+    function update_stok()
+    {
 
+        var url;
+
+        url = "<?php echo site_url('admin/transaksi/stok_opname/update_stok')?>";
+
+        seen = [];
+
+
+
+        if(!$("#form_edit").validationEngine('validate')){
+            return false;
+        }
+
+
+        $('#btnSave').text('menyimpan...'); //change button text
+        $('#btnSave').attr('disabled',true); //set button disable
+
+        // ajax adding data to database
+        $.ajax({
+            url : url,
+            type: "POST",
+            data: $('#form_edit').serialize() ,
+            dataType: "JSON",
+            success: function(data)
+            {
+
+                if(data.status) //if success close modal and reload ajax table
+                {
+                    if(save_method === 'add') {
+                        $('#modal_form_edit').modal('hide');
+                    }else{
+                        $('#modal_form_edit').modal('hide');
+                    }
+                    reload_table();
+                }
+
+                $('#btnSave').text('simpan'); //change button text
+                $('#btnSave').attr('disabled',false); //set button enable
+
+
+            },
+            error: function (jqXHR, textStatus, errorThrown)
+            {
+                alert('Error adding / update data');
+                $('#btnSave').text('simpan'); //change button text
+                $('#btnSave').attr('disabled',false); //set button enable
+
+            }
+        });
+    }
 
 </script>
 
