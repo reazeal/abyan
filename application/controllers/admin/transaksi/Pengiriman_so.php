@@ -78,21 +78,14 @@ class Pengiriman_so extends Admin_Controller {
             $row[] = $dt->qty;
             $row[] = $dt->keterangan;
             if($status->status == 'Terkirim'){
-                /*
                 $row[] = ' <a class="btn btn-sm btn-success" href="javascript:void(0)" title="Return" onclick="return_so(' . "'" . $dt->id . "'" . ')"><i class="glyphicon glyphicon-repeat"></i> Return</a>';
-                */
             }else{
-                /*
                 $row[] = '<a class="btn btn-sm btn-success" href="javascript:void(0)" title="Kirim" onclick="terima_barang(' . "'" . $dt->id . "'" . ')"><i class="glyphicon glyphicon-share"></i> Terima</a>'
                     . ' <a class="btn btn-sm btn-success" href="javascript:void(0)" title="Return" onclick="return_so(' . "'" . $dt->id . "'" . ')"><i class="glyphicon glyphicon-repeat"></i> Return</a>';
-                */  
-                $row[] = '<a class="btn btn-sm btn-success" href="javascript:void(0)" title="Kirim" onclick="terima_barang(' . "'" . $dt->id . "'" . ')"><i class="glyphicon glyphicon-share"></i> Terima</a>';
             }
            // $row[] = $status->status;
-            /*
             $row[] = '<a class="btn btn-sm btn-success" href="javascript:void(0)" title="Kirim" onclick="terima_barang(' . "'" . $dt->id . "'" . ')"><i class="glyphicon glyphicon-share"></i> Terima</a>'
                     . ' <a class="btn btn-sm btn-success" href="javascript:void(0)" title="Return" onclick="return_so(' . "'" . $dt->id . "'" . ')"><i class="glyphicon glyphicon-repeat"></i> Return</a>';
-                    */
             $data[] = $row;
         }
 
@@ -198,7 +191,7 @@ class Pengiriman_so extends Admin_Controller {
         $kode_kirim = $kode_awal . "/PN/" . $tanggal_asli[1] . "/" . $tanggal_asli[0];
 
         //update piutang
-        $this->_updatepiutang($kode_kirim, $tanggal_asli, $this->input->post('kode_so'));
+        $this->_updatepiutang($kode_kirim, $tanggal_asli);
 
         //update status SO terkirim
         $data_so = array(
@@ -265,9 +258,9 @@ class Pengiriman_so extends Admin_Controller {
         $this->sales_order_model->update_by_no_so($this->input->post('kode_so'), $data_so);
     }
 
-    public function _updatepiutang($kode_kirim, $tanggal_asli, $so) {
+    public function _updatepiutang($kode_kirim, $tanggal_asli) {
         //input/update piutang
-        $piutang_so = $this->piutang_model->get_piutang_by_kode_kirim($so);
+        $piutang_so = $this->piutang_model->get_piutang_by_kode_kirim($kode_kirim);
 
         if ($piutang_so == null) {
             $so = $this->sales_order_model->get_by_noSO($this->input->post('kode_so'));
@@ -306,11 +299,11 @@ class Pengiriman_so extends Admin_Controller {
             );
             $this->piutang_model->save($data_piutang);
         } else {
-            $nominal = ( $this->input->post('qty_terima') * $this->input->post('harga') ) + $piutang_so->nominal;
+            $nominal = ( $this->input->post('qty_terima') * $this->input->post('harga') ) + $data_piutang->nominal;
             $data_piutang_baru = array(
                 'nominal' => $nominal
             );
-            $this->piutang_model->update_by_kode($piutang_so->kode_piutang, $data_piutang_baru);
+            $this->piutang_model->update_by_kode($data_piutang->kode_piutang, $data_piutang_baru);
         }
         //end of piutang
     }

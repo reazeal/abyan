@@ -31,6 +31,7 @@ class Sales_order_model extends MY_Model
         ");
         $this->db->join('detail_so','detail_so.kode_so = sales_order.kode_so');
         */
+        $this->db->where('status != ' ,'Selesai');
        $this->db->from($this->table);
           $i = 0;
         foreach ($this->column_search as $item) // loop column

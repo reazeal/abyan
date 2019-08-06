@@ -91,11 +91,7 @@ class Piutang extends Admin_Controller
             $row[] = $dt->kode_relasi;
              $row[] = $dt->jenis;
              if($dt->status != "Lunas"){
-                
-                $row[] = '<a class="btn btn-sm btn-success" href="javascript:void(0)" title="Bayar" onclick="bayar_piutang('."'".$dt->id."'".')"><i class="glyphicon glyphicon-check"></i> Bayar</a> 
-                    <a class="btn btn-sm btn-warning" href="javascript:void(0)" title="Diskon" onclick="diskon('."'".$dt->id."'".')"><i class="glyphicon glyphicon-check"></i> Diskon</a>
-                    ';
-
+                $row[] = '<a class="btn btn-sm btn-success" href="javascript:void(0)" title="Edit" onclick="bayar_piutang('."'".$dt->id."'".')"><i class="glyphicon glyphicon-check"></i> Bayar</a>';
              }else{
                 $row[] = "";
              }
