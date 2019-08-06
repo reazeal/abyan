@@ -402,9 +402,16 @@
               $q++;
               }
 
-              $total_hargax = number_format((($total_harga)?$total_harga:'0'),0,",",".");
+              $diskon = 0;
+              $harga_diskon = $total_harga - $diskon;
+              $total_hargax = number_format((($harga_diskon)?$harga_diskon:'0'),0,",",".");
 
               ?>
+            { type: 'raw', data: ' ============================================================================= \n' },          
+
+            { type: 'raw', data: ' |                    Diskon                                    |  <?php echo $diskon ?> | \n' },
+
+            { type: 'raw', data: ' ============================================================================= \n' },
             { type: 'raw', data: ' ============================================================================= \n' },          
 
             { type: 'raw', data: ' |                    Total                                    |  <?php echo $total_hargax ?> | \n' },
