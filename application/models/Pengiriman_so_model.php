@@ -8,7 +8,7 @@ class Pengiriman_so_model extends MY_Model
     public $primary_key = 'id';
     public $column_order = array(null, 'id','kode_pengiriman', 'kode_so','kode_kurir','nama_kurir','qty','tanggal',null);
     public $column_search = array('kode_pengiriman', 'pengiriman_so.kode_so','kode_kurir','nama_kurir','pengiriman_so.qty','tanggal');
-    public $order = array('pengiriman_so.created_at' => 'desc'); // default order
+    public $order = array('pengiriman_so.tanggal' => 'desc'); // default order
 
     public function __construct()
     {
