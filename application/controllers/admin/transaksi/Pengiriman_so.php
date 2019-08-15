@@ -77,16 +77,24 @@ class Pengiriman_so extends Admin_Controller {
             $row[] = $dt->nama_kurir;
             $row[] = $dt->qty;
             $row[] = $dt->keterangan;
-            /*
+            
             if($status->status == 'Terkirim'){
+              $row[] = '';
+              /*
                 $row[] = ' <a class="btn btn-sm btn-success" href="javascript:void(0)" title="Return" onclick="return_so(' . "'" . $dt->id . "'" . ')"><i class="glyphicon glyphicon-repeat"></i> Return</a>';
+                */
             }else{
+                /*
                 $row[] = '<a class="btn btn-sm btn-success" href="javascript:void(0)" title="Kirim" onclick="terima_barang(' . "'" . $dt->id . "'" . ')"><i class="glyphicon glyphicon-share"></i> Terima</a>'
                     . ' <a class="btn btn-sm btn-success" href="javascript:void(0)" title="Return" onclick="return_so(' . "'" . $dt->id . "'" . ')"><i class="glyphicon glyphicon-repeat"></i> Return</a>';
+                    */
+                $row[] = '<a class="btn btn-sm btn-success" href="javascript:void(0)" title="Kirim" onclick="terima_barang(' . "'" . $dt->id . "'" . ')"><i class="glyphicon glyphicon-share"></i> Terima</a>';
             }
-            */
+            
            // $row[] = $status->status;
+            /*
             $row[] = '<a class="btn btn-sm btn-success" href="javascript:void(0)" title="Kirim" onclick="terima_barang(' . "'" . $dt->id . "'" . ')"><i class="glyphicon glyphicon-share"></i> Terima</a>';
+            */
             $data[] = $row;
         }
 
