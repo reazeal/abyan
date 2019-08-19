@@ -312,8 +312,10 @@ class Detail_so_model extends MY_Model
                     //'total' => ,
                     'kirim' => $jumlah_kirim,                    
                     'action' => '<a class="btn btn-sm btn-success" href="javascript:void(0)" title="Kirim" onclick="kirim_so('."'".$atributy->id."'".')"><i class="glyphicon glyphicon-share"></i> Pengiriman</a>
-                        <a class="btn btn-sm btn-success" href="javascript:void(0)" title="Return" onclick="return_so('."'".$atributy->id."'".')"><i class="glyphicon glyphicon-repeat"></i> Return</a>'    
-                    
+                        <a class="btn btn-sm btn-success" href="javascript:void(0)" title="Return" onclick="return_so('."'".$atributy->id."'".')"><i class="glyphicon glyphicon-repeat"></i> Return</a>
+                        <a class="btn btn-sm btn-warning" href="javascript:void(0)" title="Diskon" onclick="diskon_so('."'".$atributy->id."'".')"><i class="glyphicon glyphicon-check"></i> Diskon</a>
+                        '    
+                                            
                     );
                 }else{
                     $data[] = array(
@@ -327,7 +329,9 @@ class Detail_so_model extends MY_Model
                     'harga' => number_format((($atributy->harga)?$atributy->harga:'0'),0,",","."),
                     'total' => number_format((($total)?$total:'0'),0,",","."),
                     'kirim' => $jumlah_kirim,
-                    'action' => '<a class="btn btn-sm btn-success" href="javascript:void(0)" title="Return" onclick="return_so('."'".$atributy->id."'".')"><i class="glyphicon glyphicon-repeat"></i>Return</a>'
+                    'action' => '<a class="btn btn-sm btn-success" href="javascript:void(0)" title="Return" onclick="return_so('."'".$atributy->id."'".')"><i class="glyphicon glyphicon-repeat"></i>Return</a>
+                    <a class="btn btn-sm btn-warning" href="javascript:void(0)" title="Diskon" onclick="diskon_so('."'".$atributy->id."'".')"><i class="glyphicon glyphicon-check"></i> Diskon</a>
+                    '
                      );
                 }    
             }
@@ -390,9 +394,10 @@ class Detail_so_model extends MY_Model
     public function getDataByNoSoCetak($id){
         $data = array();
         $this->db->select('detail_so.id as id, sales_order.kode_so as kode_so, detail_so.kode_barang as kode_barang,
-            detail_so.nama_barang as nama_barang, detail_so.qty as qty, detail_so.harga as harga');
+            detail_so.nama_barang as nama_barang, detail_so.qty as qty, detail_so.harga as harga, diskon.nominal as diskon');
         $this->db->join('sales_order','sales_order.kode_so = detail_so.kode_so');
         $this->db->join('barang','barang.kode = detail_so.kode_barang','left');
+        $this->db->join('diskon','diskon.id_detail_so = detail_so.id','left');
         //$this->db->join('pengiriman_so','pengiriman_so.kode_so = detail_so.kode_so','left');
         $this->db->where('sales_order.id',$id);
         $query = $this->db->get($this->table);
@@ -406,6 +411,7 @@ class Detail_so_model extends MY_Model
                     'kode_barang' => $atributy->kode_barang,
                     'nama_barang' => $atributy->nama_barang,
                     'qty' => $atributy->qty,
+                    'diskon' => $atributy->diskon,
                     'harga' => $atributy->harga,
                     'total' => $atributy->harga * $atributy->qty
           //          'kirim' => $atributy->kirim,

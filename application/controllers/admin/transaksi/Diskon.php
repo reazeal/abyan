@@ -16,7 +16,7 @@
  * @property  rak_model $rak_model
  * @property  stok_fisik_model $stok_fisik_model
  */
-class Piutang extends Admin_Controller
+class Diskon extends Admin_Controller
 {
 
     function __construct()
@@ -28,6 +28,7 @@ class Piutang extends Admin_Controller
         $this->load->library('form_validation');
         $this->load->helper('text');
         $this->load->helper('url');
+        $this->load->model('diskon_model');
         $this->load->model('piutang_model');
         $this->load->model('pembayaran_piutang_model');
         
@@ -38,7 +39,7 @@ class Piutang extends Admin_Controller
         //$this->data['pilihan_barang'] = $this->barang_model->get_all();
         //$this->data['pilihan_rak'] = $this->rak_model->get_all();
         //$this->data['pilihan_gudang'] = $this->gudang_model->get_all();
-        $this->render('admin/transaksi/Piutang_view');
+        $this->render('admin/transaksi/Pembayaran_piutang_view');
     }
 
     public function get_nobukti()
@@ -51,61 +52,31 @@ class Piutang extends Admin_Controller
 
     public function get_data_all(){
 
-        $list = $this->piutang_model->get_datatables();
+        $list = $this->pembayaran_piutang_model->get_datatables();
         $data = array();
         $no = $this->input->post('start');
         foreach ($list as $dt) {
-            $nominal_bayar = $this->pembayaran_piutang_model->get_total_bayar_by_kode($dt->kode_referensi);
-           // print_r($nominal_bayar);
-           // die();
-            $nominal_sisa = $dt->nominal - $nominal_bayar;
-            $tgl=date('Y-m-d');
-            $akhir = new DateTime($tgl);
-            $awal = new DateTime($dt->tanggal_jatuh_tempo);
-            $sisa = $akhir->diff($awal);
-
-    
             $no++;
             $row = array();
             $row[] = $no;
             $row[] = $dt->id;
             $row[] = $this->tanggal($dt->tanggal);
+            $row[] = $dt->kode_pembayaran_piutang;
             $row[] = $dt->kode_piutang;
-            $row[] = $dt->kode_referensi;
-            if( ( $akhir > $awal ) && ($dt->status != "Lunas") ){
-                $row[] = "<a class='label label-danger'>$dt->nama_relasi</a>";
-            }else if( ( $sisa > 0 && $sisa < 5 ) && ($dt->status != "Lunas") ){
-                $row[] = "<a class='label label-warning'>$dt->nama_relasi</a>";
-            }else{
-                $row[] = $dt->nama_relasi;
-            }
-            
-           
-            $row[] = $this->tanggal($dt->tanggal_jatuh_tempo);
-            $row[] = number_format((($dt->nominal)?$dt->nominal:'0'),0,",",".");
-            $row[] = number_format((($nominal_bayar)?$nominal_bayar:'0'),0,",",".");
-            //$row[] = number_format((($dt->nominal_sisa)?$dt->nominal_sisa:'0'),0,",",".");
-            $row[] = number_format((($nominal_sisa)?$nominal_sisa:'0'),0,",",".");
-            $row[] = $dt->status;
-
             $row[] = $dt->kode_relasi;
-             $row[] = $dt->jenis;
-             if($dt->status != "Lunas"){
-                $row[] = '<a class="btn btn-sm btn-success" href="javascript:void(0)" title="Edit" onclick="bayar_piutang('."'".$dt->id."'".')"><i class="glyphicon glyphicon-check"></i> Bayar</a>
-';
-             }else{
-                $row[] = "";
-             }
+            $row[] = $dt->nama_relasi;
+            $row[] = number_format((($dt->nominal)?$dt->nominal:'0'),0,",",".");
+            $row[] = $dt->status;
             /*
-            $row[] = '<a class="btn btn-sm btn-primary" href="javascript:void(0)" title="Edit" onclick="detail_stok('."'".$dt->id."'".')"><i class="glyphicon glyphicon-pencil"></i> Detail</a>'; */
-             
+            $row[] = '<a class="btn btn-sm btn-primary" href="javascript:void(0)" title="Edit" onclick="detail_stok('."'".$dt->id."'".')"><i class="glyphicon glyphicon-pencil"></i> Detail</a>';
+            */
             $data[] = $row;
         }
 
         $output = array(
             "draw" => $this->input->post('draw'),
-            "recordsTotal" => $this->piutang_model->count_all(),
-            "recordsFiltered" => $this->piutang_model->count_filtered(),
+            "recordsTotal" => $this->pembayaran_piutang_model->count_all(),
+            "recordsFiltered" => $this->pembayaran_piutang_model->count_filtered(),
             "data" => $data,
         );
         //output to json format
@@ -128,50 +99,49 @@ class Piutang extends Admin_Controller
         echo json_encode(array($data));
     }
 
-    
-
     public function add()
     {
 
-        $datax  = $this->input->post('dataDetail');
-        $json = json_decode($datax);
-        $gudang = $this->gudang_model->get($this->input->post('gudang_id'));
+        $rand = rand(1,100);
+        
+        $tanggal_asli = explode("-",$this->tanggaldb($this->input->post('tanggal')));
+        
+        $jumlah_bayar = $this->diskon_model->total_diskon_perbulan_tahun($tanggal_asli[1],$tanggal_asli[0]); 
+        
+        if($jumlah_bayar == 0){
+            $jumlah = 1;
+            $kode_awal = "001";
+        }else{
+            $jumlah = $jumlah_bayar + 1;
+
+            if(strlen($jumlah_bayar) == 1 ){
+                $kode_awal = "00".$jumlah;
+            }else if(strlen($jumlah_bayar) == 2) {
+                $kode_awal = "0".$jumlah;
+            }else{
+                $kode_awal = $jumlah;
+            }
+        }
+
+        $kode = $kode_awal."/DS/".$tanggal_asli[1]."/".$tanggal_asli[0];
+
+        $id = md5($kode.'diskon'.$rand.$this->input->post('kode_so').date('YmdHis'));
+
         $data = array(
-            'barang_id' => $this->input->post('barang_id'),
+            'id' => $id,
+            'kode_diskon' => $kode,
+            'id_detail_so' => $this->input->post('id'),
+            'kode_so' => $this->input->post('kode_so'),
+            'tanggal' => $this->tanggaldb($this->input->post('tanggal')),
+            'nominal' => $this->input->post('diskon'),
             'keterangan' => $this->input->post('keterangan'),
-            'nama_barang' => $this->input->post('nama_barang'),
-            'qty' => $this->input->post('qty'),
-            //'no_rak' => $this->input->post('no_rak'),
-            //'rak_id' => $this->input->post('rak_id'),
-            'nama_gudang' => $gudang->kode.'-'.$gudang->nama,
-            'gudang_id' => $this->input->post('gudang_id')
+            'created_at' => date('Y-m-d H:i:s')
             
         );
-        $insert = $this->stok_model->save($data);
-        $id = $this->db->insert_id();
+        $insert = $this->diskon_model->save($data);
 
 
         echo json_encode(array("status" => TRUE));
-    }
-
-    public function get($id)
-    {
-       // echo $id;
-       // die();
-        $data = $this->piutang_model->get_by_id($id);
-	$nominal = $this->piutang_model->get_piutang_by_so($data->kode_referensi);
-
-        $data  = array(
-            'id' => $data->id,
-            'kode_piutang' => $data->kode_piutang,
-            'nomor_referensi' => $data->kode_referensi,
-            'kode_relasi' => $data->kode_relasi,
-            'nama_relasi' => $data->nama_relasi,
-            'nominal' => $nominal,
-            'kode_bantu' => $data->kode_bantu,
-          //  'detailBarang'=> (array) $this->detail_barang_model->getDataByTransaksi($id)
-        );
-        echo json_encode(array($data));
     }
 
     public function update()

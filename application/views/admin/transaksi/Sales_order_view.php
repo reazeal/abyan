@@ -316,6 +316,48 @@
         });
     }
 
+    function diskon_so(id)
+    {
+
+        $('#modal_detail_so').modal('hide');
+
+        save_method = 'update';
+        $('#form_diskon')[0].reset(); // reset form on modals
+        $('.form-group').removeClass('has-error'); // clear error class
+        $('.help-block').empty(); // clear error string
+
+        //Ajax Load data from ajax
+        $.ajax({
+            url : "<?php echo site_url('admin/transaksi/sales_order/edit/')?>" + id,
+            type: "GET",
+            dataType: "JSON",
+            success: function(data)
+            {
+                $('[name="id_so"]').val(data[0]['id_so']);                
+                $('[name="id"]').val(data[0]['id']);
+                $('[name="kode_so"]').val(data[0]['kode_so']);
+                $('[name="kode_barang"]').val(data[0]['kode_barang']);
+                $('[name="nama_barang"]').val(data[0]['nama_barang']);
+                $('[name="harga"]').val(data[0]['harga']);
+                $('[name="qty_order"]').val(data[0]['qty']);
+                $('[name="harga"]').val(data[0]['harga']);
+                $('[name="total_harga"]').val(data[0]['harga'] * data[0]['qty']);
+                $('[name="harga_beli"]').val(data[0]['harga_beli']);
+                $('[name="bottom_supplier"]').val(data[0]['bottom_supplier']);
+                $('[name="bottom_retail"]').val(data[0]['bottom_retail']);
+                $('[name="id_detail_barang_masuk"]').val(data[0]['id_detail_barang_masuk']);
+                //$('#modal_form_kirim').modal('show'); // show bootstrap modal when complete loaded
+                $('#modal_form_diskon').modal('show'); // show bootstrap modal when complete loaded
+                $('.modal-title').text('Sales Order Diskon'); // Set title to Bootstrap modal title
+
+            },
+            error: function (jqXHR, textStatus, errorThrown)
+            {
+                alert('Error get data from ajax');
+            }
+        });
+    }
+
     function detail_so($id)
     {
         
@@ -931,6 +973,98 @@
 </div><!-- /.modal -->
 <!-- End Bootstrap modal -->
 
+<div class="modal fade" id="modal_form_diskon" role="dialog" style="overflow-y: auto !important;">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h3 class="modal-title">Form Diskon SO</h3>
+            </div>
+            <div class="modal-body form">
+                <form action="#" id="form_diskon" class="form-horizontal">
+                    <input type="text" value="" name="id"/>
+                    <input type="hidden" value="" name="id_so"/>
+                    <input type="hidden" value="" name="kode_barang"/>
+                    <input type="hidden" value="" name="harga_beli"/>
+                    <input type="hidden" value="" name="id_detail_barang_masuk"/>
+
+                    <div class="form-group">
+                        <label class="control-label col-md-3">Tanggal<span class="required">*</span></label>
+                        <div class="col-md-9">
+                            <input placeholder="dd-mm-yyyy" name="tanggal" class="validate[required] form-control datepicker" type="text" required="required">
+                            <span class="help-block"></span>
+                        </div>
+                    </div>
+
+                    <div class="form-body">
+                        <div class="form-group">
+                            <label class="control-label col-md-3">No. So <span class="required">*</span></label>
+                            <div class="col-md-9">
+                                <input name="kode_so" placeholder="Nomor So" class="validate[required,minSize[3]] form-control" type="text" required="required" data-validate-length-range="2" data-validate-words="2" readonly="true">
+                                <span class="help-block"></span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label col-md-3">Nama Barang <span class="required">*</span></label>
+                            <div class="col-md-9">
+                                <input name="nama_barang" placeholder="Nama Barang" class="validate[required] form-control" type="text" required="required" data-validate-length-range="6" data-validate-words="2" readonly="true">
+                                <span class="help-block"></span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label col-md-3">QTY Order<span class="required">*</span></label>
+                            <div class="col-md-6">
+                                <input name="qty_order" placeholder="Qty order" class="validate[required,custom[number]] form-control" type="text" readonly="true">
+                            <span class="help-block"></span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                        <label class="control-label col-md-3">Harga<span class="required">*</span></label>
+                        <div class="col-md-6">
+                            <input name="harga" placeholder="Harga" class="validate[required,custom[number]] form-control" type="text" required="required" readonly="true">
+                            <span class="help-block"></span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                        <label class="control-label col-md-3">Total Harga<span class="required">*</span></label>
+                        <div class="col-md-6">
+                            <input name="total_harga" placeholder="Total Harga" class="validate[required,custom[number]] form-control" type="text" required="required" readonly="true">
+                            <span class="help-block"></span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                        <label class="control-label col-md-3">Diskon<span class="required">*</span></label>
+                        <div class="col-md-6">
+                            <input name="diskon" placeholder="Diskon" class="validate[required,custom[number]] form-control" type="text" required="required">
+                            <span class="help-block"></span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label col-md-3">Keterangan <span class="required">*</span></label>
+                            <div class="col-md-9">
+                                <input name="keterangan" placeholder="Keterangan" class="validate[required,minSize[6]] form-control" type="text" required="required" data-validate-length-range="6" data-validate-words="2" >
+                                <span class="help-block"></span>
+                            </div>
+                        </div>
+                       
+                    </div>
+
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btnSave" onclick="simpan_diskon()" class="btn btn-primary">Simpan</button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Batal</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+<!-- End Bootstrap modal -->
 
 
 <div class="modal fade" id="modal_detail_barang" role="dialog">
@@ -1210,6 +1344,59 @@
         $("#attachment").attr('src', src);
         $('#cetakan_gt').modal('show');
         return false;
+    }
+
+    function simpan_diskon()
+    {
+
+        var url;
+
+        url = "<?php echo site_url('admin/transaksi/diskon/add')?>";
+
+        seen = [];
+
+
+
+        if(!$("#form_diskon").validationEngine('validate')){
+            return false;
+        }
+
+
+        $('#btnSave').text('menyimpan...'); //change button text
+        $('#btnSave').attr('disabled',true); //set button disable
+
+        // ajax adding data to database
+        $.ajax({
+            url : url,
+            type: "POST",
+            data: $('#form_diskon').serialize() ,
+            dataType: "JSON",
+            success: function(data)
+            {
+
+                if(data.status) //if success close modal and reload ajax table
+                {
+                    if(save_method === 'add') {
+                        $('#modal_form_diskon').modal('hide');
+                    }else{
+                        $('#modal_form_diskon').modal('hide');
+                    }
+                    reload_table();
+                }
+
+                $('#btnSave').text('simpan'); //change button text
+                $('#btnSave').attr('disabled',false); //set button enable
+
+
+            },
+            error: function (jqXHR, textStatus, errorThrown)
+            {
+                alert('Error adding / update data');
+                $('#btnSave').text('simpan'); //change button text
+                $('#btnSave').attr('disabled',false); //set button enable
+
+            }
+        });
     }
 
 </script>

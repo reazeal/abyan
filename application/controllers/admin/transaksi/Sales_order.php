@@ -38,6 +38,7 @@ class Sales_order extends Admin_Controller
         $this->load->model('transaksi_biaya_model');
         $this->load->model('pengiriman_so_model');
         $this->load->model('detail_barang_masuk_model');
+        $this->load->model('diskon_model');
     }
 
     public function index()
@@ -83,6 +84,7 @@ class Sales_order extends Admin_Controller
                   <a class="btn btn-sm btn-primary" href="javascript:void(0)" title="Detail" onclick="detail_so('."'".$dt->id."'".')"><i class="glyphicon glyphicon-pencil"></i> Detail</a>
                   <a class="btn btn-sm btn-primary" href="javascript:void(0)" title="Cetak" onclick="cetak_so('."'".$dt->id."'".')"><i class="glyphicon glyphicon-pencil"></i> Cetak</a>
                   <a class="btn btn-sm btn-danger" href="javascript:void(0)" title="Hapus" onclick="hapus_so('."'".$dt->id."'".')"><i class="glyphicon glyphicon-trash"></i> Delete</a>
+
                 ';
             }else{
                         $row[] = '
@@ -361,12 +363,14 @@ class Sales_order extends Admin_Controller
 
         $datax = $this->detail_so_model->getDataByNoSoCetak($idx);
         $so = $this->sales_order_model->get_by_idSo($idx);
+        $diskon = $this->diskon_model->get_nominal_diskon($so->kode_so);
         $pegawai = $this->pegawai_model->get_by_kode($so->kode_sales);
         //print_r($so);
         $so->tanggal = $this->tanggal($so->tanggal);
         $tes = 'halo';
         $data['datanya'] = $datax;
         $data['so'] = $so;
+        $data['diskon'] = $diskon;
         $data['pegawai'] = $pegawai;
         $data['user'] = $user->username;
         $data['tanggal_cetak'] = date('d-m-Y H:i:s');

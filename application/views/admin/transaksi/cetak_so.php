@@ -377,10 +377,10 @@
               <?php 
               $q=1;
               $total_harga = 0;
-              $diskonx = 0;
+              $diskon = 0;
               foreach ($datanya as $hasilx) {
-                    $total_harga = $total_harga + ($hasilx['qty'] * $hasilx['harga']);
-                    
+                    $total_harga = $total_harga + ($hasilx['qty'] * $hasilx['harga'] - $hasilx['diskon']);
+                    //$total_diskon = $diskon + $hasilx['diskon'];
                     $kode_barang = $hasilx['kode_barang'];
                     $panjang_kode_barang = str_repeat(" ", (6-strlen($kode_barang)));
                     $nama_barang = $hasilx['nama_barang'];
@@ -389,9 +389,9 @@
                     $panjang_qty = str_repeat(" ", (4-strlen($qty)));
                     $harga = number_format((($hasilx['harga'])?$hasilx['harga']:'0'),0,",",".");
                     $panjang_harga = str_repeat(" ", (9-strlen($harga)));
-                    $diskon = $diskonx;
+                    $diskon = number_format((($hasilx['diskon'])?$hasilx['diskon']:'0'),0,",",".");
                     $panjang_diskon = str_repeat(" ", (7-strlen($diskon)));
-                    $sub_total = number_format((($hasilx['qty'] * $hasilx['harga'])?$hasilx['qty'] * $hasilx['harga']:'0'),0,",",".");
+                    $sub_total = number_format((($hasilx['qty'] * $hasilx['harga'] - $hasilx['diskon'] )?$hasilx['qty'] * $hasilx['harga'] - $hasilx['diskon']:'0'),0,",",".");
                     $panjang_sub_total = str_repeat(" ", (11-strlen($sub_total)));
                 ?>
 
@@ -402,7 +402,7 @@
               $q++;
               }
 
-              $total_hargax = number_format((($total_harga)?$total_harga:'0'),0,",",".");
+              $total_hargax = number_format((($total_harga )?$total_harga :'0'),0,",",".");
 
               ?>
             { type: 'raw', data: ' ============================================================================= \n' },          
