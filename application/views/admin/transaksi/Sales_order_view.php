@@ -982,7 +982,7 @@
             </div>
             <div class="modal-body form">
                 <form action="#" id="form_diskon" class="form-horizontal">
-                    <input type="text" value="" name="id"/>
+                    <input type="hidden" value="" name="id"/>
                     <input type="hidden" value="" name="id_so"/>
                     <input type="hidden" value="" name="kode_barang"/>
                     <input type="hidden" value="" name="harga_beli"/>

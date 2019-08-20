@@ -143,7 +143,10 @@ class Pembayaran_piutang extends Admin_Controller
         $total_bayar = $this->pembayaran_piutang_model->get_total_bayar_by_kode($this->input->post('nomor_referensi'));
        // echo $total_bayar;
 
-        if($total_bayar >= $this->input->post('nominal')){
+         $total_piutang = $this->piutang_model->get_piutang_by_so($this->input->post('nomor_referensi'));
+
+        //if($total_bayar >= $this->input->post('nominal')){
+         if($total_bayar >= $total_piutang){
             $status_piutang = "Lunas";
         }else{
             $status_piutang = "Belum Lunas";

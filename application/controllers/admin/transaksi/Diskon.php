@@ -39,7 +39,7 @@ class Diskon extends Admin_Controller
         //$this->data['pilihan_barang'] = $this->barang_model->get_all();
         //$this->data['pilihan_rak'] = $this->rak_model->get_all();
         //$this->data['pilihan_gudang'] = $this->gudang_model->get_all();
-        $this->render('admin/transaksi/Pembayaran_piutang_view');
+        $this->render('admin/transaksi/Diskon_view');
     }
 
     public function get_nobukti()
@@ -52,7 +52,7 @@ class Diskon extends Admin_Controller
 
     public function get_data_all(){
 
-        $list = $this->pembayaran_piutang_model->get_datatables();
+        $list = $this->diskon_model->get_datatables();
         $data = array();
         $no = $this->input->post('start');
         foreach ($list as $dt) {
@@ -61,12 +61,9 @@ class Diskon extends Admin_Controller
             $row[] = $no;
             $row[] = $dt->id;
             $row[] = $this->tanggal($dt->tanggal);
-            $row[] = $dt->kode_pembayaran_piutang;
-            $row[] = $dt->kode_piutang;
-            $row[] = $dt->kode_relasi;
-            $row[] = $dt->nama_relasi;
+            $row[] = $dt->kode_diskon;
+            $row[] = $dt->kode_so;
             $row[] = number_format((($dt->nominal)?$dt->nominal:'0'),0,",",".");
-            $row[] = $dt->status;
             /*
             $row[] = '<a class="btn btn-sm btn-primary" href="javascript:void(0)" title="Edit" onclick="detail_stok('."'".$dt->id."'".')"><i class="glyphicon glyphicon-pencil"></i> Detail</a>';
             */
@@ -75,8 +72,8 @@ class Diskon extends Admin_Controller
 
         $output = array(
             "draw" => $this->input->post('draw'),
-            "recordsTotal" => $this->pembayaran_piutang_model->count_all(),
-            "recordsFiltered" => $this->pembayaran_piutang_model->count_filtered(),
+            "recordsTotal" => $this->diskon_model->count_all(),
+            "recordsFiltered" => $this->diskon_model->count_filtered(),
             "data" => $data,
         );
         //output to json format
@@ -140,6 +137,13 @@ class Diskon extends Admin_Controller
         );
         $insert = $this->diskon_model->save($data);
 
+        $total_piutang = $this->piutang_model->get_piutang_by_so($this->input->post('kode_so'));
+
+        $data_piutang_baru = array(
+                'nominal' => $total_piutang - $this->input->post('diskon')
+            );
+
+        $this->piutang_model->update_by_kode($this->input->post('kode_so'), $data_piutang_baru);
 
         echo json_encode(array("status" => TRUE));
     }
