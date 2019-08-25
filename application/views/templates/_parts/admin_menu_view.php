@@ -49,6 +49,7 @@
                     <li><a href="<?php echo site_url('admin/transaksi/hutang');?>">Hutang</a></li>
                     <li><a href="<?php echo site_url('admin/transaksi/pembayaran_hutang');?>">Pembayaran Hutang</a></li>
                     <li><a href="<?php echo site_url('admin/transaksi/pembayaran_piutang');?>">Pembayaran Piutang</a></li>
+                    <li><a href="<?php echo site_url('admin/transaksi/rekap_pembayaran_piutang');?>">Rekap Pembayaran Piutang</a></li>
                     <li><a href="<?php echo site_url('admin/transaksi/transaksi_biaya');?>">Transaksi Biaya</a></li>
                     <li><a href="<?php echo site_url('admin/transaksi/komisi');?>">Komisi</a></li>
                     <li><a href="<?php echo site_url('admin/transaksi/laba_rugi');?>">Laba Rugi</a></li>

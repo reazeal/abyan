@@ -302,6 +302,52 @@
 
     }
 
+    function update_po(id)
+    {
+        $('#modal_detail_po').modal('hide');
+
+        save_method = 'update';
+        $('#form_edit_po')[0].reset(); // reset form on modals
+        $('.form-group').removeClass('has-error'); // clear error class
+        $('.help-block').empty(); // clear error string
+
+        //Ajax Load data from ajax
+        $.ajax({
+            url : "<?php echo site_url('admin/transaksi/purchase_order/edit/')?>/" + id,
+            type: "GET",
+            dataType: "JSON",
+            success: function(data)
+            {
+                $('[name="id"]').val(id);
+                $('[name="id_po"]').val(data[0]['id_po']);
+                $('[name="nama_barang"]').val(data[0]['nama_barang']);
+                $('[name="kode_po"]').val(data[0]['kode_po']);
+                $('[name="nama_supplier"]').val(data[0]['nama_supplier']);
+                $('[name="kode_supplier"]').val(data[0]['kode_supplier']);
+                $('[name="kode_barang"]').val(data[0]['kode_barang']);
+                $('[name="qty"]').val(data[0]['qty']);
+                $('[name="harga"]').val(data[0]['harga']);
+                $('[name="top"]').val(data[0]['top']);
+                $('[name="bottom_supplier"]').val(data[0]['bottom_supplier']);
+                $('[name="bottom_retail"]').val(data[0]['bottom_retail']);
+                $('[name="harga_beli"]').val(data[0]['harga_beli']);
+                $('[name="qty_terima"]').val("0");
+
+  
+                $('#modal_form_edit_po').modal('show'); // show bootstrap modal when complete loaded
+                $('.modal-title').text('Edit PO'); // Set title to Bootstrap modal title
+
+                //$('#modal_detail_po').modal('show');
+
+            },
+            error: function (jqXHR, textStatus, errorThrown)
+            {
+                alert('Error get data from ajax');
+            }
+        });
+
+    }
+
     function detail_po($id)
     {
         
@@ -489,6 +535,64 @@
             }
         });
     }
+
+    function simpan_edit_po()
+    {
+
+        var url;
+
+        url = "<?php echo site_url('admin/transaksi/purchase_order/update_detail_po')?>";
+
+        seen = [];
+
+
+        if(!$("#form_terima").validationEngine('validate')){
+            return false;
+        }
+
+       // alert('sini');
+        
+        var id_po = $('#form_edit_po').find('input[name="id_po"]').val();
+       // alert(id_po);        
+
+        $('#btnSaveTerimaPo').text('menyimpan...'); //change button text
+        $('#btnSaveTerimaPo').attr('disabled',true); //set button disable
+
+        // ajax adding data to database
+        $.ajax({
+            url : url,
+            type: "POST",
+            data: $('#form_edit_po').serialize(),
+            dataType: "JSON",
+            success: function(data)
+            {
+
+                if(data.status) //if success close modal and reload ajax table
+                {
+                    if(save_method === 'add') {
+                        $('#modal_form_edit_po').modal('hide');
+                    }else{
+                        $('#modal_form_edit_po').modal('hide');
+                    }
+                    reload_table();
+                }
+
+                $('#btnSaveTerimaPo').text('simpan'); //change button text
+                $('#btnSaveTerimaPo').attr('disabled',false); //set button enable
+
+                detail_po(id_po);
+
+            },
+            error: function (jqXHR, textStatus, errorThrown)
+            {
+                alert('Error adding / update data');
+                $('#btnSaveTerimaPo').text('simpan'); //change button text
+                $('#btnSaveTerimaPo').attr('disabled',false); //set button enable
+
+            }
+        });
+    }
+
 
     function update()
     {
@@ -881,6 +985,91 @@
             </div>
             <div class="modal-footer">
                 <button type="button" id="btnSaveTerimaPo" onclick="simpan_terima_po()" class="btn btn-primary">Simpan</button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Batal</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+<!-- End Bootstrap modal Terima -->
+
+<!-- Bootstrap modal Terima-->
+<div class="modal fade" id="modal_form_edit_po" role="dialog" style="overflow-y: auto !important;">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h3 class="modal-title">Form Edit PO</h3>
+            </div>
+            <div class="modal-body form">
+                <form action="#" id="form_edit_po" class="form-horizontal">
+                    <input type="hidden" value="" name="id"/>
+                    <input type="hidden" value="" name="id_po"/>
+                    <input type="hidden" value="" name="kode_supplier"/>
+                    <input type="hidden" value="" name="kode_barang"/>
+                    <input type="hidden" value="" name="top"/>
+                    
+                    <div class="form-group">
+                        <label class="control-label col-md-3">No. PO <span class="required">*</span></label>
+                        <div class="col-md-6">
+                            <input name="kode_po" placeholder="Kode PO" readonly="true" class="form-control">
+                            <span class="help-block"></span>
+                        </div>
+                    </div>                        
+
+                    <div class="form-group">
+                        <label class="control-label col-md-3">Nama Supplier <span class="required">*</span></label>
+                        <div class="col-md-9">
+                            <input name="nama_supplier" placeholder="Nama Supplier" class="form-control" readonly="true">
+                            <span class="help-block"></span>
+                        </div>
+                              
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label col-md-3">Nama Barang <span class="required">*</span></label>
+                        <div class="col-md-6">
+                            <input name="nama_barang" placeholder="Nama Barang" class="form-control" readonly="true">
+                            <span class="help-block"></span>
+                        </div>
+                        
+                    </div>
+
+                    <div class="form-group">
+                         <label class="control-label col-md-3">QTY<span class="required">*</span></label>
+                        <div class="col-md-6">
+                            <input name="qty" placeholder="Qty" class="validate[required,custom[number]] form-control" type="text" required="required">
+                        <span class="help-block"></span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label col-md-3">Harga<span class="required">*</span></label>
+                        <div class="col-md-6">
+                            <input name="harga" placeholder="Harga" class="validate[required,custom[number]] form-control" type="text" required="required">
+                            <span class="help-block"></span>
+                            </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label col-md-3">Buttom Supplier<span class="required">*</span></label>
+                        <div class="col-md-6">
+                            <input name="bottom_supplier" placeholder="Buttom Supplier" class="validate[required,custom[number]] form-control" type="text" required="required">
+                            <span class="help-block"></span>
+                            </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label col-md-3">Buttom Retail<span class="required">*</span></label>
+                        <div class="col-md-6">
+                            <input name="bottom_retail" placeholder="Buttom Retail" class="validate[required,custom[number]] form-control" type="text" required="required">
+                            <span class="help-block"></span>
+                            </div>
+                    </div>
+
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btnSaveTerimaPo" onclick="simpan_edit_po()" class="btn btn-primary">Simpan</button>
                 <button type="button" class="btn btn-danger" data-dismiss="modal">Batal</button>
             </div>
         </div><!-- /.modal-content -->

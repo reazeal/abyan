@@ -205,6 +205,24 @@ class Purchase_order extends Admin_Controller
         echo json_encode(array("status" => TRUE));
     }
 
+    public function update_detail_po()
+    {
+        
+        $data = array(
+            'qty' => $this->input->post('qty'),
+            'harga' => $this->input->post('harga'),
+            'bottom_supplier' => $this->input->post('bottom_supplier'),
+            'bottom_retail' => $this->input->post('bottom_retail'),
+            'updated_at' => date("Y-m-d H:i:s"),
+
+        );
+
+        $this->detail_purchase_order_model->update_by_id(array('id' => $this->input->post('id')), $data);
+
+        
+        echo json_encode(array("status" => TRUE));
+    }
+
     public function delete($id)
     {
         

@@ -16,7 +16,7 @@
  * @property  rak_model $rak_model
  * @property  stok_fisik_model $stok_fisik_model
  */
-class Pembayaran_piutang extends Admin_Controller
+class Rekap_pembayaran_piutang extends Admin_Controller
 {
 
     function __construct()
@@ -33,15 +33,8 @@ class Pembayaran_piutang extends Admin_Controller
         $this->load->model('piutang_model');
     }
 
-    public function index()
-    {
-        //$this->data['pilihan_barang'] = $this->barang_model->get_all();
-        //$this->data['pilihan_rak'] = $this->rak_model->get_all();
-        //$this->data['pilihan_gudang'] = $this->gudang_model->get_all();
-        $this->render('admin/transaksi/Pembayaran_piutang_view');
-    }
 
-    public function rekap()
+    public function index()
     {
         //$this->data['pilihan_barang'] = $this->barang_model->get_all();
         //$this->data['pilihan_rak'] = $this->rak_model->get_all();
@@ -59,7 +52,7 @@ class Pembayaran_piutang extends Admin_Controller
 
     public function get_data_all(){
 
-        $list = $this->pembayaran_piutang_model->get_datatables();
+        $list = $this->rekap_pembayaran_piutang_model->get_datatables();
         $data = array();
         $no = $this->input->post('start');
         foreach ($list as $dt) {
@@ -68,10 +61,6 @@ class Pembayaran_piutang extends Admin_Controller
             $row[] = $no;
             $row[] = $dt->id;
             $row[] = $this->tanggal($dt->tanggal);
-            $row[] = $dt->kode_pembayaran_piutang;
-            $row[] = $dt->kode_piutang;
-            $row[] = $dt->kode_relasi;
-            $row[] = $dt->nama_relasi;
             $row[] = number_format((($dt->nominal)?$dt->nominal:'0'),0,",",".");
             $row[] = $dt->status;
             /*
