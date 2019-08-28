@@ -90,34 +90,7 @@ class Pembayaran_piutang extends Admin_Controller
         echo json_encode($output);
     }
 
-    public function get_data_all_rekap(){
-
-        $list = $this->rekap_pembayaran_piutang_model->get_datatables();
-        $data = array();
-        $no = $this->input->post('start');
-        foreach ($list as $dt) {
-            $no++;
-            $row = array();
-            $row[] = $no;
-            $row[] = $dt->id;
-            $row[] = $this->tanggal($dt->tanggal);
-            $row[] = number_format((($dt->nominal)?$dt->nominal:'0'),0,",",".");
-            /*
-            $row[] = '<a class="btn btn-sm btn-primary" href="javascript:void(0)" title="Edit" onclick="detail_stok('."'".$dt->id."'".')"><i class="glyphicon glyphicon-pencil"></i> Detail</a>';
-            */
-            $data[] = $row;
-        }
-
-        $output = array(
-            "draw" => $this->input->post('draw'),
-            "recordsTotal" => $this->rekap_pembayaran_piutang_model->count_all(),
-            "recordsFiltered" => $this->rekap_pembayaran_piutang_model->count_filtered(),
-            "data" => $data,
-        );
-        //output to json format
-        echo json_encode($output);
-    }
-
+    
     public function edit($id)
     {
         $data = $this->stok_fisik_model->get($id);
@@ -240,6 +213,14 @@ class Pembayaran_piutang extends Admin_Controller
         endforeach;*/
 
         echo json_encode(array("status" => TRUE));
+    }
+
+    public function get_detail_pembayaran($tanggal)
+    {
+        $data  = array(
+            'detailPembayaranPiutang'=> (array) $this->pembayaran_piutang_model->getDataByTanggal($tanggal)
+        );
+        echo json_encode(array($data));
     }
 
     public function delete($id)

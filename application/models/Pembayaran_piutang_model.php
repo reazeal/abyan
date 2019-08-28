@@ -210,4 +210,28 @@ class Pembayaran_piutang_model extends MY_Model
         return $insert;
     }
 
+    public function getDataByTanggal($tanggal){
+        $data = array();
+        $this->db->select('kode_pembayaran_piutang, kode_piutang, nama_relasi, nominal');
+        $this->db->where('tanggal',$tanggal);
+        $query = $this->db->get($this->table);
+
+        $totaly2 = $query->num_rows();
+        if ($totaly2 > 0) {
+            foreach ($query->result() as $atributy) {
+
+                    $data[] = array(
+                    'kode_pembayaran_piutang' => $atributy->kode_pembayaran_piutang,
+                    'kode_piutang' => $atributy->kode_piutang,
+                    'nama_relasi' => $atributy->nama_relasi,
+                    'nominal' => number_format((($atributy->nominal)?$atributy->nominal:'0'),0,",","."),
+
+                    );
+
+            }
+        }
+        return $data;
+
+    }
+
 }

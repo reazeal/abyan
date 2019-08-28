@@ -62,10 +62,9 @@ class Rekap_pembayaran_piutang extends Admin_Controller
             $row[] = $dt->id;
             $row[] = $this->tanggal($dt->tanggal);
             $row[] = number_format((($dt->nominal)?$dt->nominal:'0'),0,",",".");
-            $row[] = $dt->status;
-            /*
-            $row[] = '<a class="btn btn-sm btn-primary" href="javascript:void(0)" title="Edit" onclick="detail_stok('."'".$dt->id."'".')"><i class="glyphicon glyphicon-pencil"></i> Detail</a>';
-            */
+            
+            $row[] = '<a class="btn btn-sm btn-primary" href="javascript:void(0)" title="Edit" onclick="detail_pembayaran('."'".$dt->tanggal."'".')"><i class="glyphicon glyphicon-pencil"></i> Detail</a>';
+            
             $data[] = $row;
         }
 
@@ -91,6 +90,10 @@ class Rekap_pembayaran_piutang extends Admin_Controller
             $row[] = $dt->id;
             $row[] = $this->tanggal($dt->tanggal);
             $row[] = number_format((($dt->nominal)?$dt->nominal:'0'),0,",",".");
+
+             $row[] = '<a class="btn btn-sm btn-primary" href="javascript:void(0)" title="Edit" onclick="detail_pembayaran('."'".$dt->tanggal."'".')"><i class="glyphicon glyphicon-pencil"></i> Detail</a>';
+            
+
             /*
             $row[] = '<a class="btn btn-sm btn-primary" href="javascript:void(0)" title="Edit" onclick="detail_stok('."'".$dt->id."'".')"><i class="glyphicon glyphicon-pencil"></i> Detail</a>';
             */
