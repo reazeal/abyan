@@ -107,7 +107,7 @@
 
                                 ?>
                                 <tr>
-                                    <td><?php echo $outlet->nama_outlet;?></td>
+                                    <td><?php echo $urut;?></td>
                                     <td><?php echo $hasil['nama_barang'];?></td>
                                     <td><?php echo $hasil['kode_barang'];?></td>
                                     <td><?php echo $hasil['qty'];?></td>
@@ -345,8 +345,6 @@
     function  printESCPOS() {
         var config = getUpdatedConfig();
 
-        // $panjang_nama_outlet = str_repeat(" ", (52-strlen($outlet->nama_outlet)));
-
         var printData = [
             { type: 'raw', data: '\n', options: { language: 'ESCPOS', dotDensity: 'double',  } , },
             '\x1B' + '\x40',   
@@ -364,7 +362,7 @@
             { type: 'raw', data: ' ====================================================================== \n' },
             */
              '                               INVOICE                      \n',
-             '<?php echo $outlet->nama_outlet.$panjang_nama_outlet ?>                          Number    :  <?php echo $so->kode_so ?>    \n' ,
+             'CV. Abyan Jaya                          Number    :  <?php echo $so->kode_so ?>    \n' ,
              'Jl. Balongsari Tama Blok A/3            Tanggal   :  <?php echo $so->tanggal ?>      \n' ,
              'Balongsari - Tandes, Surabaya           TOP       : \n' ,
              'Phone : (031) 561-3507                  Sales     : <?php echo $pegawai->nama_pegawai ?>\n' ,
@@ -416,14 +414,13 @@
 
              { type: 'raw', data: ' Transfer Via :  \n' },
              { type: 'raw', data: ' <?php echo $outlet->nama_bank ?>                 Penerima            Pengirim              Hormat Kami \n' },
-             { type: 'raw', data: ' A/C 790-0954-004 \n' },
-             { type: 'raw', data: ' A/N Zuhair Bobsaid  \n' },
+             { type: 'raw', data: ' A/C <?php echo $outlet->nomor_rekening ?> \n' },
+             { type: 'raw', data: ' A/N <?php echo $outlet->atas_nama ?>  \n' },
              { type: 'raw', data: '\n' },
              { type: 'raw', data: '---------------------------------------------------------------------------  \n' },
              { type: 'raw', data: ' | Nb: Barang yang dibeli tidak dapat dikembalikan, kecuali ada perjanjian | \n' },
              { type: 'raw', data: ' ---------------------------------------------------------------------------\n' },
         ];
-        print_r(printData);
 
         qz.print(config, printData).catch(displayError);
     }
