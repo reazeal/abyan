@@ -365,10 +365,18 @@
              '<?php $panjang_outlet = str_repeat(" ", (40-strlen($outlet->nama_outlet))); if($outlet->nama_outlet == '-' ) { echo ''.$panjang_outlet; }else{
                 echo $outlet->nama_outlet.$panjang_outlet; 
              } ?>Number    :  <?php echo $so->kode_so ?>    \n' ,
-             'Jl. Balongsari Tama Blok A/3            Tanggal   :  <?php echo $so->tanggal ?>      \n' ,
-             'Balongsari - Tandes, Surabaya           TOP       : \n' ,
-             'Phone : (031) 561-3507                  Sales     : <?php echo $pegawai->nama_pegawai ?>\n' ,
-             'WA :0822-3204-7857                      Customer  :  <?php echo $so->nama_customer ?>\n' ,
+             '<?php $panjang_alamat = str_repeat(" ", (40-strlen($outlet->alamat_outlet))); if($outlet->alamat_outlet == '-' ) { echo ''.$panjang_alamat; }else{
+                echo $outlet->alamat_outlet.$panjang_alamat; 
+             } ?>Tanggal   :  <?php echo $so->tanggal ?>      \n' ,
+             '<?php $panjang_kota = str_repeat(" ", (40-strlen($outlet->kota_outlet))); if($outlet->kota_outlet == '-' ) { echo ''.$panjang_kota; }else{
+                echo $outlet->kota_outlet.$panjang_kota; 
+             } ?>TOP       : \n' ,
+             '<?php $panjang_phone = str_repeat(" ", (40-strlen($outlet->telp_outlet))); if($outlet->telp_outlet == '-' ) { echo ''.$panjang_phone; }else{
+                echo 'Phone : '.$outlet->kota_outlet.$panjang_phone; 
+             } ?>Sales     : <?php echo $pegawai->nama_pegawai ?>\n' ,
+             '<?php $panjang_wa = str_repeat(" ", (40-strlen($outlet->hp_outlet))); if($outlet->hp_outlet == '-' ) { echo ''.$panjang_wa; }else{
+                echo 'WA :'.$outlet->hp_outlet.$panjang_wa; 
+             } ?>Customer  :  <?php echo $so->nama_customer ?>\n' ,
              '                                        Po        :  <?php echo $so->no_po ?>\n',
              ' Printer By : <?php echo $user ?> <?php echo $tanggal_cetak ?>  \n',
              
