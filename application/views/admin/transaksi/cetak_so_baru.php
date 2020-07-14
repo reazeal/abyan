@@ -362,9 +362,9 @@
             { type: 'raw', data: ' ====================================================================== \n' },
             */
              '                               INVOICE                      \n',
-             '<?php $panjang_outlet = str_repeat(" ", (52-strlen($outlet->nama_outlet))); if($outlet->nama_outlet == '-' ) { echo ''; }else{
-                echo $so->kode_so; 
-             } ?>                          Number    :  <?php echo $so->kode_so ?>    \n' ,
+             '<?php $panjang_outlet = str_repeat(" ", (40-strlen($outlet->nama_outlet))); if($outlet->nama_outlet == '-' ) { echo ''.$panjang_outlet; }else{
+                echo $outlet->nama_outlet.$panjang_outlet; 
+             } ?>Number    :  <?php echo $so->kode_so ?>    \n' ,
              'Jl. Balongsari Tama Blok A/3            Tanggal   :  <?php echo $so->tanggal ?>      \n' ,
              'Balongsari - Tandes, Surabaya           TOP       : \n' ,
              'Phone : (031) 561-3507                  Sales     : <?php echo $pegawai->nama_pegawai ?>\n' ,
@@ -423,6 +423,8 @@
              { type: 'raw', data: ' | Nb: Barang yang dibeli tidak dapat dikembalikan, kecuali ada perjanjian | \n' },
              { type: 'raw', data: ' ---------------------------------------------------------------------------\n' },
         ];
+        
+        console.log(printData);
 
         qz.print(config, printData).catch(displayError);
     }
