@@ -39,6 +39,7 @@ class Sales_order extends Admin_Controller
         $this->load->model('pengiriman_so_model');
         $this->load->model('detail_barang_masuk_model');
         $this->load->model('diskon_model');
+        $this->load->model('outlet_model');
     }
 
     public function index()
@@ -46,6 +47,7 @@ class Sales_order extends Admin_Controller
         $this->data['pilihan_barang'] = $this->barang_model->get_all();
         $this->data['pilihan_customer'] = $this->customer_model->get_all();
         $this->data['pilihan_pegawai'] = $this->pegawai_model->get_all();
+        $this->data['pilihan_outlet'] = $this->outlet_model->get_all();
         //$this->data['pilihan_barang_masuk'] = $this->detail_barang_masuk_model->get_by_penerimaan();
         $this->data['pilihan_barang_masuk'] = $this->detail_barang_masuk_model->get_by_penerimaanx();
       // /  print_r($this->data['pilihan_barang_masuk']);
@@ -83,6 +85,7 @@ class Sales_order extends Admin_Controller
                 $row[] = '
                   <a class="btn btn-sm btn-primary" href="javascript:void(0)" title="Detail" onclick="detail_so('."'".$dt->id."'".')"><i class="glyphicon glyphicon-pencil"></i> Detail</a>
                   <a class="btn btn-sm btn-primary" href="javascript:void(0)" title="Cetak" onclick="cetak_so('."'".$dt->id."'".')"><i class="glyphicon glyphicon-pencil"></i> Cetak</a>
+                  <a class="btn btn-sm btn-primary" href="javascript:void(0)" title="Cetak" onclick="cetak_so_baru('."'".$dt->id."'".')"><i class="glyphicon glyphicon-pencil"></i> Cetakx</a>
                   <a class="btn btn-sm btn-danger" href="javascript:void(0)" title="Hapus" onclick="hapus_so('."'".$dt->id."'".')"><i class="glyphicon glyphicon-trash"></i> Delete</a>
 
                 ';
@@ -90,7 +93,7 @@ class Sales_order extends Admin_Controller
                         $row[] = '
                   <a class="btn btn-sm btn-primary" href="javascript:void(0)" title="Detail" onclick="detail_so('."'".$dt->id."'".')"><i class="glyphicon glyphicon-pencil"></i> Detail</a>
                   <a class="btn btn-sm btn-primary" href="javascript:void(0)" title="Cetak" onclick="cetak_so('."'".$dt->id."'".')"><i class="glyphicon glyphicon-pencil"></i> Cetak</a>
-                  
+                  <a class="btn btn-sm btn-primary" href="javascript:void(0)" title="Cetak" onclick="cetak_so_baru('."'".$dt->id."'".')"><i class="glyphicon glyphicon-pencil"></i> Cetakx</a>
                 ';
             }
 
@@ -163,6 +166,7 @@ class Sales_order extends Admin_Controller
             'tanggal' => $this->tanggaldb($this->input->post('tanggal')),
             'kode_sales' => $this->input->post('kode_pegawai'),
             'no_po' => $this->input->post('no_po'),
+            'id_outlet' => $this->input->post('id_outlet'),
             'tanggal_kirim' => $this->tanggaldb($this->input->post('tanggal_kirim')),
             'top' => $this->input->post('top'),
             'created_at' => date("Y-m-d H:i:s"),
@@ -375,6 +379,38 @@ class Sales_order extends Admin_Controller
         $data['user'] = $user->username;
         $data['tanggal_cetak'] = date('d-m-Y H:i:s');
         $this->load->view('admin/transaksi/cetak_so',$data);
+
+    }
+
+    public function cetak_so_baru($idx)
+
+    {
+        //echo $idx;
+      //  echo $this->input->get('id');
+
+        //echo $_GET['id'];
+        $user = $this->ion_auth->user()->row();
+        //$this->data['user'] = $user;
+        //$this->data['current_user_menu'] = '';
+        //$this->data['username_auth'] = $user->username;
+       // echo $user->username;
+
+        $datax = $this->detail_so_model->getDataByNoSoCetak($idx);
+        $so = $this->sales_order_model->get_by_idSo($idx);
+        $diskon = $this->diskon_model->get_nominal_diskon($so->kode_so);
+        $pegawai = $this->pegawai_model->get_by_kode($so->kode_sales);
+        $outlet = $this->outlet_model->get_by_kode($so->id_outlet);
+        //print_r($so);
+        $so->tanggal = $this->tanggal($so->tanggal);
+        $tes = 'halo';
+        $data['datanya'] = $datax;
+        $data['so'] = $so;
+        $data['diskon'] = $diskon;
+        $data['pegawai'] = $pegawai;
+        $data['outlet'] = $outlet;
+        $data['user'] = $user->username;
+        $data['tanggal_cetak'] = date('d-m-Y H:i:s');
+        $this->load->view('admin/transaksi/cetak_so_baru',$data);
 
     }
     

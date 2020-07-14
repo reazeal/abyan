@@ -738,6 +738,27 @@
                         </div>
                         </div>
 
+                        <div class="form-group">
+                       
+                        <label class="control-label col-md-3">Outlet<span class="required">*</span></label>
+                             <div class="col-md-6">
+                            <select id="id_outlet" name="id_outlet" data-live-search="true"  class="selectpicker validate[required] form-control" required="required">
+                                <option value="">--Pilih Outlet--</option>
+                                <?php
+                                foreach ($pilihan_outlet as $row_outlet):
+                                    ?>
+                                    <option value="<?php echo $row_outlet->id;?>"><?php echo $row_outlet
+                                    ->nama_outlet; ?></option>
+                                    <?php
+
+                                endforeach;
+                                ?>
+                            </select>
+                            <span class="help-block"></span>
+                        </div>
+                        </div>
+
+
                     </div>
 
                 <p>
@@ -1341,6 +1362,21 @@
         $('.modal-title').text('Cetak'); // Set Title to Bootstrap modal title
         //var src = '<?php echo site_url('admin/sales_order/cetak_so/')?>'+$id;
         var src = '<?php echo site_url('admin/transaksi/sales_order/cetak_so/')?>'+$id;
+        $("#attachment").attr('src', src);
+        $('#cetakan_gt').modal('show');
+        return false;
+    }
+
+    function cetak_so_baru($id)
+    {
+
+        if(!$("#form").validationEngine('validate')){
+            return false;
+        }
+
+        $('.modal-title').text('Cetak'); // Set Title to Bootstrap modal title
+        //var src = '<?php echo site_url('admin/sales_order/cetak_so/')?>'+$id;
+        var src = '<?php echo site_url('admin/transaksi/sales_order/cetak_so_baru/')?>'+$id;
         $("#attachment").attr('src', src);
         $('#cetakan_gt').modal('show');
         return false;
