@@ -415,7 +415,7 @@
             
 
              { type: 'raw', data: ' Transfer Via :  \n' },
-             { type: 'raw', data: ' BCA                 Penerima            Pengirim              Hormat Kami \n' },
+             { type: 'raw', data: ' <?php echo $outlet->nama_bank ?>                 Penerima            Pengirim              Hormat Kami \n' },
              { type: 'raw', data: ' A/C 790-0954-004 \n' },
              { type: 'raw', data: ' A/N Zuhair Bobsaid  \n' },
              { type: 'raw', data: '\n' },
