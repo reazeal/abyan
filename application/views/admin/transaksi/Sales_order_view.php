@@ -748,7 +748,7 @@
                                 foreach ($pilihan_outlet as $row_outlet):
                                     ?>
                                     <option value="<?php echo $row_outlet->id;?>"><?php echo $row_outlet
-                                    ->nama_outlet; ?></option>
+                                    ->nama_outlet."-".$row_outlet->nama_bank."-".$row_outlet->atas_nama; ?></option>
                                     <?php
 
                                 endforeach;
