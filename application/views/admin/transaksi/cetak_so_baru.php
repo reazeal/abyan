@@ -371,10 +371,10 @@
              '<?php $panjang_kota = str_repeat(" ", (40-strlen($outlet->kota_outlet))); if($outlet->kota_outlet == '-' ) { echo ''.$panjang_kota; }else{
                 echo $outlet->kota_outlet.$panjang_kota; 
              } ?>TOP       : \n' ,
-             '<?php $panjang_phone = str_repeat(" ", (40-strlen($outlet->telp_outlet))); if($outlet->telp_outlet == '-' ) { echo ''.$panjang_phone; }else{
-                echo 'Phone : '.$outlet->kota_outlet.$panjang_phone; 
+             '<?php $panjang_phone = str_repeat(" ", (32-strlen($outlet->telp_outlet))); if($outlet->telp_outlet == '-' ) { echo ''.$panjang_phone; }else{
+                echo 'Phone : '.$outlet->telp_outlet.$panjang_phone; 
              } ?>Sales     : <?php echo $pegawai->nama_pegawai ?>\n' ,
-             '<?php $panjang_wa = str_repeat(" ", (40-strlen($outlet->hp_outlet))); if($outlet->hp_outlet == '-' ) { echo ''.$panjang_wa; }else{
+             '<?php $panjang_wa = str_repeat(" ", (36-strlen($outlet->hp_outlet))); if($outlet->hp_outlet == '-' ) { echo ''.$panjang_wa; }else{
                 echo 'WA :'.$outlet->hp_outlet.$panjang_wa; 
              } ?>Customer  :  <?php echo $so->nama_customer ?>\n' ,
              '                                        Po        :  <?php echo $so->no_po ?>\n',
