@@ -84,16 +84,16 @@ class Sales_order extends Admin_Controller
             if($dt->status == 'Proses'){
                 $row[] = '
                   <a class="btn btn-sm btn-primary" href="javascript:void(0)" title="Detail" onclick="detail_so('."'".$dt->id."'".')"><i class="glyphicon glyphicon-pencil"></i> Detail</a>
-                  <a class="btn btn-sm btn-primary" href="javascript:void(0)" title="Cetak" onclick="cetak_so('."'".$dt->id."'".')"><i class="glyphicon glyphicon-pencil"></i> Cetak</a>
-                  <a class="btn btn-sm btn-primary" href="javascript:void(0)" title="Cetak" onclick="cetak_so_baru('."'".$dt->id."'".')"><i class="glyphicon glyphicon-pencil"></i> Cetakx</a>
+                  
+
+                  <a class="btn btn-sm btn-primary" href="javascript:void(0)" title="Cetak" onclick="cetak_so_baru('."'".$dt->id."'".')"><i class="glyphicon glyphicon-pencil"></i> Cetak</a>
                   <a class="btn btn-sm btn-danger" href="javascript:void(0)" title="Hapus" onclick="hapus_so('."'".$dt->id."'".')"><i class="glyphicon glyphicon-trash"></i> Delete</a>
 
                 ';
             }else{
                         $row[] = '
                   <a class="btn btn-sm btn-primary" href="javascript:void(0)" title="Detail" onclick="detail_so('."'".$dt->id."'".')"><i class="glyphicon glyphicon-pencil"></i> Detail</a>
-                  <a class="btn btn-sm btn-primary" href="javascript:void(0)" title="Cetak" onclick="cetak_so('."'".$dt->id."'".')"><i class="glyphicon glyphicon-pencil"></i> Cetak</a>
-                  <a class="btn btn-sm btn-primary" href="javascript:void(0)" title="Cetak" onclick="cetak_so_baru('."'".$dt->id."'".')"><i class="glyphicon glyphicon-pencil"></i> Cetakx</a>
+                  <a class="btn btn-sm btn-primary" href="javascript:void(0)" title="Cetak" onclick="cetak_so_baru('."'".$dt->id."'".')"><i class="glyphicon glyphicon-pencil"></i> Cetak</a>
                 ';
             }
 
@@ -402,7 +402,6 @@ class Sales_order extends Admin_Controller
         $outlet = $this->outlet_model->get_by_kode($so->id_outlet);
         //print_r($so);
         $so->tanggal = $this->tanggal($so->tanggal);
-        $tes = 'halo';
         $data['datanya'] = $datax;
         $data['so'] = $so;
         $data['diskon'] = $diskon;
