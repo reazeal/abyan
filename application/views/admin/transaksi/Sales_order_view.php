@@ -558,7 +558,8 @@
 
                 $('#btnSave').text('simpan'); //change button text
                 $('#btnSave').attr('disabled',false); //set button enable
-
+                // tambahan 202009
+                $('#modal_form_kirim').modal('hide');
                 detail_so(id_so);
 
             },

@@ -5,7 +5,7 @@
     <div class="">
         <div class="row top_tiles">
             
-            <div class="animated flipInY col-lg-6 col-md-6 col-sm-6 col-xs-12">
+            <div class="animated flipInY col-lg-4 col-md-6 col-sm-6 col-xs-12">
                 <div class="tile-stats">
 <!--                    <div class="icon"><i class="fa fa-level-down"></i></div>-->
                     <div class="count"><?php echo "RP. ".number_format($nominal_piutang, 0, ',', '.').",-" ?></div>
@@ -13,11 +13,19 @@
                     <p>Hingga hari ini</p>
                 </div>
             </div>
-            <div class="animated flipInY col-lg-6 col-md-6 col-sm-6 col-xs-12">
+            <div class="animated flipInY col-lg-4 col-md-6 col-sm-6 col-xs-12">
                 <div class="tile-stats">
 <!--                    <div class="icon"><i class="fa fa-level-up"></i></div>-->
                     <div class="count"><?php echo number_format($jml_qty, 2, ',', '.') ?></div>
                     <h3>Total Qty Penjualan</h3>
+                    <p>Dalam bulan ini</p>
+                </div>
+            </div>
+            <div class="animated flipInY col-lg-4 col-md-6 col-sm-6 col-xs-12">
+                <div class="tile-stats">
+<!--                    <div class="icon"><i class="fa fa-level-up"></i></div>-->
+                    <div class="count"><?php echo "RP. ".number_format($nominal_uang_masuk, 0, ',', '.').",-" ?></div>
+                    <h3>Total Uang Masuk</h3>
                     <p>Dalam bulan ini</p>
                 </div>
             </div>

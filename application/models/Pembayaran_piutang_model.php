@@ -139,6 +139,29 @@ class Pembayaran_piutang_model extends MY_Model
 
     }
 
+    public function total_uang_masuk(){
+        $total_piutang = array();
+
+        $this->db->select("
+            sum(nominal) as total_masuk
+        ");
+        $this->db->where(" MONTH(tanggal) = date_format(curdate(),'%m%')  and YEAR(tanggal) = date_format(curdate(),'%Y%') ");
+
+        $query = $this->db->get($this->table);
+
+        $totaly2 = $query->num_rows();
+        if ($totaly2 > 0) {
+            foreach ($query->result() as $atributy) {
+
+                $total_masuk = $atributy->total_masuk ;
+                
+            }
+
+        }
+        return $total_masuk;
+
+    }
+
     public function get_total_bayar_by_kode($kode){
         $nominal = array();
 
