@@ -8,7 +8,7 @@ class Sales_order_model extends MY_Model
     public $primary_key = 'id';
     public $column_order = array(null, 'id','tanggal','kode_so','kode_customer','nama_customer','tanggal_kirim','kode_sales','id_outlet',null);
     public $column_search = array('id','tanggal','kode_so','kode_customer','nama_customer','tanggal_kirim','kode_sales','id_outlet');
-    public $order = array('created_at, status' => 'desc'); // default order
+    public $order = array('tanggal' => 'desc'); // default order
 
     public function __construct()
     {
@@ -31,7 +31,7 @@ class Sales_order_model extends MY_Model
         ");
         $this->db->join('detail_so','detail_so.kode_so = sales_order.kode_so');
         */
-       // $this->db->where('status != ' ,'Selesai');
+       $this->db->where('tanggal >= ' ,'2020-01-01');
        $this->db->from($this->table);
           $i = 0;
         foreach ($this->column_search as $item) // loop column
@@ -77,6 +77,8 @@ class Sales_order_model extends MY_Model
     function count_filtered()
     {
         $this->_get_datatables_query();
+        // $this->db->where('status != ' ,'Selesai');
+        $this->db->where('tanggal >= ' ,'2020-01-01');
         $query = $this->db->get();
         return $query->num_rows();
     }
@@ -84,6 +86,8 @@ class Sales_order_model extends MY_Model
     public function count_all()
     {
         $this->db->select($this->primary_key);
+        // $this->db->where('status != ' ,'Selesai');
+        $this->db->where('tanggal >= ' ,'2020-01-01');
         $this->db->from($this->table);
         return $this->db->count_all_results();
     }
