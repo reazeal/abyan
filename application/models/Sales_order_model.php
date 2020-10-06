@@ -8,7 +8,7 @@ class Sales_order_model extends MY_Model
     public $primary_key = 'id';
     public $column_order = array(null, 'id','tanggal','kode_so','kode_customer','nama_customer','tanggal_kirim','kode_sales','id_outlet',null);
     public $column_search = array('id','tanggal','kode_so','kode_customer','nama_customer','tanggal_kirim','kode_sales','id_outlet');
-    public $order = array('tanggal' => 'desc'); // default order
+    public $order = array('created_at' => 'desc'); // default order
 
     public function __construct()
     {

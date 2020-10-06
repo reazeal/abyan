@@ -245,6 +245,7 @@ on detail_barang_masuk.id = b.id_detail_barang_masuk
  from stok_opname a 
  join detail_barang_masuk b on a.id_detail_barang_masuk = b.id 
  join barang_masuk c on c.kode_barang_masuk = b.kode_barang_masuk 
+ where a.tanggal = last_day(DATE_SUB(now(), interval 1 month))
 ");
     /*
         $query = $this->db->query("select a.*, b.qty, ifnull(c.keluar,0) k, (b.qty - ifnull(c.keluar,0)) as jumlah from 
