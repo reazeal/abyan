@@ -200,7 +200,10 @@ class Pengiriman_so extends Admin_Controller {
         $kode_kirim = $kode_awal . "/PN/" . $tanggal_asli[1] . "/" . $tanggal_asli[0];
 
         //update piutang
-        $this->_updatepiutang($kode_kirim, $tanggal_asli);
+        //update 20201009
+        // $this->_updatepiutang($kode_kirim, $tanggal_asli);
+        // tess
+        $this->_updatepiutang($this->input->post('kode_so'), $tanggal_asli);
 
         //update status SO terkirim
         $data_so = array(
