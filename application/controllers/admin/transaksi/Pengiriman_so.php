@@ -311,11 +311,12 @@ class Pengiriman_so extends Admin_Controller {
             );
             $this->piutang_model->save($data_piutang);
         } else {
-            $nominal = ( $this->input->post('qty_terima') * $this->input->post('harga') ) + $data_piutang->nominal;
+            $nominal = ( $this->input->post('qty_terima') * $this->input->post('harga') ) + $piutang_so->nominal;
             $data_piutang_baru = array(
                 'nominal' => $nominal
             );
-            $this->piutang_model->update_by_kode($data_piutang->kode_piutang, $data_piutang_baru);
+            // $this->piutang_model->update_by_kode($data_piutang->kode_piutang, $data_piutang_baru);
+            $this->piutang_model->update_by_kode($this->input->post('kode_so'), $data_piutang_baru);
         }
         //end of piutang
     }

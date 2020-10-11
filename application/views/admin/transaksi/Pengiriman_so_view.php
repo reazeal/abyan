@@ -832,8 +832,9 @@ $('[name="kurir"]').val(data[0]['kurir']);
 
                 $('#btnSave').text('simpan'); //change button text
                 $('#btnSave').attr('disabled',false); //set button enable
-
+                $('#modal_form_terima').modal('hide');
                 detail_so(id_so);
+                
 
             },
             error: function (jqXHR, textStatus, errorThrown)
