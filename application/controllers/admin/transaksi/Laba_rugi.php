@@ -136,8 +136,10 @@ class Laba_rugi extends Admin_Controller
         if($dataexist){
             $this->laba_rugi_model->update_by_id(array('id' => $id), $data);
         }else{
-            $id=$this->laba_rugi_model->save($data);
+            $idx=$this->laba_rugi_model->save($data);
         }
+        
+        // print_r($pendapatan);
         
         $this->_insertdetail($bulan, $tahun, $id);
         
