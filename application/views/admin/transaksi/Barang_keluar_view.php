@@ -656,7 +656,8 @@
                                     <option value="">--Pilih Trans--</option>
                                     <option value="PRIBADI">Pribadi</option>
                                     <option value="SAMPLE">Sample</option>    
-                                    <option value="SPONSORSHIP">Sponsorship</option>                         
+                                    <option value="SPONSORSHIP">Sponsorship</option>
+                                    <option value="KIRIM_CABANG">Kirim Cabang</option>                         
                                 </select>
                                 <span class="help-block"></span>
                             </div>

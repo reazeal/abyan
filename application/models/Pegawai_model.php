@@ -146,5 +146,16 @@ class Pegawai_model extends MY_Model
 
     }
 
+    public function get_deliver(){
+        
+        $query = $this->db->query("
+            select * from pegawai where jabatan = 'Deliver'
+");
+  
+        return $query->result();
+        
+       
+    }
+
 
 }
