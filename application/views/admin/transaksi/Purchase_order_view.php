@@ -126,8 +126,8 @@
                 { title: "Qty" },
                 { title: "Harga" },
                 { title: "Total" },
-                { title: "Supplier" },
                 { title: "Customer" },
+                { title: "Supplier" },
                 { title: "Action" , width:'25'}
             ],
             "columnDefs": [
@@ -690,7 +690,7 @@
 
              iterasi++;
 
-            table_detail.row.add(['','', encodeURIComponent(barang_id), encodeURIComponent(nama_barang), encodeURIComponent(qty), encodeURIComponent(harga), encodeURIComponent(total), encodeURIComponent(buttom_supplier), encodeURIComponent(buttom_retail), aksi]).draw();
+            table_detail.row.add(['','', encodeURIComponent(barang_id), nama_barang, encodeURIComponent(qty), encodeURIComponent(harga), encodeURIComponent(total), encodeURIComponent(buttom_retail),encodeURIComponent(buttom_supplier), aksi]).draw();
 
             $('#modal_formDetail').modal('hide');
             $('#btnSaveDetail').text('simpan'); //change button text
@@ -702,7 +702,6 @@
     }
 
     function hapus_dataDetail() {
-        alert('tes');
         $('#datatable-detail').on( 'click', '.hapus-detail', function () {
             if(confirm('Anda yakin mau menghapus data ini ?')){
                 
@@ -823,8 +822,8 @@
                         <th>Qty</th>
                         <th>Harga</th>
                         <th>Total</th>
-                        <th>Supplier</th>
                         <th>Customer</th>
+                        <th>Supplier</th>
                         <th>Action</th>
                     </tr>
                     </thead>
@@ -1051,17 +1050,17 @@
                     </div>
 
                     <div class="form-group">
-                        <label class="control-label col-md-3">Buttom Supplier<span class="required">*</span></label>
+                        <label class="control-label col-md-3">Buttom Retail<span class="required">*</span></label>
                         <div class="col-md-6">
-                            <input name="bottom_supplier" placeholder="Buttom Supplier" class="validate[required,custom[number]] form-control" type="text" required="required">
+                            <input name="bottom_retail" placeholder="Buttom Retail" class="validate[required,custom[number]] form-control" type="text" required="required">
                             <span class="help-block"></span>
                             </div>
                     </div>
 
                     <div class="form-group">
-                        <label class="control-label col-md-3">Buttom Retail<span class="required">*</span></label>
+                        <label class="control-label col-md-3">Buttom Supplier<span class="required">*</span></label>
                         <div class="col-md-6">
-                            <input name="bottom_retail" placeholder="Buttom Retail" class="validate[required,custom[number]] form-control" type="text" required="required">
+                            <input name="bottom_supplier" placeholder="Buttom Supplier" class="validate[required,custom[number]] form-control" type="text" required="required">
                             <span class="help-block"></span>
                             </div>
                     </div>
@@ -1153,6 +1152,14 @@
                         </div>
                     </div>
 
+                     <div class="form-group">
+                        <label class="control-label col-md-3">Buttom Retail<span class="required">*</span></label>
+                        <div class="col-md-6">
+                            <input name="buttom_retail" placeholder="Harga Buttom Customer" class="validate[required,custom[number]] form-control" type="text" required="required">
+                            <span class="help-block"></span>
+                        </div>
+                    </div>
+
 
                     <div class="form-group">
                         <label class="control-label col-md-3">Buttom Supplier<span class="required">*</span></label>
@@ -1163,14 +1170,7 @@
                     </div>
 
 
-                    <div class="form-group">
-                        <label class="control-label col-md-3">Buttom Retail<span class="required">*</span></label>
-                        <div class="col-md-6">
-                            <input name="buttom_retail" placeholder="Harga Buttom Customer" class="validate[required,custom[number]] form-control" type="text" required="required">
-                            <span class="help-block"></span>
-                        </div>
-                    </div>
-
+                   
                     
 
                 </form>
