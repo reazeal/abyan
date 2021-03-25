@@ -70,6 +70,7 @@
                                     <th>Total Pendapatan</th>
                                     <th>Total Biaya</th>
                                     <th>Total Pembelian</th>
+                                    <th>Kerugian</th>
                                     <th>Laba Rugi</th>   
                                     <th>Action</th>
                                 </tr>

@@ -215,16 +215,18 @@ class Barang_keluar extends Admin_Controller
             endforeach;
         }
 
-        if($this->input->post('nama_biaya') == 'PRIBADI'){
+        if($this->input->post('jenis_trans') == 'PRIBADI'){
             $jenis_biaya = "100";
-        }else if($this->input->post('nama_biaya') == 'SAMPLE'){
+        }else if($this->input->post('jenis_trans') == 'SAMPLE'){
             $jenis_biaya = "101";
+        }else if($this->input->post('jenis_trans') == 'KIRIM_CABANG'){
+            $jenis_biaya = "103";
         }else {
             $jenis_biaya = "102";
         }
 
         $data = array(
-            'id' => md5(rand(1,100).'transaksi_biaya'.$this->input->post('nama_biaya').$this->input->post('nominal').date('YmdHis')),
+            'id' => md5(rand(1,100).'transaksi_biaya'.$this->input->post('jenis_trans').$this->input->post('nominal').date('YmdHis')),
             'id_jenis_biaya' => $jenis_biaya,
             'nominal' => $biaya,            
             'tanggal' => $this->tanggaldb($this->input->post('tanggal')),

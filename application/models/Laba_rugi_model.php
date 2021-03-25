@@ -282,6 +282,28 @@ class Laba_rugi_model extends MY_Model
         }
         return $total;
     }
+
+    public function total_kerugian_perbulan_tahun($bulan,$tahun){
+        $this->db->select("
+            ifnull(sum(nominal),0) as total 
+            from transaksi_biaya a
+           
+        ");
+
+        $this->db->where(" month(a.tanggal)='$bulan' and year(a.tanggal) = '$tahun' and id_jenis_biaya in (101,102,103,100)");
+        $query = $this->db->get();
+
+        $totaly2 = $query->num_rows();
+        if ($totaly2 > 0) {
+            foreach ($query->result() as $atributy) {
+
+                $total = $atributy->total ;
+                
+            }
+
+        }
+        return $total;
+    }
     
     
     public function total_pembelian_perbulan_tahun($bulan,$tahun){

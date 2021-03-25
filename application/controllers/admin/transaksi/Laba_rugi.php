@@ -114,6 +114,8 @@ class Laba_rugi extends Admin_Controller
 
         $biaya_pengiriman = $this->transaksi_biaya_model->total_biaya_perbulan_tahun_komisi_pengiriman($bulan,$tahun);
 
+        $total_kerugian = $this->laba_rugi_model->total_kerugian_perbulan_tahun($bulan,$tahun);
+
         //$biaya_bulanan=$this->laba_rugi_model->total_biaya_perbulan_tahun_bulanan($bulan,$tahun);
         //$hutang=$this->laba_rugi_model->total_hutang_perbulan_tahun($bulan,$tahun);
         $pembelian=$this->laba_rugi_model->total_pembelian_perbulan_tahun($bulan,$tahun);
@@ -123,7 +125,8 @@ class Laba_rugi extends Admin_Controller
         $data = array(
             'id' => $id,
             'periode' => $periode,
-            'total_pendapatan' => $pendapatan,            
+            'total_pendapatan' => $pendapatan,
+            'total_kerugian' => $total_kerugian,            
             'total_biaya' => $biaya_bulanan + $biaya_bulanan_bank + $biaya_bulanan_kardus_cold,          
             ///'total_biaya' => 0,
             'total_pembelian' => $pembelian,
@@ -174,6 +177,7 @@ class Laba_rugi extends Admin_Controller
             $row[] = number_format((($dt->total_pendapatan)?$dt->total_pendapatan:'0'),0,",",".");
             $row[] = number_format((($total_biaya)?$total_biaya:'0'),0,",",".");
             $row[] = number_format((($dt->total_pembelian)?$dt->total_pembelian:'0'),0,",",".");
+            $row[] = $dt->total_kerugian ;
             $row[] = number_format((($labarugi)?$labarugi:'0'),0,",",".");
             $row[] = '<a class="btn btn-sm btn-primary" href="javascript:void(0)" title="Detail" onclick="detail_ll('."'".$dt->id."'".')"><i class="glyphicon glyphicon-pencil"></i> Detail</a>
                   <a class="btn btn-sm btn-primary" href="javascript:void(0)" title="Cetak" onclick="cetak_ll('."'".$dt->id."'".')"><i class="glyphicon glyphicon-pencil"></i> Cetak</a>';

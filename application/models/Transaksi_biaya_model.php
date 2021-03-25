@@ -347,6 +347,8 @@ and year(d.tanggal) = '$tahun' and `e`.`jabatan` != 'owner' ");
 
     }
 
+  
+
     public function insert_biaya_perbulan_tahun_komisi_sales($idlabarugi){
         
         $this->db->select("sum(pp.nominal) as nominal");
