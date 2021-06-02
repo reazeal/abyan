@@ -239,14 +239,14 @@ where b.tanggal >= '2019-06-01'
 left join (SELECT sum(qty) keluar, id_detail_barang_masuk FROM detail_barang_keluar 
 group by id_detail_barang_masuk ) b 
 on detail_barang_masuk.id = b.id_detail_barang_masuk
- where detail_barang_masuk.qty > ifnull(b.keluar,0) and barang_masuk.tanggal >= '2020-10-01'
+ where detail_barang_masuk.qty > ifnull(b.keluar,0) and barang_masuk.tanggal >= '2021-06-01'
  union all 
  select  a.kode_barang , b.id, a.nama_barang , a.tanggal , c.kode_barang_masuk , a.qty 
  from stok_opname a 
  join detail_barang_masuk b on a.id_detail_barang_masuk = b.id 
  join barang_masuk c on c.kode_barang_masuk = b.kode_barang_masuk 
  -- where a.tanggal = last_day(DATE_SUB(now(), interval 1 month))
- where a.tanggal = '2020-09-30'
+ where a.tanggal = '2021-05-31'
 ");
     /*
         $query = $this->db->query("select a.*, b.qty, ifnull(c.keluar,0) k, (b.qty - ifnull(c.keluar,0)) as jumlah from 
